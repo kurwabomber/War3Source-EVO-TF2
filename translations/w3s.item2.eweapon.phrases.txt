@@ -1,0 +1,15 @@
+"Phrases"
+{
+	"eweapon_temName"
+	{
+		"en"		"Enhanced Weaponry"
+	}
+	"eweapon_ItemShortDesc"
+	{
+		"en"		"+3% damage."
+	}
+	"eweapon_temDesc"
+	{
+		"en"		"+3% damage."
+	}
+}

@@ -1,0 +1,15 @@
+"Phrases"
+{
+	"lplates_temName"
+	{
+		"en"		"Light Armor Plates"
+	}
+	"lplates_ItemShortDesc"
+	{
+		"en"		"+5% defense."
+	}
+	"lplates_temDesc"
+	{
+		"en"		"+5% defense."
+	}
+}
