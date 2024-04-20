@@ -315,6 +315,14 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                     {
                         Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBash Duration: %.1fs",MiniHUD_Text, W3GetBuffSumFloat(client, fBashDuration));
                     }
+                    if(W3GetBuffSumFloat(client, fCritChance) != 0.0)
+                    {
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nCrit Chance: %.1fpct",MiniHUD_Text, W3GetBuffSumFloat(client, fCritChance)*100.0);
+                    }
+                    if(W3GetBuffMaxFloat(client, fCritModifier) != 1.0)
+                    {
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nCrit Modifier: x%.1f",MiniHUD_Text, W3GetBuffMaxFloat(client, fCritModifier));
+                    }
                     if(W3GetPhysicalArmorMulti(client) != 1.0)
                     {
                         Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nPhys Reduction: x%.2f",MiniHUD_Text, W3GetPhysicalArmorMulti(client));
@@ -325,13 +333,13 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                     }
                     if(W3GetBuffHasTrue(client,bSlowImmunity) || W3GetBuffHasTrue(client,bImmunitySkills) || W3GetBuffHasTrue(client,bImmunityUltimates) || W3GetBuffHasTrue(client,bImmunityWards))
                     {
-                        StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "\nImmune: ");
+                        StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "\nImmune:|");
                         if(W3GetBuffHasTrue(client,bSlowImmunity))
-                            StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "Sl|");
+                            StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "Slow|");
                         if(W3GetBuffHasTrue(client,bImmunitySkills))
-                            StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "Sk|");
+                            StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "Skill|");
                         if(W3GetBuffHasTrue(client,bImmunityWards))
-                            StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "Wa|");  
+                            StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "Ward|");  
                         if(W3GetBuffHasTrue(client,bImmunityUltimates))
                             StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "Ult|");
     

@@ -145,7 +145,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace(RACE_LONGNAME,RACE_SHORTNAME,reloadrace_id,"Lifesteal, crits & speed.");
 		SKILL_LEECH=War3_AddRaceSkill(thisRaceID,"Vampiric Aura","Leech Health\nYou recieve up to 40% of your damage dealt as Health\nCan not buy item mask any level",false,4);
 		SKILL_SPEED=War3_AddRaceSkill(thisRaceID,"Unholy Aura","You run up to 32% faster",false,4);
-		SKILL_LOWGRAV=War3_AddRaceSkill(thisRaceID,"Blood Lust","When you gain health from Vampiric Aura, your crit chance by +2%.\nCrit Chance resets on death.\nCrits count as 50% damage increase.",false,4);
+		SKILL_LOWGRAV=War3_AddRaceSkill(thisRaceID,"Blood Lust","When you gain health from Vampiric Aura, your crit chance by +2%.\nCrit Chance resets on death and is capped to 40%.\nCrits count as 50% damage increase.",false,4);
 		SKILL_SUICIDE=War3_AddRaceSkill(thisRaceID,"Reincarnation","When you die, you revive on the spot.\nHas a base 60 second cooldown.\nDecreases cooldown by -5s each upgrade. After 4 upgrades, reduces to -1s.",true,4);
 		War3_CreateRaceEnd(thisRaceID);
 
@@ -278,17 +278,17 @@ public void OnWar3Event(W3EVENT event,int client)
 				int skill_level=player.getskilllevel( thisRaceID, SKILL_LOWGRAV );
 				float CurrentCritChance = player.getbuff(fCritChance,thisRaceID);
 				//DP("Crit before %f",CurrentCritChance);
-				if(CurrentCritChance<1.0)
+				if(CurrentCritChance<0.4)
 				{
-					CurrentCritChance+=0.02 * skill_level;
+					CurrentCritChance+=0.02 + 0.003*skill_level;
 					player.setbuff(fCritChance,thisRaceID,CurrentCritChance,client);
 					player.setbuff(iCritMode,thisRaceID,1,client);
 					player.setbuff(fCritModifier,thisRaceID,CritDamageIncrease,client);
 					//player.message("{blue}BloodLust increases crit chance by %f",CurrentCritChance);
 				}
-				else if(CurrentCritChance>1.0)
+				else if(CurrentCritChance>0.4)
 				{
-					CurrentCritChance=1.0;
+					CurrentCritChance=0.4;
 					player.setbuff(fCritChance,thisRaceID,CurrentCritChance,client);
 					player.setbuff(iCritMode,thisRaceID,1,client);
 					player.setbuff(fCritModifier,thisRaceID,CritDamageIncrease,client);

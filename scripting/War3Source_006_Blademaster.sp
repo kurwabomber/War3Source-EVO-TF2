@@ -2,6 +2,8 @@
 #include <tf2>
 #include <tf2_stocks>
 #include <tf2attributes>
+#include <tf2utils>
+
 #assert GGAMEMODE == MODE_WAR3SOURCE
 
 #define RACE_ID_NUMBER 6
@@ -19,18 +21,7 @@ public Plugin:myinfo =
 	version = "1.0",
 };
 public W3ONLY(){} //unload this?
-/* Changelog
- * 1.2 - Fixed speed buff not being removed on race switch
- */
-stock TF2_RemoveAllWearables(client)
-{
-    new i = -1;
-    while ((i = FindEntityByClassname(i, "tf_wearable*")) != -1)
-    {
-        if (client != GetEntPropEnt(i, Prop_Send, "m_hOwnerEntity")) continue;
-        AcceptEntityInput(i, "Kill");
-    }
-} 
+
 new thisRaceID;
 
 bool HooksLoaded = false;
@@ -73,7 +64,7 @@ new SKILL_CRITS, SKILL_BERSERK, SKILL_SALVE, ULT_WARCRY;
 
 // Critical Strike
 new Float:CritChance[] = {0.36,0.395,0.43,0.465,0.5};
-new Float:CritMultiplier = 2.0;
+new Float:CritMultiplier[] = {1.0,1.1,1.2,1.3,1.4};
 
 // Berserker
 new BerserkHP[] = {60,70,80,90,100};
@@ -95,7 +86,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("blademaster",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Blademaster","blademaster",reloadrace_id,"True melee, crits, tank.");
-		SKILL_CRITS=War3_AddRaceSkill(thisRaceID,"Precision","Chance to deal 2x damage. 36%-50% chance to proc.",false,4);
+		SKILL_CRITS=War3_AddRaceSkill(thisRaceID,"Precision","Chance to deal +100% -> +140% damage crits. 36% chance to proc.",false,4);
 		SKILL_BERSERK=War3_AddRaceSkill(thisRaceID,"Berserk","Passive : Gives +60-100 health and +20%-28% movespeed.",false,4);
 		SKILL_SALVE=War3_AddRaceSkill(thisRaceID,"Healing Salve","After 2.5 seconds of being out of combat, you gain +16-24 regen per second.",false,4);
 		ULT_WARCRY=War3_AddRaceSkill(thisRaceID,"War Cry","Gives damage and movespeed to you and nearby players.\n+30-40% damage boost, +30-35% movespeed, 600-650HU radius, lasts 8 seconds.",true,4);
@@ -122,7 +113,13 @@ GiveBlademasterPerks(client)
 {
 	new weapon = GetPlayerWeaponSlot(client, 2);
 	SetEntPropEnt(client, Prop_Send, "m_hActiveWeapon", weapon);
-	TF2_RemoveAllWearables(client);
+	
+	for(int i = 0;i<=3;++i){
+		int wearable = TF2Util_GetPlayerLoadoutEntity(client, i);
+		if(IsValidEntity(wearable) && TF2Util_IsEntityWearable(wearable))
+			RemoveEntity(wearable);
+	}
+
 	StopSalve(client);
 	TF2_AddCondition(client, TFCond_RestrictToMelee, 9999999.0);
 	TF2Attrib_SetByName(client,"cancel falling damage", 1.0);
@@ -131,6 +128,10 @@ GiveBlademasterPerks(client)
 	TF2Attrib_SetByName(client,"dmg taken increased", 0.9);
 	TF2Attrib_SetByName(client,"damage force reduction", 0.0);
 	TF2Attrib_SetByName(client,"airblast vulnerability multiplier", 0.0);
+
+	new skilllvl = War3_GetSkillLevel(client,thisRaceID,SKILL_CRITS);
+	War3_SetBuff(client,fCritChance,thisRaceID,CritChance[skilllvl]);
+	War3_SetBuff(client,fCritModifier,thisRaceID,CritMultiplier[skilllvl]);
 }
 RemoveBlademasterPerks(client)
 {
@@ -148,6 +149,8 @@ RemoveBlademasterPerks(client)
 	}
 	War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,0);
 	War3_SetBuff(client,fMaxSpeed2,thisRaceID,0.0);
+	War3_SetBuff(client,fCritChance,thisRaceID,0.0);
+	War3_SetBuff(client,fCritModifier,thisRaceID,0.0);
 }
 
 public void OnPluginStart()
@@ -247,21 +250,6 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 	}
 	if(IsValidEntity(victim)&&ValidPlayer(attacker,false))
 	{
-		if(War3_GetRace(attacker)==thisRaceID)
-		{
-			new skilllvl = War3_GetSkillLevel(attacker,thisRaceID,SKILL_CRITS);
-			new Float:Chance = GetRandomFloat(0.0, 1.0);
-			if(!ValidPlayer(victim,false) && CritChance[skilllvl] >= Chance)
-			{
-				War3_DamageModPercent(CritMultiplier); // Chance to deal double damage.
-				PrintHintText(attacker,"2x damage! Precision crit.");
-			}
-			if(ValidPlayer(victim,false) && CritChance[skilllvl] >= Chance &&!W3HasImmunity(victim,Immunity_Skills))
-			{
-				War3_DamageModPercent(CritMultiplier); // Chance to deal double damage.
-				PrintHintText(attacker,"2x damage! Precision crit.");
-			}
-		}
 		if(ValidPlayer(victim,true) && War3_GetRace(victim)==thisRaceID)
 		{
 			StopSalve(victim);

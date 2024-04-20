@@ -139,14 +139,9 @@ public Action:ClientAimTarget(Handle:timer,any:userid)
 				{
 #endif
 					//native War3_GetRaceName(raceid,String:retstr[],maxlen);
-					decl String:racename[64];
+					char racename[64];
 					new raceid=War3_GetRace(target);
-					War3_GetRaceName(raceid,racename,63);
 					float pDIST = 1.0;
-					//SetHudTextParams(-1.0, 0.14, 0.1, 255, 0, 0, 128,1); //no center full
-
-					// I think this is perfect, but players want it darker..
-					//SetHudTextParams(-1.0, -1.0, 0.15, 65, 0, 0, 5);
 					if(GetClientTeam (target)==2) // red team
 					{
 						SetHudTextParams(-1.0, 0.20, 0.20, 255, 0, 0, 255);
@@ -157,8 +152,13 @@ public Action:ClientAimTarget(Handle:timer,any:userid)
 						SetHudTextParams(-1.0, 0.20, 0.20, 0, 0, 255, 255);
 						pDIST = GetPlayerDistance(client,target);
 					}
-					//float pDIST = GetPlayerDistance(client,target);
-					ShowSyncHudText(client, ClientNameInfoMessage, "(%s level %d | DST %.0f HU)",racename,War3_GetLevel(target, raceid),pDIST);
+
+					if(ValidRace(raceid)){
+						War3_GetRaceName(raceid,racename,sizeof(racename));
+						ShowSyncHudText(client, ClientNameInfoMessage, "(%s level %d | DST %.0f HU)",racename,War3_GetLevel(target, raceid),pDIST);
+					}else{
+						ShowSyncHudText(client, ClientNameInfoMessage, "(%N | DST %.0f HU)",target,pDIST);
+					}
 #if GGAMETYPE == GGAME_TF2
 				}
 #endif

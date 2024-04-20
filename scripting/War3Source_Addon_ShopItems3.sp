@@ -77,11 +77,14 @@ public OnWar3LoadRaceOrItemOrdered(num)
 }
 public Action:Timer_QuickTimer(Handle:timer)
 {
-	for(new client = 1; client < MaxClients+1; client++)
+	for(new client = 1; client <= MaxClients; ++client)
 	{
 		if(ValidPlayer(client, true))
 		{
 			new race = War3_GetRace(client);
+			if(!ValidRace(race))
+				continue;
+
 			if(War3_GetOwnsItem3(client,race,ItemID[SPRINGGEM]))
 			{
 				new level = War3_GetItemLevel(client,race,ItemID[SPRINGGEM])+1;
@@ -151,11 +154,14 @@ public Action:Timer_QuickTimer(Handle:timer)
 }
 public Action:Timer_SlowTimer(Handle:timer)
 {
-	for(new client = 1; client < MaxClients+1; client++)
+	for(new client = 1; client <= MaxClients; ++client)
 	{
 		if(ValidPlayer(client, true))
 		{
 			new race = War3_GetRace(client);
+			if(!ValidRace(race))
+				continue;
+
 			GiveWindPearlPerks(client,race);
 			
 			if(War3_GetOwnsItem3(client,race,ItemID[FREEZE]))
@@ -219,6 +225,9 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 			{
 				//BLUE
 				new victimrace = War3_GetRace(victim);
+				if(!ValidRace(victimrace))
+					return Plugin_Continue;
+
 				if(War3_GetOwnsItem3(victim,victimrace,ItemID[BLUETEARSTONE]))
 				{
 					new level = War3_GetItemLevel(victim,victimrace,ItemID[BLUETEARSTONE])+1;
@@ -234,6 +243,9 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 		{
 			//RED
 			new attackerrace = War3_GetRace(attacker);
+			if(!ValidRace(attackerrace))
+				return Plugin_Continue;
+
 			if(ValidPlayer(victim,true))
 			{
 				if(War3_GetOwnsItem3(attacker,attackerrace,ItemID[POISONGEM]) && GetRandomFloat(0.0,1.0)<=0.1)
@@ -261,6 +273,8 @@ public Action OnWar3EventPostHurt(int victim, int attacker, float dmgamount, cha
 			if(!Perplexed(attacker,false))
 			{
 				new attackerrace = War3_GetRace(attacker);
+				if(!ValidRace(attackerrace))
+					return Plugin_Continue;
 				//Orange
 				if(War3_GetOwnsItem3(attacker,attackerrace,ItemID[MAGMACHARM]))
 				{
@@ -283,6 +297,8 @@ public Action:SDK_Forwarded_TraceAttack(victim, &attacker, &inflictor, &Float:da
 		if(!Perplexed(attacker,false))
 		{
 			new attackerrace = War3_GetRace(attacker);
+			if(!ValidRace(attackerrace))
+				return Plugin_Continue;
 			//Red
 			if(War3_GetOwnsItem3(attacker,attackerrace,ItemID[STORMHEART]))
 			{

@@ -64,7 +64,7 @@ public OnPluginStart()
 {
 	CreateConVar("war3_shopmenu1",PLUGIN_VERSION,"War3Source:EVO shopmenu1", FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 
-	BootsSpeedCvar=CreateConVar("war3_shop_boots_speed","1.2","Boots speed, 1.2 is default");
+	BootsSpeedCvar=CreateConVar("war3_shop_boots_speed","0.2","Boots speed, 0.2 is default");
 	ClawsAttackCvar=CreateConVar("war3_shop_claws_damage","0.10","Claws of attack additional percentage damage per second");
 	MaskDeathCvar=CreateConVar("war3_shop_mask_percent","0.3","Percent of damage rewarded for Mask of Death, from 0.0 - 1.0");
 	OrbFrostCvar=CreateConVar("war3_shop_orb_speed","0.5","Orb of Frost speed, 1.0 is normal speed, 0.6 default for orb.");
@@ -87,7 +87,6 @@ public OnPluginStart()
 	LoadTranslations("w3s._common.phrases");
 	LoadTranslations("w3s.item.helm.phrases");
 	LoadTranslations("w3s.item.courage.phrases");
-	LoadTranslations("w3s.item.antiward.phrases");
 	LoadTranslations("w3s.item.uberme.phrases");
 #if GGAMETYPE == GGAME_TF2
 	LoadTranslations("w3s.item.fireorb.phrases");
@@ -156,13 +155,11 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		shopItem[FIREORB]=War3_CreateShopItemT("fireorb","chance to ignite victim per second", 10, 4000);
 #endif
 
-		shopItem[COURAGE]=War3_CreateShopItem("Armor of Courage","courage","+5 dmg reduction","increases up to 25% resistance against all physcial damage\n(does not block magical)",10,3000);
+		shopItem[COURAGE]=War3_CreateShopItem("Armor of Courage","courage","+5 phys dmg reduction","increases up to 25% resistance against all physcial damage\n(does not block magical)",10,3000);
 
 		shopItem[FAITH]=War3_CreateShopItem("Armor of Faith","faith","+5 magic dmg reduction","increases up to 25% resistance against all magical damage\n(does not block physical)",10,3000);
 
 		shopItem[ARMBAND]=War3_CreateShopItem("Armband of Repetition","armband","+15% attack speed","Increases attack speed by 15%\n(does not stack with other attack speed increases)",10,3000);
-
-		shopItem[ANTIWARD]=War3_CreateShopItemT("antiward","immunity to wards",3,3000);
 
 		shopItem[MBOOTS]=War3_CreateShopItem("Medi Boots","mboots","healing gives speed","Gives healing target increased movement speed",9,3000);
 		War3_TFSetItemClasses(shopItem[MBOOTS],TFClass_Medic);
@@ -171,13 +168,13 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		shopItem[MHEALTH]=War3_CreateShopItem("Medi Health","mhealth","healing gives health","Gives healing target extra hp",9,3000);
 		War3_TFSetItemClasses(shopItem[MHEALTH],TFClass_Medic);
 
-		shopItem[DIVINERAPIER]=War3_CreateShopItem("Divine Rapier", "rapier", "+5 additive damage", "+5 additive damage", 30, 10000);
+		shopItem[DIVINERAPIER]=War3_CreateShopItem("Divine Rapier", "rapier", "+8 additive damage", "+8 additive damage", 15, 10000);
 		shopItem[REFRESHERORB]=War3_CreateShopItem("Refresh Orb", "refreshorb", "1.4x faster ability cooldown", "1.4x faster ability cooldown", 15, 10000);
 		shopItem[REFRESHSHARD]=War3_CreateShopItem("Refresh Shard", "refreshshard", "instantly resets cooldowns", "Instantly resets cooldowns", 5, 10000);
 		War3_SetItemProperty(shopItem[REFRESHSHARD], ITEM_USED_ON_BUY,true);
 		
 		shopItem[GLIMMERCAPE]=War3_CreateShopItem("Glimmer Cape", "cape", "+7 magic dmg reduction", "+7 magic dmg reduction", 15, 10000);
-		shopItem[AGHANIMSCEPTRE]=War3_CreateShopItem("Aghanim's Sceptre", "sceptre", "WIP: upgrades all ultimates", "WIP: upgrades all ultimates", 25, 10000);
+		shopItem[AGHANIMSCEPTRE]=War3_CreateShopItem("Aghanim's Sceptre", "sceptre", "WIP:NOT WORKING upgrades all ultimates", "WIP:NOT WORKING upgrades all ultimates", 25, 10000);
 		shopItem[BLINKDAGGER]=War3_CreateShopItem("Blink Dagger", "blink", "shift+right-click teleport", "shift+right-click teleport", 15, 10000);
 		shopItem[ORBOFVENOM]=War3_CreateShopItem("Orb of Venom", "venom", "attacks apply venom dot (4dps)", "attacks apply venom dot (4dps)", 3, 10000);
 		shopItem[RINGOFPROTECTION]=War3_CreateShopItem("Ring of Protection", "protection", "+3 dmg reduction", "+3 dmg reduction", 5, 10000);
@@ -190,7 +187,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		shopItem[DESOLATOR]=War3_CreateShopItem("Desolator", "desolator", "-0.5 phys dmg reduction per second on targets.", "-0.5 phys dmg reduction per second on targets.", 15, 10000);
 		shopItem[PANICNECKLACE]=War3_CreateShopItem("Panic Necklade", "panic", "+2s speed boost when hit", "+2s speed boost when hit", 5, 10000);
 		shopItem[BLOODBOUNDGEM]=War3_CreateShopItem("Bloodbound Gem", "bloodbound", "+20% lifesteal and regen boost", "+20% lifesteal and regen boost", 20, 10000);
-		shopItem[MEKANSM]=War3_CreateShopItem("Mekansm", "mekansm", "+35HP AOE heal/5s", "+35HP AOE heal/5s", 25, 10000);
+		shopItem[MEKANSM]=War3_CreateShopItem("Mekansm", "mekansm", "+15HP AOE heal/5s", "+15HP AOE heal/5s", 10, 10000);
 		shopItem[MANTLEOFINTEL]=War3_CreateShopItem("Mantle of Intelligence", "mantle", "+15% magic dmg", "+15% magic dmg", 6, 10000);
 
 #if GGAMETYPE2 == GGAME_PVM
@@ -212,17 +209,16 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		War3_AddItemBuff(shopItem[DRAGONMAIL], fArmorMagic, 50.0);
 #endif
 
-		War3_AddItemBuff(shopItem[ANTIWARD], bImmunityWards, true);
 		War3_AddItemBuff(shopItem[SOCK], fLowGravityItem, GetConVarFloat(SockCvar));
 		War3_AddItemBuff(shopItem[NECKLACE], bImmunityUltimates, true);
 		War3_AddItemBuff(shopItem[RING], fHPRegen, GetConVarFloat(RegenHPTFCvar));
-		War3_AddItemBuff(shopItem[BOOTS], fMaxSpeed, GetConVarFloat(BootsSpeedCvar));
+		War3_AddItemBuff(shopItem[BOOTS], fMaxSpeed2, GetConVarFloat(BootsSpeedCvar));
 		War3_AddItemBuff(shopItem[SHIELD], bImmunitySkills, true);
 		War3_AddItemBuff(shopItem[GAUNTLET], iAdditionalMaxHealth, 35);
 		War3_AddItemBuff(shopItem[ARMBAND], fAttackSpeed, 1.15);
 		War3_AddItemBuff(shopItem[CLAW],fDamageModifier,GetConVarFloat(ClawsAttackCvar));
 		War3_AddItemBuff(shopItem[MASK],fVampirePercent,GetConVarFloat(MaskDeathCvar));
-		War3_AddItemBuff(shopItem[DIVINERAPIER], iDamageBonus, 5);
+		War3_AddItemBuff(shopItem[DIVINERAPIER], iDamageBonus, 8);
 		War3_AddItemBuff(shopItem[FAITH],fArmorMagic,5.0);
 		War3_AddItemBuff(shopItem[COURAGE],fArmorPhysical,5.0);
 		War3_AddItemBuff(shopItem[REFRESHERORB],fCooldownReduction,1.4);
@@ -237,7 +233,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fHPRegen,1.0);
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fArmorPhysical,1.0);
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fArmorMagic,1.0);
-		War3_AddItemBuff(shopItem[NULLTALISMAN],fMaxSpeed,1.05);
+		War3_AddItemBuff(shopItem[NULLTALISMAN],fMaxSpeed2,0.05);
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fDamageModifier,0.05);
 		War3_AddItemBuff(shopItem[DAEDALUS],fCritChance,0.2);
 		War3_AddItemBuff(shopItem[DAEDALUS],fCritModifier,0.5);
@@ -267,7 +263,7 @@ public Action:SecondLoop(Handle:timer,any:data)
 				//DP("HealingTarget[client]!=HealTarget");
 				// reset buffs
 				//fMaxSpeed2
-				War3_SetBuffItem(HealingTarget[client],fMaxSpeed2,shopItem[MBOOTS],1.0);
+				War3_SetBuffItem(HealingTarget[client],fMaxSpeed2,shopItem[MBOOTS],0.0);
 				// Regen
 				War3_SetBuffItem(HealingTarget[client],fHPRegen,shopItem[MRING],0.0);
 				// Additional Health
@@ -285,7 +281,7 @@ public Action:SecondLoop(Handle:timer,any:data)
 					if(War3_GetOwnsItem(client,shopItem[MBOOTS]))
 					{
 						//fMaxSpeed2
-						War3_SetBuffItem(HealTarget,fMaxSpeed2,shopItem[MBOOTS],1.2,client);
+						War3_SetBuffItem(HealTarget,fMaxSpeed2,shopItem[MBOOTS],0.2,client);
 						//CreateTimer(1.0,SecondLoop,_,TIMER_REPEAT);
 						//DP("set MaxSpeed2 HealTarget");
 					}
@@ -310,7 +306,7 @@ public Action:SecondLoop(Handle:timer,any:data)
 					if(War3_GetOwnsItem(client,shopItem[MBOOTS]))
 					{
 						//fMaxSpeed2
-						War3_SetBuffItem(HealTarget,fMaxSpeed2,shopItem[MBOOTS],1.0,client);
+						War3_SetBuffItem(HealTarget,fMaxSpeed2,shopItem[MBOOTS],0.0,client);
 						//DP("UNSET fMaxSpeed2 HealTarget");
 					}
 					if(War3_GetOwnsItem(client,shopItem[MRING]))
@@ -335,7 +331,7 @@ public Action:SecondLoop(Handle:timer,any:data)
 				{
 					// reset buffs
 					//fMaxSpeed2
-					War3_SetBuffItem(HealingTarget[client],fMaxSpeed2,shopItem[MBOOTS],1.0);
+					War3_SetBuffItem(HealingTarget[client],fMaxSpeed2,shopItem[MBOOTS],0.0);
 					// Regen
 					War3_SetBuffItem(HealingTarget[client],fHPRegen,shopItem[MRING],0.0);
 					// Additional Health
@@ -417,7 +413,7 @@ public OnItemPurchase(client,item)
 		return 0;
 
 	if(shopItem[MBOOTS]==item){
-		War3_SetBuffItem(client,fMaxSpeed2,shopItem[MBOOTS],1.2);
+		War3_SetBuffItem(client,fMaxSpeed2,shopItem[MBOOTS],0.2);
 	}
 	if(shopItem[SOCK]==item){
 		War3_ChatMessage(client,"You pull on your socks");
@@ -456,9 +452,9 @@ public OnItemLost(client,item){ //deactivate passives , client may have disconne
 		return 0;
 	if(shopItem[MBOOTS]==item)
 	{
-		War3_SetBuffItem(client,fMaxSpeed2,shopItem[MBOOTS],1.0);
+		War3_SetBuffItem(client,fMaxSpeed2,shopItem[MBOOTS],0.0);
 		if(HealingTarget[client]>0)
-			War3_SetBuffItem(HealingTarget[client],fMaxSpeed2,shopItem[MBOOTS],1.0);
+			War3_SetBuffItem(HealingTarget[client],fMaxSpeed2,shopItem[MBOOTS],0.0);
 	}
 	if(shopItem[MRING]==item)
 	{
