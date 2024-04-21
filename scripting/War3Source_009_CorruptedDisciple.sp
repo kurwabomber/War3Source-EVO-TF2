@@ -43,7 +43,7 @@ new StaticHealRadius=800;
 new OverloadDuration=75; //HIT TIMES, DURATION DEPENDS ON TIMER
 new OverloadRadius=500;
 new OverloadDamagePerHit[]={4,4,5,5,6};
-new Float:OverloadDamageIncrease[]={1.025,1.0275,1.03,1.0325,1.035};
+new Float:OverloadDamageIncrease[]={1.01,1.012,1.0124,1.0124,1.0126};
 ////
 
 
@@ -153,7 +153,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_TIDE=War3_AddRaceSkill(thisRaceID,"Electric Tide","Expands electric rings around you, deals the most damage at the edge.\nMaximum damage is 140-180. Has a 7.5 second cooldown.",false,4);
 		SKILL_CONDUIT=War3_AddRaceSkill(thisRaceID,"Corrupted Conduit","Your victim will lose damage per attack for a duration.\nAuto activate when not on cooldown. On activation: Heals 2-4 health when you're hit.\nLasts 10 seconds, has a 12 second cooldown.",false,4);
 		SKILL_STATIC=War3_AddRaceSkill(thisRaceID,"Static Discharge","Chance to heal you and your teammates around you when you are damaged.\n50% chance of proc, heals for 60-72% of damage taken. 800HU radius.",false,4);
-		ULT_OVERLOAD=War3_AddRaceSkill(thisRaceID,"Overload","(+ultimate) Shocks the lowest hp enemy around you per second while you gain damage per hit\nHits for 4-6 dmg, has 75 damage ticks. Your damage increases by up to 3.5% per zap. Ticks every 0.1 seconds.",true,4);
+		ULT_OVERLOAD=War3_AddRaceSkill(thisRaceID,"Overload","(+ultimate) Shocks the lowest hp enemy around you per second while you gain damage per hit\nHits for 4-6 dmg, has 75 damage ticks. Your damage increases by 1% -> 1.26% per zap. Ticks every 0.1 seconds.",true,4);
 		War3_CreateRaceEnd(thisRaceID);
 
 		W3SkillCooldownOnSpawn(thisRaceID,ULT_OVERLOAD,10.0,_); //translated doesnt use this "Chain Lightning"
@@ -198,7 +198,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 	//if(!bypass)
 		//DP("!bypass");
 
-	if(/*War3_GetRace(client)==thisRaceID &&*/ ability==0 && pressed && ValidPlayer(client,true))
+	if(War3_GetRace(client)==thisRaceID && ability==0 && pressed && ValidPlayer(client,true))
 	{
 		if(!Silenced(client)&&(bypass||War3_SkillNotInCooldown(client,thisRaceID,SKILL_TIDE,true)))
 		{
@@ -272,6 +272,7 @@ public Action:BurnLoop(Handle:timer,any:userid)
 					GetClientAbsOrigin(i,otherVec);
 					otherVec[2]+=30.0;
 					new Float:victimdistance=GetVectorDistance(ElectricTideOrigin[attacker],otherVec);
+					float resistance = W3GetBuffStackedFloat(i, fAbilityResistance);
 					if(victimdistance<ElectricTideRadius&&FloatAbs(otherVec[2]-ElectricTideOrigin[attacker][2])<25)
 					{
 						if(FloatAbs(victimdistance-damagingRadius)<(ElectricTideRadius/10.0))
@@ -282,7 +283,7 @@ public Action:BurnLoop(Handle:timer,any:userid)
 							else{
 								HitOnForwardTide[i][attacker]=true;
 							}
-							if(War3_DealDamage(i,RoundFloat(ElectricTideMaxDamage[War3_GetSkillLevel(attacker,thisRaceID,SKILL_TIDE)]*victimdistance/ElectricTideRadius/2.0),attacker,DMG_ENERGYBEAM,"electrictide"))
+							if(War3_DealDamage(i,RoundFloat(resistance*ElectricTideMaxDamage[War3_GetSkillLevel(attacker,thisRaceID,SKILL_TIDE)]*victimdistance/ElectricTideRadius/2.0),attacker,DMG_ENERGYBEAM,"electrictide"))
 							{
 								War3_NotifyPlayerTookDamageFromSkill(i, attacker, War3_GetWar3DamageDealt(), SKILL_TIDE);
 							}
@@ -440,7 +441,8 @@ public Action:UltimateLoop(Handle:timer,any:userid)
 			otherpos[2]-=20.0; //THIS IS EYE NOW, NOT ABS
 			TE_SetupBeamPoints(pos,otherpos,BeamSprite,HaloSprite,0,35,0.15,6.0,5.0,0,1.0,{255,000,255,255},20);
 			TE_SendToAll();
-			if(War3_DealDamage(besttarget,OverloadDamagePerHit[War3_GetSkillLevel(attacker,thisRaceID,ULT_OVERLOAD)],attacker,_,"overload"))
+			float resistance = W3GetBuffStackedFloat(besttarget, fUltimateResistance);
+			if(War3_DealDamage(besttarget,RoundFloat(resistance*OverloadDamagePerHit[War3_GetSkillLevel(attacker,thisRaceID,ULT_OVERLOAD)]),attacker,_,"overload"))
 			{
 				War3_NotifyPlayerTookDamageFromSkill(besttarget, attacker, War3_GetWar3DamageDealt(), ULT_OVERLOAD);
 			}
@@ -493,15 +495,14 @@ public Action OnW3TakeDmgAllPre(int victim, int attacker, float damage)
 	{
 		if(ValidPlayer(victim,true))
 		{
-			if(GetClientTeam(victim)==GetClientTeam(attacker) || W3HasImmunity(victim, Immunity_Skills))
+			if(GetClientTeam(victim)==GetClientTeam(attacker) || W3HasImmunity(victim, Immunity_Ultimates))
 				return Plugin_Continue;
 		}
 		new race_attacker=War3_GetRace(attacker);
 		if(race_attacker==thisRaceID&&IsPlayerAlive(attacker)&&UltimateZapsRemaining[attacker]>0)
 		{
-			//new skill=War3_GetSkillLevel(client,thisRaceID,ULT_OVERLOAD);
-			War3_DamageModPercent(PlayerDamageIncrease[attacker]);
-			//PrintToConsole(attacker,"Dealing %.1fX base damage from Overload",PlayerDamageIncrease[attacker]);
+			float resistance = W3GetBuffStackedFloat(victim, fUltimateResistance);
+			War3_DamageModPercent(1+ (PlayerDamageIncrease[attacker]-1)*resistance);
 		}
 	}
 	return Plugin_Changed;
@@ -530,41 +531,41 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 	//new attacker=GetClientOfUserId(attacker_userid);
 	if(ValidPlayer(victim)&&ValidPlayer(attacker))
 	{
-		/*new race_attacker=War3_GetRace(attacker);*/
-		//if(/*race_attacker==thisRaceID&&*/!W3HasImmunity(victim,Immunity_Skills)){
-
-		new skill_level=War3_GetSkillLevel(attacker,thisRaceID,SKILL_CONDUIT);
-
-		if(W3GetDamageIsBullet()&&!Hexed(attacker,false))
+		new race_attacker=War3_GetRace(attacker);
+		if(race_attacker==thisRaceID)
 		{
+			new skill_level=War3_GetSkillLevel(attacker,thisRaceID,SKILL_CONDUIT);
 
-			if(ConduitUntilTime[victim]>1.0&&W3Chance(W3ChanceModifier(attacker)))
+			if(W3GetDamageIsBullet()&&!Hexed(attacker,false))
 			{
-				//do nothing, already on conduit
-				ConduitSubtractDamage[victim]+=ConduitPerHit[skill_level];
-			}
-			else if(War3_SkillNotInCooldown(attacker,thisRaceID,SKILL_CONDUIT))
-			{
-				//activate conduit on this victim
-
-				if(!W3HasImmunity(victim,Immunity_Skills))
+				if(ConduitUntilTime[victim]>1.0&&W3Chance(W3ChanceModifier(attacker)))
 				{
-					ConduitUntilTime[victim]=GetGameTime()+float(ConduitDuration);
+					//do nothing, already on conduit
 					ConduitSubtractDamage[victim]+=ConduitPerHit[skill_level];
-					ConduitBy[victim]=attacker;
-					War3_CooldownMGR(attacker,float(ConduitCooldown),thisRaceID,SKILL_CONDUIT,_,false);
-
-					PrintHintText(victim,"Conduit activated on you!");
-					PrintHintText(attacker,"Activated Conduit!");
-					War3_NotifyPlayerSkillActivated(attacker,SKILL_CONDUIT,true);
 				}
-				else
+				else if(War3_SkillNotInCooldown(attacker,thisRaceID,SKILL_CONDUIT))
 				{
-					War3_NotifyPlayerImmuneFromSkill(attacker, victim, SKILL_CONDUIT);
+					//activate conduit on this victim
+
+					if(!W3HasImmunity(victim,Immunity_Skills))
+					{
+						float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
+						ConduitUntilTime[victim]=GetGameTime()+float(ConduitDuration)*resistance;
+						ConduitSubtractDamage[victim]+=ConduitPerHit[skill_level];
+						ConduitBy[victim]=attacker;
+						War3_CooldownMGR(attacker,float(ConduitCooldown),thisRaceID,SKILL_CONDUIT,_,false);
+
+						PrintHintText(victim,"Conduit activated on you!");
+						PrintHintText(attacker,"Activated Conduit!");
+						War3_NotifyPlayerSkillActivated(attacker,SKILL_CONDUIT,true);
+					}
+					else
+					{
+						War3_NotifyPlayerImmuneFromSkill(attacker, victim, SKILL_CONDUIT);
+					}
 				}
 			}
 		}
-		//}
 
 		///attacker has conduit:
 		if(ConduitSubtractDamage[attacker]){
@@ -587,23 +588,24 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 			}
 		}
 
-		//new race_victim=War3_GetRace(victim);
-		//if(race_victim==thisRaceID){
-		new skill = War3_GetSkillLevel(victim,thisRaceID,SKILL_STATIC);
-		if(!Hexed(victim,false)&&GetRandomFloat(0.0,1.0)<0.5){
-			new heal=RoundFloat(StaticHealPercent[skill]*dmg);
-			new team=GetClientTeam(victim);
+		new race_victim=War3_GetRace(victim);
+		if(race_victim==thisRaceID){
+			new skill = War3_GetSkillLevel(victim,thisRaceID,SKILL_STATIC);
+			if(!Hexed(victim,false)&&GetRandomFloat(0.0,1.0)<0.5){
+				new heal=RoundFloat(StaticHealPercent[skill]*dmg);
+				new team=GetClientTeam(victim);
 
-			new Float:pos[3];
-			GetClientAbsOrigin(victim,pos);
-			new Float:otherVec[3];
-			for(new i=1;i<=MaxClients;i++)
-			{
-				if(ValidPlayer(i,true)&&GetClientTeam(i)!=team)
+				new Float:pos[3];
+				GetClientAbsOrigin(victim,pos);
+				new Float:otherVec[3];
+				for(new i=1;i<=MaxClients;i++)
 				{
-					GetClientAbsOrigin(i,otherVec);
-					if(GetVectorDistance(pos,otherVec)<StaticHealRadius){
-						War3_HealToBuffHP(i,heal);
+					if(ValidPlayer(i,true)&&GetClientTeam(i)!=team)
+					{
+						GetClientAbsOrigin(i,otherVec);
+						if(GetVectorDistance(pos,otherVec)<StaticHealRadius){
+							War3_HealToBuffHP(i,heal);
+						}
 					}
 				}
 			}

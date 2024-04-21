@@ -81,10 +81,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual(raceshortname,shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace(racelongname,raceshortname,reloadrace_id,racedescription);
-		SKILL_FIRST=War3_AddRaceSkill(thisRaceID,"Juggernaut","+8 armor. Deal 15% more damage.\n+6 to 8 HPR, +50-70 MaxHP. -40% movespeed. (passive)",false,8);
-		SKILL_SECOND=War3_AddRaceSkill(thisRaceID,"Cleansing Flame","Within a 500HU radius, deal 80 to 85 damage.\n25s to 18.5s cooldown. Using this also adds cooldown to other abilities. (+ability)",false,8);
-		SKILL_THIRD=War3_AddRaceSkill(thisRaceID,"Chokeslam","Grab a nearby enemy, dealing 75 -> 95 dmg. Stuns for 1.5s.\n30s cooldown.  Using this also adds cooldown to other abilities. (+ability2)",false,8);
-		ULT=War3_AddRaceSkill(thisRaceID,"Steadfast Corruption","Creates a shockwave arc with 550HU length.\nCast time is 2.5s. Deals 130 -> 160 dmg.\n45s cooldown. (+ultimate)",true,8);
+		SKILL_FIRST=War3_AddRaceSkill(thisRaceID,"Juggernaut","+8 armor. Deal 15% more damage.\n+6 to 8 HPR, +50-70 MaxHP. -40% movespeed. (passive)",false,4);
+		SKILL_SECOND=War3_AddRaceSkill(thisRaceID,"Cleansing Flame","Within a 500HU radius, deal 80 to 85 damage.\n25s to 18.5s cooldown. Using this also adds cooldown to other abilities. (+ability)",false,4);
+		SKILL_THIRD=War3_AddRaceSkill(thisRaceID,"Chokeslam","Grab a nearby enemy, dealing 75 -> 95 dmg. Stuns for 1.5s.\n30s cooldown.  Using this also adds cooldown to other abilities. (+ability2)",false,4);
+		ULT=War3_AddRaceSkill(thisRaceID,"Steadfast Corruption","Creates a shockwave arc with 550HU length.\nCast time is 2.5s. Deals 130 -> 160 dmg.\n45s cooldown. (+ultimate)",true,4);
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_FIRST, fHPRegen, JuggernautHPR);
 		War3_AddSkillBuff(thisRaceID, SKILL_FIRST, iAdditionalMaxHealth, JuggernautHP);
@@ -116,6 +116,16 @@ public OnW3Denyable(W3DENY:event,client)
 				War3_ChatMessage(client, "The ring interfere with your armor.");
 			}
 			if((W3GetVar(EventArg1) == War3_GetItemIdByShortname("courage")))
+			{
+				W3Deny();
+				War3_ChatMessage(client, "You already have armor.");
+			}
+			if((W3GetVar(EventArg1) == War3_GetItemIdByShortname("cuirass")))
+			{
+				W3Deny();
+				War3_ChatMessage(client, "You already have armor.");
+			}
+			if((W3GetVar(EventArg1) == War3_GetItemIdByShortname("blademail")))
 			{
 				W3Deny();
 				War3_ChatMessage(client, "You already have armor.");
@@ -187,9 +197,9 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 							{
 								if(!W3HasImmunity(i,Immunity_Skills))
 								{
-									if(War3_DealDamage(i, RoundToNearest(CleasningFlameDamage[skill_level]), client, DMG_BURN, "cleansingflame"))
+									if(War3_DealDamage(i, RoundToNearest(CleasningFlameDamage[skill_level]*W3GetBuffStackedFloat(i, fAbilityResistance)), client, DMG_BURN, "cleansingflame"))
 									{
-										War3_NotifyPlayerTookDamageFromSkill(client, i, RoundToNearest(CleasningFlameDamage[skill_level]), SKILL_SECOND);
+										War3_NotifyPlayerTookDamageFromSkill(client, i, War3_GetWar3DamageDealt(), SKILL_SECOND);
 										PrintHintText(i,"You were hit by cleansing flames!");
 									}
 								}
@@ -221,6 +231,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 					GetClientAbsOrigin(client,vOrigin);
 					new Float:otherVec[3];
 					new team = GetClientTeam(client);
+					bool successful;
 					for(new i=1;i<=MaxClients;i++)
 					{
 						if(ValidPlayer(i,true)&&GetClientTeam(i)!=team)
@@ -231,9 +242,9 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 							{
 								if(!W3HasImmunity(i,Immunity_Skills))
 								{
-									if(War3_DealDamage(i, RoundToNearest(ChokeslamDamage[skill_level]), client, DMG_CLUB, "chokeslam"))
+									if(War3_DealDamage(i, RoundToNearest(ChokeslamDamage[skill_level]*W3GetBuffStackedFloat(i, fAbilityResistance)), client, DMG_CLUB, "chokeslam"))
 									{
-										War3_NotifyPlayerTookDamageFromSkill(client, i, RoundToNearest(ChokeslamDamage[skill_level]), SKILL_THIRD);
+										War3_NotifyPlayerTookDamageFromSkill(client, i, War3_GetWar3DamageDealt(), SKILL_THIRD);
 										TF2_StunPlayer(i, 1.5, 1.0, TF_STUNFLAGS_NORMALBONK, client);
 										PrintHintText(i,"You were grabbed by %N!",client);
 										PrintHintText(client,"You grabbed %N!",i);
@@ -247,6 +258,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 										{
 											War3_CooldownMGR(client,4.0,thisRaceID,ULT,_,_);
 										}
+										successful = true;
 										break;
 									}
 								}
@@ -256,6 +268,9 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 								}
 							}
 						}
+					}
+					if(!successful){
+						PrintHintText(client, "Did not find any valid targets for chokeslam.");
 					}
 				}
 			}
@@ -301,9 +316,9 @@ public OnWar3CastingFinished(client, target, W3SpellEffects:spelleffect, String:
 						{
 							if(!W3HasImmunity(i,Immunity_Ultimates))
 							{
-								if(War3_DealDamage(i, RoundToNearest(SteadfastCorruptionDamage[skill_level]), client, DMG_BURN, "corruption"))
+								if(War3_DealDamage(i, RoundToNearest(SteadfastCorruptionDamage[skill_level]*W3GetBuffStackedFloat(i, fUltimateResistance)), client, DMG_BURN, "corruption"))
 								{
-									War3_NotifyPlayerTookDamageFromSkill(client, i, RoundToNearest(SteadfastCorruptionDamage[skill_level]), ULT);
+									War3_NotifyPlayerTookDamageFromSkill(client, i, War3_GetWar3DamageDealt(), ULT);
 								}
 							}
 						}

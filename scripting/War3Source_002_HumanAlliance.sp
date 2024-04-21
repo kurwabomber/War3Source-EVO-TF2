@@ -294,26 +294,25 @@ public Action:OnW3TeleportLocationChecking(client,Float:playerVec[3])
 
 		for(new i=1;i<=MaxClients;i++)
 		{
-			if(ValidPlayer(i,true)&&GetClientTeam(i)!=team&&W3HasImmunity(i,Immunity_Ultimates))
+			if(ValidPlayer(i,true)&&GetClientTeam(i)!=team)
 			{
 				GetClientAbsOrigin(i,otherVec);
-				//if(skilllevel==0)
-				//{
-				if(GetVectorDistance(playerVec,otherVec)<350)
-				{
-					War3_NotifyPlayerImmuneFromSkill(client, i, ULT_TELEPORT);
-					return Plugin_Handled;
-				}
-				//}
-				/*
-				if(skilllevel==1)
-				{
-					if(GetVectorDistance(playerVec,otherVec)<150)
+				float resistance = W3GetBuffStackedFloat(i, fUltimateResistance);
+
+				if(W3HasImmunity(i,Immunity_Ultimates)){
+					if(GetVectorDistance(playerVec,otherVec)<350)
 					{
-						War3_NotifyPlayerImmuneFromSkill(client, i, ULT_IMPROVED_TELEPORT);
+						War3_NotifyPlayerImmuneFromSkill(client, i, ULT_TELEPORT);
 						return Plugin_Handled;
 					}
-				}*/
+				}
+				else if(resistance != 1.0){
+					if(GetVectorDistance(playerVec,otherVec)<350*(1-resistance))
+					{
+						War3_NotifyPlayerImmuneFromSkill(client, i, ULT_TELEPORT);
+						return Plugin_Handled;
+					}
+				}
 			}
 		}
 	}

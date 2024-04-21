@@ -181,7 +181,7 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 		if(HasEntProp(victim,Prop_Send,"m_hBuilder"))
 		{
 			new owner = GetEntPropEnt(victim,Prop_Send,"m_hBuilder");//It's a building
-			if(ValidPlayer(owner,true))
+			if(ValidPlayer(owner,true) && War3_GetRace(owner) == thisRaceID)
 			{
 				if(W3GetPhysicalArmorMulti(owner) != 1.0)
 				{
@@ -401,9 +401,9 @@ public Action:OnW3TakeDmgBullet(victim,attacker,Float:damage)
 				if(speed_frost>1.0)	speed_frost=1.0;
 				War3_SetBuff(victim,fSlow,thisRaceID,speed_frost);
 				bFrosted[victim]=true;
-				CreateTimer(2.0,Unfrost,victim);
+				CreateTimer(2.0*W3GetBuffStackedFloat(victim, fAbilityResistance),Unfrost,victim);
 			}
-			new dmg = RoundToCeil(damage*ACP[sentry_ACP_level]);
+			new dmg = RoundToCeil(damage*ACP[sentry_ACP_level]* W3GetBuffStackedFloat(victim, fAbilityResistance));
 			War3_DealDamage(victim,dmg,inflictor,DMG_BULLET,"obj_sentrygun");
 		}
 	}

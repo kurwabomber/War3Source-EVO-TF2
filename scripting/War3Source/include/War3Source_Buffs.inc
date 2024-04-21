@@ -390,42 +390,37 @@ native W3GetSpeedMulti(client);
  * @return 								true if the player has immunity
  */
 stock bool:W3HasImmunity(client,War3Immunity:immunityindex) {
-										 //Immunity_Ability
 	//add magic immunity etc later
-	if(immunityindex==Immunity_Abilities) {
-		return W3GetBuffHasTrue(client,bImmunityAbilities);
+	switch(immunityindex){
+		case Immunity_Abilities: {
+			return W3GetBuffHasTrue(client,bImmunityAbilities) || W3GetBuffStackedFloat(client, fAbilityResistance) == 0.0;
+		}
+		case Immunity_Skills: {
+			return W3GetBuffHasTrue(client,bImmunitySkills) || W3GetBuffStackedFloat(client, fAbilityResistance) == 0.0;
+		}
+		case Immunity_Ultimates: {
+			return W3GetBuffHasTrue(client,bImmunityUltimates) || W3GetBuffStackedFloat(client, fUltimateResistance) == 0.0;
+		}
+		case Immunity_Wards: {
+			return W3GetBuffHasTrue(client,bImmunityWards);
+		}
+		case Immunity_Poison: {
+			return W3GetBuffHasTrue(client,bImmunityPoison);
+		}
+		case Immunity_Hacks: {
+			return W3GetBuffHasTrue(client,bImmunityHacks);
+		}
+		case Immunity_ArmorPiercing: {
+			return W3GetBuffHasTrue(client,bImmunityPiercing);
+		}
+		case Immunity_Extra2: {
+			return W3GetBuffHasTrue(client,bImmunityExtra2);
+		}
+		case Immunity_Extra3:{
+			return W3GetBuffHasTrue(client,bImmunityExtra3);
+		}
 	}
-	//else if(immunityindex==Immunity_Items) {
-		//return W3GetBuffHasTrue(client,bImmunityItems);
-	//}
-	else if(immunityindex==Immunity_Skills) {
-		return W3GetBuffHasTrue(client,bImmunitySkills);
-	}
-	else if(immunityindex==Immunity_Ultimates) {
-		return W3GetBuffHasTrue(client,bImmunityUltimates);
-	}
-	else if(immunityindex==Immunity_Wards) {
-		//return W3GetBuffHasTrue(client,bImmunityWards)||W3GetBuffHasTrue(client,bImmunitySkills);
-		return W3GetBuffHasTrue(client,bImmunityWards);
-	}
-	else if(immunityindex==Immunity_Poison) {
-		return W3GetBuffHasTrue(client,bImmunityPoison);
-	}
-	else if(immunityindex==Immunity_Hacks) {
-		return W3GetBuffHasTrue(client,bImmunityHacks);
-	}
-	else if(immunityindex==Immunity_ArmorPiercing) {
-		return W3GetBuffHasTrue(client,bImmunityPiercing);
-	}
-	else if(immunityindex==Immunity_Extra2) {
-		return W3GetBuffHasTrue(client,bImmunityExtra2);
-	}
-	else if(immunityindex==Immunity_Extra3) {
-		return W3GetBuffHasTrue(client,bImmunityExtra3);
-	}
-
 	return false;
-
 }
 
 /**
@@ -435,7 +430,7 @@ stock bool:W3HasImmunity(client,War3Immunity:immunityindex) {
  * @return 								true if client is immune to skills
  */
 stock bool:IsSkillImmune(client) {
-	return W3GetBuffHasTrue(client,bImmunitySkills);
+	return W3GetBuffHasTrue(client,bImmunitySkills) || W3GetBuffStackedFloat(client, fAbilityResistance) == 0.0;
 }
 
 /**
@@ -445,7 +440,7 @@ stock bool:IsSkillImmune(client) {
  * @return 								true if client is immune to ultimates
  */
 stock bool:IsUltImmune(client) {
-	return W3GetBuffHasTrue(client,bImmunityUltimates);
+	return W3GetBuffHasTrue(client,bImmunityUltimates) || W3GetBuffStackedFloat(client, fUltimateResistance) == 0.0;
 }
 
 

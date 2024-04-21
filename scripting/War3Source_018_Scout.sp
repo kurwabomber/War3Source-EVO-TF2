@@ -371,7 +371,7 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 					distance=2048.0;
 				}
 				new Float:multi=distance*MarksmanCrit[lvl]/2048.0;
-				War3_DamageModPercent(multi+1.0);
+				War3_DamageModPercent(multi*W3GetBuffStackedFloat(victim,fUltimateResistance)+1.0);
 				//W3ForceDamageIsBullet();
 				//icount++;
 				PrintToConsole(attacker,"[War3Source:EVO] %.2fX dmg by marksman shot",multi);

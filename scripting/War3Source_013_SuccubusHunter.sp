@@ -127,7 +127,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 {
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("succubus",shortname,false)))
 	{
-		thisRaceID=War3_CreateNewRace("Succubus Hunter","succubus",reloadrace_id,"Killstreak & mobility.");
+		thisRaceID=War3_CreateNewRace("Succubus Hunter","succubus",reloadrace_id,"Killstreak & mobility");
 
 		SKILL_HEADHUNTER = War3_AddRaceSkill(thisRaceID, "Head Hunter","Deal extra +1-1.5% dmg per skull. Max skulls is 20.\nYou gain your victim's skulls on kill", false, 4);
 		SKILL_TOTEM = War3_AddRaceSkill(thisRaceID, "Totem Incantation","You gain 3-4 HP, 3-4 gold and 5-8XP on spawn for each skull you collected. You lose 10 skulls on spawn.", false, 4);
@@ -329,7 +329,8 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 		{
 			//DP("health %d",GetClientHealth(victim));
 			//new xdamage= RoundFloat(0.2*float(damage) * skulls[attacker]/20 );
-			new xdamage= RoundFloat(damage * 0.01 * HeadDMG[skilllevelheadhunter] * skulls[attacker]);
+			
+			new xdamage= RoundFloat(damage * 0.01 * HeadDMG[skilllevelheadhunter] * skulls[attacker] * W3GetBuffStackedFloat(victim, fAbilityResistance));
 			War3_DealDamage(victim,xdamage,attacker,_,"headhunter",W3DMGORIGIN_SKILL,W3DMGTYPE_PHYSICAL);
 
 			//W3PrintSkillDmgConsole(victim,attacker,War3_GetWar3DamageDealt(),SKILL_HEADHUNTER);

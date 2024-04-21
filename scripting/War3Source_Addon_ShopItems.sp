@@ -132,7 +132,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 
 		shopItem[MASK]=War3_CreateShopItemT("mask","30% lifesteal",3,1500);
 
-		shopItem[NECKLACE]=War3_CreateShopItemT("lace","immunity to ultimates",2,800);
+		shopItem[NECKLACE]=War3_CreateShopItemT("lace","40% immunity to ultimates",2,800);
 
 		shopItem[FROST]=War3_CreateShopItemT("orb","50% slowdown on hit",3,2000);
 
@@ -145,10 +145,9 @@ public OnWar3LoadRaceOrItemOrdered(num)
 
 		shopItem[OIL]=War3_CreateShopItem("Oil of Penetration","oil","ignore helm/plates","Coats your weapons with ability to penetrate helm.",8,3500);
 
-
 		shopItem[HELM]=War3_CreateShopItemT("helm","immunity to headshots",10,3500);
 
-		shopItem[SHIELD]=War3_CreateShopItemT("shield","immunity to skills",3,2000);
+		shopItem[SHIELD]=War3_CreateShopItemT("shield","40% immunity to skills",3,2000);
 
 		shopItem[GAUNTLET]=War3_CreateShopItem("Gauntlet of Endurance","gauntlet","+35 max hp","Increases max health by 35 HP",5,3000);
 #if GGAMETYPE == GGAME_TF2
@@ -188,7 +187,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		shopItem[PANICNECKLACE]=War3_CreateShopItem("Panic Necklade", "panic", "+2s speed boost when hit", "+2s speed boost when hit", 5, 10000);
 		shopItem[BLOODBOUNDGEM]=War3_CreateShopItem("Bloodbound Gem", "bloodbound", "+20% lifesteal and regen boost", "+20% lifesteal and regen boost", 20, 10000);
 		shopItem[MEKANSM]=War3_CreateShopItem("Mekansm", "mekansm", "+15HP AOE heal/5s", "+15HP AOE heal/5s", 10, 10000);
-		shopItem[MANTLEOFINTEL]=War3_CreateShopItem("Mantle of Intelligence", "mantle", "+15% magic dmg", "+15% magic dmg", 6, 10000);
+		shopItem[MANTLEOFINTEL]=War3_CreateShopItem("Mantle of Intelligence", "mantle", "+25% magic dmg", "+25% magic dmg", 6, 10000);
 
 #if GGAMETYPE2 == GGAME_PVM
 		// Armor
@@ -210,10 +209,10 @@ public OnWar3LoadRaceOrItemOrdered(num)
 #endif
 
 		War3_AddItemBuff(shopItem[SOCK], fLowGravityItem, GetConVarFloat(SockCvar));
-		War3_AddItemBuff(shopItem[NECKLACE], bImmunityUltimates, true);
+		War3_AddItemBuff(shopItem[NECKLACE], fUltimateResistance, 0.6);
 		War3_AddItemBuff(shopItem[RING], fHPRegen, GetConVarFloat(RegenHPTFCvar));
 		War3_AddItemBuff(shopItem[BOOTS], fMaxSpeed2, GetConVarFloat(BootsSpeedCvar));
-		War3_AddItemBuff(shopItem[SHIELD], bImmunitySkills, true);
+		War3_AddItemBuff(shopItem[SHIELD], fAbilityResistance, 0.6);
 		War3_AddItemBuff(shopItem[GAUNTLET], iAdditionalMaxHealth, 35);
 		War3_AddItemBuff(shopItem[ARMBAND], fAttackSpeed, 1.15);
 		War3_AddItemBuff(shopItem[CLAW],fDamageModifier,GetConVarFloat(ClawsAttackCvar));
@@ -238,7 +237,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		War3_AddItemBuff(shopItem[DAEDALUS],fCritChance,0.2);
 		War3_AddItemBuff(shopItem[DAEDALUS],fCritModifier,0.5);
 		War3_AddItemBuff(shopItem[BLOODBOUNDGEM],fSustainEfficiency,0.2);
-		War3_AddItemBuff(shopItem[MANTLEOFINTEL],fMagicDamageModifier,0.15);
+		War3_AddItemBuff(shopItem[MANTLEOFINTEL],fMagicDamageModifier,0.25);
 	}
 }
 

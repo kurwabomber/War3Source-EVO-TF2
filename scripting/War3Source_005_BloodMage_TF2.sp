@@ -352,7 +352,9 @@ public Action BurnLoop(Handle timer,any userid)
 		BurnsRemaining[victim]--;
 		//PrintToChatAll("Burns Remaining %d (inside function)",BurnsRemaining[victim]);
 		int damage = ULT_DAMAGE_TF;
-		if(War3_DealDamage(victim,damage,attacker,DMG_BURN,"flamestrike",_,W3DMGTYPE_MAGIC))
+		float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
+
+		if(War3_DealDamage(victim,RoundFloat(damage*resistance),attacker,DMG_BURN,"flamestrike",_,W3DMGTYPE_MAGIC))
 		{
 			//PrintToChatAll("War3_DealDamage flamestrike is True");
 			War3_NotifyPlayerTookDamageFromSkill(victim, attacker, War3_GetWar3DamageDealt(), ULT_FLAMESTRIKE);
@@ -403,6 +405,9 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 			if(War3_GetRace(attacker)==thisRaceID)
 			{
 				float chance_mod=W3ChanceModifier(attacker);
+				float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
+				chance_mod *= resistance;
+
 				if(IsPlayerAlive(attacker)&&IsPlayerAlive(victim))
 				{
 					new skill_level=War3_GetSkillLevel(attacker,thisRaceID,SKILL_BANISH);

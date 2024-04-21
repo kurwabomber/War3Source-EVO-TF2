@@ -969,7 +969,7 @@ stock CheckRaceTeamLimit(raceid,team)
 stock CheckPendingRace(client)
 {
 	int pendingrace=W3GetPendingRace(client);
-	if(pendingrace>0)
+	if(ValidRace(0))
 	{
 		W3SetPendingRace(client,-1);
 
@@ -985,7 +985,6 @@ stock CheckPendingRace(client)
 			//W3Log("race %d blocked on client %d due to restrictions limit (CheckPendingRace)",pendingrace,client);
 			W3CreateEvent(DoShowChangeRaceMenu,client);
 		}
-
 	}
 	///wasnt pending
 	else if(War3_GetRace(client)==0){

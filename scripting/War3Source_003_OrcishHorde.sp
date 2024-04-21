@@ -223,13 +223,14 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 			if(skilllvl > 0)
 			{
 				new Float:Chance = GetRandomFloat(0.0, 1.0);
-				
-				if(!ValidPlayer(victim,false) && CritChance >= Chance)
+				float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
+
+				if(!ValidPlayer(victim,false) && CritChance*resistance >= Chance)
 				{
 					War3_DamageModPercent(CritMultiplier[skilllvl]);
 					W3Hint(attacker,HINT_COOLDOWN_NOTREADY,2.0,"Crit!");
 				}
-				if(ValidPlayer(victim,false) && CritChance >= Chance && !W3HasImmunity(victim,Immunity_Skills))
+				if(ValidPlayer(victim,false) && CritChance*resistance >= Chance && !W3HasImmunity(victim,Immunity_Skills))
 				{
 					War3_DamageModPercent(CritMultiplier[skilllvl]);
 					W3Hint(attacker,HINT_COOLDOWN_NOTREADY,2.0,"Crit!");			
@@ -405,8 +406,9 @@ public DoChain(client,Float:distance,dmg,bool:first_call,last_target)
     else
     {
         // found someone
+		float resistance = W3GetBuffStackedFloat(target, fUltimateResistance);
         bBeenHit[client][target]=true; // don't let them get hit twice
-        War3_DealDamage(target,dmg,client,DMG_ENERGYBEAM,"chainlightning");
+        War3_DealDamage(target,RoundFloat(dmg * resistance),client,DMG_ENERGYBEAM,"chainlightning");
         PrintHintText(target,"Hit by Chain Lightning -%i HP",War3_GetWar3DamageDealt());
         start_pos[2]+=30.0; // offset for effect
         decl Float:target_pos[3],Float:vecAngles[3];

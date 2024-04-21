@@ -331,6 +331,14 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                     {
                         Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nMagic Reduction: x%.2f",MiniHUD_Text, W3GetMagicArmorMulti(client));
                     }
+                    if(W3GetBuffStackedFloat(client, fAbilityResistance) != 1.0)
+                    {
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nIncoming Abilities: x%.1f",MiniHUD_Text, W3GetBuffStackedFloat(client, fAbilityResistance));
+                    }
+                    if(W3GetBuffStackedFloat(client, fUltimateResistance) != 1.0)
+                    {
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nIncoming Ultimates: x%.1f",MiniHUD_Text, W3GetBuffStackedFloat(client, fUltimateResistance));
+                    }
                     if(W3GetBuffHasTrue(client,bSlowImmunity) || W3GetBuffHasTrue(client,bImmunitySkills) || W3GetBuffHasTrue(client,bImmunityUltimates) || W3GetBuffHasTrue(client,bImmunityWards))
                     {
                         StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "\nImmune:|");

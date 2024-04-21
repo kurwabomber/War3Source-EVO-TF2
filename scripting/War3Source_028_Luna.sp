@@ -59,7 +59,7 @@ new String:beamsnd[]= "war3source/moonqueen/beam.mp3";
 //skill is auto cast via chance
 //new Float:LucentChance[5] = {0.00,0.05,0.11,0.22,0.30};
 new LucentBeamMin[] = {6,6,7,7,8};
-new LucentBeamMax[] = {10,11,12,12};
+new LucentBeamMax[] = {10,11,12,12,13};
 
 new Float:GlaiveRadius[] = {400.0,425.0,450.0,475.0,500.0};
 new Float:GlaiveChance = 0.11;
@@ -185,7 +185,7 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 	{
 		if(CurrentBlessing[attacker] > 1.0)
 		{
-			War3_DamageModPercent(CurrentBlessing[attacker]);
+			War3_DamageModPercent(1+(CurrentBlessing[attacker]-1)* W3GetBuffStackedFloat(victim, fAbilityResistance));
 		}
 	}
 	return Plugin_Changed;
@@ -321,12 +321,10 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 							{
 								TE_SetupSparks(TargetPos, sparkdir, 90, 90);
 								TE_SendToAll();
-								if(War3_DealDamage( i, lunadmg, attacker, DMG_FALL, "moonglaive" ))
+								if(War3_DealDamage( i, RoundFloat(lunadmg* W3GetBuffStackedFloat(i, fAbilityResistance)), attacker, DMG_FALL, "moonglaive" ))
 								{
-									War3_NotifyPlayerTookDamageFromSkill(i, attacker, lunadmg, SKILL_BOUNCE);
+									War3_NotifyPlayerTookDamageFromSkill(i, attacker, War3_GetWar3DamageDealt(), SKILL_BOUNCE);
 								}
-								//W3PrintSkillDmgConsole(i,attacker, War3_GetWar3DamageDealt(),SKILL_BOUNCE);
-								//PrintHintText(i,"You have been hit by a Moon Glaive!");
 							}
 							else
 							{
@@ -478,7 +476,7 @@ public Action:Timer_EclipseLoop( Handle:timer, any:attacker )
 			if(!W3HasImmunity( victim, Immunity_Ultimates ))
 			{
 				// Use level 4 damage values for the ultimate
-				MoonBeamDamageAndEffect(victim, attacker, LucentBeamMin[3], LucentBeamMax[3]);
+				MoonBeamDamageAndEffect(victim, attacker, LucentBeamMin[4], LucentBeamMax[4]);
 				W3FlashScreen(victim, RGBA_COLOR_WHITE);
 			}
 			else
@@ -514,7 +512,7 @@ MoonBeamDamageAndEffect(victim, attacker, min, max) {
 	TE_SetupBeamRingPoint(start_pos, 20.0, 99.0, XBeamSprite, HaloSprite, 0, 1, 0.5, 30.0, 0.0, {255,255,255,255}, 10, 0);
 	TE_SendToAll(0.3);
 
-	if(War3_DealDamage(victim, GetRandomInt(min, max), attacker ,DMG_FALL, "lucentbeam"))
+	if(War3_DealDamage(victim, RoundFloat(GetRandomInt(min, max) * W3GetBuffStackedFloat(victim, fAbilityResistance)), attacker ,DMG_FALL, "lucentbeam"))
 	{
 		//W3PrintSkillDmgHintConsole(victim, attacker, War3_GetWar3DamageDealt(), SKILL_MOONBEAM);
 		if(ValidPlayer(victim,false))

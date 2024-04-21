@@ -49,6 +49,8 @@
 #undef REQUIRE_PLUGIN
 #include <war3source>
 #include <sourcemod>
+#include <tf2utils>
+
 //#include <profiler>
 #include "War3Source/include/War3Source_Version_Info.inc"
 #include "War3Source/include/War3Source_Variables.inc"

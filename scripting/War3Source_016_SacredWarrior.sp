@@ -163,7 +163,7 @@ public Action:Heal_BurningSpearTimer(Handle:h,any:data) //1 sec
 				skill = War3_GetSkillLevel(attacker, thisRaceID, SKILL_SPEAR);
 				if(ValidPlayer(attacker, true)&&bSpearActivated[attacker]) // Attacker has Burning Spear activated
 				{
-					damage = VictimSpearStacks[i] * SpearDamage[skill]; // Number of stacks on the client * damage of the attacker
+					damage = RoundFloat(VictimSpearStacks[i] * SpearDamage[skill] * W3GetBuffStackedFloat(i, fAbilityResistance)); // Number of stacks on the client * damage of the attacker
 
 					War3_DealDamage(i,damage,attacker,_,"bleed_kill"); // Bleeding Icon
 					VictimSpearTicks[i]--;
@@ -314,22 +314,23 @@ public OnWar3EventDeath(victim, attacker, deathrace, distance, attacker_hpleft)
 
 CheckSkills(client)
 {
-	new skill = War3_GetSkillLevel(client,thisRaceID,SKILL_VITALITY);
-	new VictimCurHP = GetClientHealth(client);
-	new VictimMaxHP = War3_GetMaxHP(client);
-	new Float:DoubleTrigger = VictimMaxHP * 0.4;
+	if(War3_GetRace(client) == thisRaceID){
+		new skill = War3_GetSkillLevel(client,thisRaceID,SKILL_VITALITY);
+		new VictimCurHP = GetClientHealth(client);
+		new VictimMaxHP = War3_GetMaxHP(client);
+		new Float:DoubleTrigger = VictimMaxHP * 0.4;
 
-	if(bSpearActivated[client]){
-		War3_SetBuff(client,fHPRegen,thisRaceID,0.0);
-		War3_SetBuff(client,fHPDecay,thisRaceID,VictimMaxHP*0.05);
+		if(bSpearActivated[client]){
+			War3_SetBuff(client,fHPRegen,thisRaceID,0.0);
+			War3_SetBuff(client,fHPDecay,thisRaceID,VictimMaxHP*0.05);
+		}
+		else
+		{
+		//level 0 is fine
+			War3_SetBuff(client,fHPRegen,thisRaceID,  (VictimCurHP<=DoubleTrigger)  ?  VitalityHealed[skill]*2.0: VitalityHealed[skill] );
+			War3_SetBuff(client,fHPDecay,thisRaceID,0.0);
+		}
 	}
-	else
-	{
-	//level 0 is fine
-		War3_SetBuff(client,fHPRegen,thisRaceID,  (VictimCurHP<=DoubleTrigger)  ?  VitalityHealed[skill]*2.0: VitalityHealed[skill] );
-		War3_SetBuff(client,fHPDecay,thisRaceID,0.0);
-	}
-	return;
 }
 
 public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
@@ -384,7 +385,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 				{
 
 					new Float:VictimMaxHP = float(War3_GetMaxHP(target));
-					new Damage = RoundToFloor(LifeBreakHPVictim[ult_level] * VictimMaxHP);
+					new Damage = RoundToFloor(LifeBreakHPVictim[ult_level] * VictimMaxHP * W3GetBuffStackedFloat(target, fUltimateResistance));
 
 					if(War3_DealDamage(target,Damage,client,DMG_BULLET,"lifebreak")) // do damage to nearest enemy
 					{

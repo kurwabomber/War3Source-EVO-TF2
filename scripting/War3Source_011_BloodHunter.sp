@@ -108,8 +108,6 @@ public OnPluginStart()
 	CreateTimer(0.1,RuptureCheckLoop,_,TIMER_REPEAT);
 	CreateTimer(0.5,BloodCrazyDOTLoop,_,TIMER_REPEAT);
 
-	RegAdminCmd("rme", ruptureme, ADMFLAG_ROOT, "Sets rupture on yourself without damage");
-
 	//LoadTranslations("w3s.race.bh.phrases");
 }
 
@@ -122,15 +120,6 @@ public OnPluginEnd()
 {
 	if(LibraryExists("RaceClass"))
 		War3_RaceOnPluginEnd("bh");
-}
-
-public Action:ruptureme(client,args){
-	bRuptured[client]=true;
-	RupturedBy[client]=client;
-	RuptureUntil[client]=GetGameTime()+999999.0;
-	GetClientAbsOrigin(client,lastRuptureLocation[client]);
-
-	return Plugin_Handled;
 }
 
 public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
@@ -178,9 +167,8 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 					{
 						bRuptured[target]=true;
 						RupturedBy[target]=client;
-						RuptureUntil[target]=GetGameTime()+RuptureDuration[skill];
+						RuptureUntil[target]=GetGameTime()+RuptureDuration[skill]*W3GetBuffStackedFloat(target, fUltimateResistance);
 						GetClientAbsOrigin(target,lastRuptureLocation[target]);
-
 
 						War3_CooldownMGR(client,GetConVarFloat(ultCooldownCvar),thisRaceID,ULT_RUPTURE,true,true);
 
@@ -188,7 +176,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 
 						War3_EmitSoundToAll(ultsnd,target);
 						War3_EmitSoundToAll(ultsnd,target);
-						PrintHintText(target,"You have been ruptured! You take damage if you move!");
+						PrintHintText(target,"You have been ruptured for %.1fs! You take damage if you move!", RuptureUntil[target]-GetGameTime());
 						PrintHintText(client,"Rupture!");
 					}
 					else
@@ -366,7 +354,7 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 				{
 					bCrazyDot[victim]=true;
 					CrazyBy[victim]=attacker;
-					CrazyUntil[victim]=GetGameTime()+CrazyDuration[skilllevel];
+					CrazyUntil[victim]=GetGameTime()+CrazyDuration[skilllevel]*W3GetBuffStackedFloat(victim, fAbilityResistance);
 				}
 				else
 				{
@@ -389,7 +377,7 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 			if(!W3HasImmunity(victim,Immunity_Skills))
 			{
 				W3FlashScreen(victim,RGBA_COLOR_RED,0.3,_,FFADE_IN);
-				War3_DamageModPercent(2.0);
+				War3_DamageModPercent(1 + W3GetBuffStackedFloat(victim, fAbilityResistance));
 				PrintToConsole(attacker,"Double Damage against low HP enemies!");
 				War3_NotifyPlayerTookDamageFromSkill(victim, attacker, RoundToNearest(damage * 2), SKILL_SENSE);
 			}

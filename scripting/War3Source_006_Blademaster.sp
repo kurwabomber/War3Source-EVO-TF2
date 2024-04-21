@@ -64,7 +64,7 @@ new SKILL_CRITS, SKILL_BERSERK, SKILL_SALVE, ULT_WARCRY;
 
 // Critical Strike
 new Float:CritChance[] = {0.36,0.395,0.43,0.465,0.5};
-new Float:CritMultiplier[] = {1.0,1.1,1.2,1.3,1.4};
+new Float:CritMultiplier[] = {2.0,2.1,2.2,2.3,2.4};
 
 // Berserker
 new BerserkHP[] = {60,70,80,90,100};
@@ -76,10 +76,10 @@ new bool:OutOfCombat[MAXPLAYERS+1];
 new Float:TimeOutOfCombat[MAXPLAYERS+1] = {0.0,...};
 
 // War Cry
-new Float:WarCryMult[] = {1.3,1.325,1.35,1.375,1.4};
+new Float:WarCryMult[] = {0.3,0.325,0.35,0.375,0.4};
 new Float:WarCrySpeed[] = {1.31,1.32,1.33,1.34,1.35};
 new Float:WarCryRange[] = {600.0,613.0,625.0,638.0,650.0};
-new Float:CurrentMultiplier[MAXPLAYERS+1] = {1.0,...};
+new Float:CurrentMultiplier[MAXPLAYERS+1] = {0.0,...};
 
 public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 {
@@ -254,15 +254,17 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 		{
 			StopSalve(victim);
 		}
-		if(CurrentMultiplier[attacker] > 1.0)
+		if(CurrentMultiplier[attacker] > 0.0)
 		{
+			float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
+
 			if(!ValidPlayer(victim,false))
 			{
-				War3_DamageModPercent(CurrentMultiplier[attacker]);
+				War3_DamageModPercent(CurrentMultiplier[attacker]*resistance + 1);
 			}
 			if(ValidPlayer(victim,false)&&!W3HasImmunity(victim,Immunity_Ultimates))
 			{
-				War3_DamageModPercent(CurrentMultiplier[attacker]);
+				War3_DamageModPercent(CurrentMultiplier[attacker]*resistance + 1);
 			}
 		}
 	}
@@ -286,7 +288,7 @@ public Action:TF2_CalcIsAttackCritical(client, weapon, String:weaponname[], &boo
 public Action:WarCryOff(Handle:timer,any:client)
 {	
 	TF2Attrib_RemoveByName(client, "major move speed bonus");
-	CurrentMultiplier[client] = 1.0;
+	CurrentMultiplier[client] = 0.0;
 	TF2_AddCondition(client, TFCond_SpeedBuffAlly, 0.01);
 	W3Hint(client,HINT_SKILL_STATUS,3.0,"War Cry has worn off.");
 }

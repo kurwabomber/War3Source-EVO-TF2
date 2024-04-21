@@ -164,8 +164,8 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 		}
 		if(angleDistance <= 60.0)
 		{
-			War3_DamageModPercent(HiddenDamage[skill_level]);
-			PrintHintText(attacker,"%.2fx damage! Hidden Attack", HiddenDamage[skill_level]);
+			War3_DamageModPercent(1+(HiddenDamage[skill_level]-1)*W3GetBuffStackedFloat(victim, fAbilityResistance));
+			PrintHintText(attacker,"%.2fx damage! Hidden Attack", 1+(HiddenDamage[skill_level]-1)*W3GetBuffStackedFloat(victim, fAbilityResistance));
 		}
 	}
 	return Plugin_Changed;
@@ -188,9 +188,6 @@ public OnW3Teleported(client,target,distance,raceid,skillid)
 	{
 		War3_CooldownMGR(client,13.0,thisRaceID,SKILL_BLINK,_,_);
 		EmitSoundToAll(teleportSound,client);
-		new Float:ClientAngle[3];
-		GetClientEyeAngles(client,ClientAngle);
-		TeleportEntity(client, NULL_VECTOR, ClientAngle, NULL_VECTOR); 
 	}
 }
 public Action:OnW3TeleportLocationChecking(client,Float:playerVec[3])
@@ -201,13 +198,23 @@ public Action:OnW3TeleportLocationChecking(client,Float:playerVec[3])
 		new team = GetClientTeam(client);
 		for(new i=1;i<=MaxClients;i++)
 		{
-			if(ValidPlayer(i,true)&&GetClientTeam(i)!=team&&W3HasImmunity(i,Immunity_Skills))
+			if(ValidPlayer(i,true)&&GetClientTeam(i)!=team)
 			{
 				GetClientAbsOrigin(i,otherVec);
-				if(GetVectorDistance(playerVec,otherVec)<400.0)
-				{
-					War3_NotifyPlayerImmuneFromSkill(client, i, SKILL_BLINK);
-					return Plugin_Handled;
+				float resistance = W3GetBuffStackedFloat(i, fAbilityResistance);
+				if(W3HasImmunity(i,Immunity_Skills)){
+					if(GetVectorDistance(playerVec,otherVec)<400.0)
+					{
+						War3_NotifyPlayerImmuneFromSkill(client, i, SKILL_BLINK);
+						return Plugin_Handled;
+					}
+				}
+				else if(resistance != 1.0){
+					if(GetVectorDistance(playerVec,otherVec)<400.0*(1-resistance))
+					{
+						War3_NotifyPlayerImmuneFromSkill(client, i, SKILL_BLINK);
+						return Plugin_Handled;
+					}
 				}
 			}
 		}

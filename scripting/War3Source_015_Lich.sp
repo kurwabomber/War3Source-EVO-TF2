@@ -234,7 +234,7 @@ public Action:BurnLoop(Handle:timer,any:attacker)
 								//War3_DealDamage(i,RoundFloat(FrostNovaMaxDamage[War3_GetSkillLevel(attacker,thisRaceID,SKILL_FROSTNOVA)]*victimdistance/FrostNovaRadius/2.0),attacker,DMG_ENERGYBEAM,"FrostNova");
 								War3_SetBuff(i,fSlow,thisRaceID,FrostNovaArr[War3_GetSkillLevel(attacker,thisRaceID,SKILL_FROSTNOVA)],attacker);
 								War3_SetBuff(i,fAttackSpeed,thisRaceID,FrostNovaArr[War3_GetSkillLevel(attacker,thisRaceID,SKILL_FROSTNOVA)],attacker);
-								CreateTimer(5.0,RemoveFrostNova,i);
+								CreateTimer(5.0*W3GetBuffStackedFloat(i, fAbilityResistance),RemoveFrostNova,i);
 								PrintHintText(i,"You were slowed by frost nova!");
 							}
 							else
@@ -301,6 +301,9 @@ public OnWar3EventDeath(victim,attacker)
 				if(!Silenced(i))
 				{
 					new hpadd=DarkRitualAmt[skill];
+					if(addedHealth[i] + hpadd > 40)//Cap to 40 at max.
+						hpadd = 40-addedHealth[i];
+					
 					if(addedHealth[i] < 40)
 					{
 						War3_SetBuff(i,iAdditionalMaxHealth,thisRaceID,hpadd + addedHealth[i]);
@@ -378,7 +381,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 					for(new i=0;i<targetsfound;i++)
 					{
 						new victim=targetlist[i];
-						if(War3_DealDamage(victim,damage,client,DMG_BULLET,"Death and Decay")) //default magic
+						if(War3_DealDamage(victim,RoundFloat(damage*W3GetBuffStackedFloat(victim, fUltimateResistance)),client,DMG_BULLET,"Death and Decay")) //default magic
 						{
 							//PrintToChatAll("%i Step 1 Damage", damage);
 							damage=War3_GetWar3DamageDealt();

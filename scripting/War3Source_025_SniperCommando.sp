@@ -178,7 +178,7 @@ public Action:SDK_Forwarded_TraceAttack(victim, &attacker, &inflictor, &Float:da
 	if(hitgroup == 1 && War3_GetRace(attacker)==thisRaceID && ValidPlayer(attacker,false) && ValidPlayer(victim,false)&&!W3HasImmunity(victim,Immunity_Skills))
 	{
 		new skill_level = War3_GetSkillLevel(attacker,thisRaceID,SKILL_COMBAT);
-		damage *= HeadshotDMG[skill_level];
+		damage *= 1+(HeadshotDMG[skill_level]-1)* W3GetBuffStackedFloat(victim, fAbilityResistance);
 	}
 }
 public Action:stopUltimate(Handle:t,any:client){

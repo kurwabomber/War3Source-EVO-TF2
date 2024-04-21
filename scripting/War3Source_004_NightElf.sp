@@ -339,7 +339,9 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 			))
 			{
 				int skill_level_evasion=iVictim.getskilllevel(thisRaceID,SKILL_EVADE);
-				if(!iVictim.hexed && GetRandomFloat(0.0,1.0)<=EvadeChance[skill_level_evasion])
+				float resistance = W3GetBuffStackedFloat(attacker, fAbilityResistance);
+
+				if(!iVictim.hexed && GetRandomFloat(0.0,1.0)<=EvadeChance[skill_level_evasion]*resistance)
 				{
 					if(!iAttacker.immunity(Immunity_Skills))
 					{
@@ -375,9 +377,10 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 				{				
 					if(!iVictim.immunity(Immunity_Skills))
 					{
+						float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
 						//PrintToServer("trig %f",TrueshotDamagePercent[skill_level_trueshot]);
 						damagestackcritmatch=W3GetDamageStack();
-						War3_DamageModPercent(TrueshotDamagePercent[skill_level_trueshot]+1.0);
+						War3_DamageModPercent(TrueshotDamagePercent[skill_level_trueshot]*resistance+1.0);
 						iVictim.flashscreen(RGBA_COLOR_RED);
 					}
 					else
@@ -517,7 +520,7 @@ public OnWar3CastingFinished(client, target, W3SpellEffects:spelleffect, String:
 				bIsEntangled[target]=true;
 
 				iTarget.setbuff(bNoMoveMode,thisRaceID,true,client);
-				float entangle_time=EntangleDuration[skill_level];
+				float entangle_time=EntangleDuration[skill_level] * W3GetBuffStackedFloat(target, fAbilityResistance);
 				CreateTimer(entangle_time,StopEntangle,target);
 				float effect_vec[3];
 				GetClientAbsOrigin(target,effect_vec);

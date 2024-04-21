@@ -70,6 +70,7 @@ new Float:RoarCooldownTime=25.0;
 new Float:ScalesPhysical[]={3.0,3.33,3.66,4.0,4.33};
 new Float:dragvec[3]={0.0,0.0,0.0};
 new Float:DragonBreathRange[]={550.0,575.0,600.0,625.0,650.0};
+new Float:DragonResistance[]={0.66,0.5775,0.495,0.4125,0.33};
 
 // Sounds
 new String:roarsound[]="war3source/dragonborn/roar.mp3";
@@ -83,9 +84,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 
 		thisRaceID=War3_CreateNewRace("Dragonborn","dragonborn_o",reloadrace_id,"Stun, armor, immunities.");
-		SKILL_ROAR=War3_AddRaceSkill(thisRaceID,"Roar","(+Ability) Puts all those around you in a 400 radius in a fear state for 0.2-0.9 second.",false,4);
-		SKILL_SCALES=War3_AddRaceSkill(thisRaceID,"Scales","1-4.33 physical armor",false,4);
-		SKILL_DRAGONBORN=War3_AddRaceSkill(thisRaceID,"Dragonborn","Being dragonborn gives immunitys to certain magics.\nLvl 1 gives ward immunity, lvl 2 slow immunity, lvl 3 skill immunity, lvl 4 ultimate immunity.",false,4);
+		SKILL_ROAR=War3_AddRaceSkill(thisRaceID,"Roar","(+Ability) Puts all those around you in a 400 radius in a fear state for 0.7-0.9 second.",false,4);
+		SKILL_SCALES=War3_AddRaceSkill(thisRaceID,"Scales","3-4.33 physical armor",false,4);
+		SKILL_DRAGONBORN=War3_AddRaceSkill(thisRaceID,"Dragonborn","Being dragonborn gives immunities to certain magics.\nGives 33% to 66% ultimate and ability resistance.",false,4);
 		ULTIMATE_DRAGONBREATH=War3_AddRaceSkill(thisRaceID,"Dragons Breath","Applies jarate effect for 5 seconds. 400-650 range.",true,4);
 		War3_CreateRaceEnd(thisRaceID);
 	}
@@ -191,7 +192,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 						War3_EmitSoundToAll(ultsndblue,i); //play sound to target ... - Dagothur 1/16/2013
 						GetClientAbsOrigin(i,VictimPos);
 						#if GGAMETYPE == GGAME_TF2
-							TF2_AddCondition(i, TFCond_Jarated, 5.0);
+							TF2_AddCondition(i, TFCond_Jarated, 5.0* W3GetBuffStackedFloat(i, fUltimateResistance));
 						#else
 							DP("ULTIMATE DRAGONBREATH skill is not currently working correctly for CSGO yet.");
 						#endif
@@ -287,7 +288,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 								War3_EmitSoundToAll(roarsound,i); //fixed playing the roar sound to the affected player; this used to play it to the client, which as you can see above, resulted in it being played twice - Dagothur 1/16/2013
 
 #if GGAMETYPE == GGAME_TF2
-								TF2_StunPlayer(i, RoarDuration[skilllvl], _, TF_STUNFLAGS_GHOSTSCARE,client);
+								TF2_StunPlayer(i, RoarDuration[skilllvl]* W3GetBuffStackedFloat(i, fAbilityResistance), _, TF_STUNFLAGS_GHOSTSCARE,client);
 #else
 								DP("SKILL_ROAR is not currently working for CSGO yet.");
 #endif
@@ -333,32 +334,14 @@ public InitPassiveSkills(client)
 
 		//dragonborn
 		new skilllvl = War3_GetSkillLevel(client,thisRaceID,SKILL_DRAGONBORN);
-		if(skilllvl > 0)
-		{
-			War3_SetBuff(client,bImmunityWards,thisRaceID,1);
-			if (skilllvl > 1)
-			{
-				War3_SetBuff(client,bSlowImmunity,thisRaceID,1);
-			}
-			if (skilllvl >2)
-			{
-				War3_SetBuff(client,bImmunitySkills,thisRaceID,1);
-			}
-			if (skilllvl >3)
-			{
-				War3_SetBuff(client,bImmunityUltimates,thisRaceID,1);
-			}
-		}
-		else{
-			RemoveImmunity(client);
-		}
+
+		War3_SetBuff(client,bImmunityWards,thisRaceID,DragonResistance[skilllvl]);
+		War3_SetBuff(client,bSlowImmunity,thisRaceID,DragonResistance[skilllvl]);
 	}
 }
 RemoveImmunity(client){
-	War3_SetBuff(client,bImmunityWards,thisRaceID,0);
-	War3_SetBuff(client,bImmunitySkills,thisRaceID,0);
-	War3_SetBuff(client,bSlowImmunity,thisRaceID,0);
-	War3_SetBuff(client,bImmunityUltimates,thisRaceID,0);
+	War3_SetBuff(client,fAbilityResistance,thisRaceID,1.0);
+	War3_SetBuff(client,fUltimateResistance,thisRaceID,1.0);
 }
 public OnRaceChanged(client,oldrace,newrace)
 {

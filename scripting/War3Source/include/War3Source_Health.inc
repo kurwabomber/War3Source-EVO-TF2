@@ -31,13 +31,18 @@ stock bool:nsEntity_SetHealth(entity, health)
 		return false;
 	}
 
-	SetEntProp(entity, Prop_Data, "m_iHealth", health);
-	ChangeEdictState(entity, 0);
-
 	if (currenthp < health)
 	{
+		int difference = health - currenthp;
+		health = currenthp + RoundFloat(difference*(1+W3GetBuffSumFloat(entity,fSustainEfficiency)));
+
+		SetEntProp(entity, Prop_Data, "m_iHealth", health);
+		ChangeEdictState(entity, 0);
 		return true;
 	}
+
+	SetEntProp(entity, Prop_Data, "m_iHealth", health);
+	ChangeEdictState(entity, 0);
 
 	return false;
 }

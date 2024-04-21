@@ -850,7 +850,8 @@ public MadMilkBomber( client, level )
 					{
 						if( !W3HasImmunity( x, Immunity_Ultimates ) )
 						{
-                            TF2_AddCondition( x, TFCond_Milked, MadMilkDuration[level] );
+							float resistance = W3GetBuffStackedFloat(x, fUltimateResistance);
+                            TF2_AddCondition( x, TFCond_Milked, MadMilkDuration[level] * resistance);
                             //PrintToHint( x, "\x05: \x04You have been milked!");
                             //PrintToHint( client, "\x04 You Milked \x05: s%",x );
 
@@ -975,7 +976,8 @@ MoonBeamDamageAndEffect(victim, attacker, min, max) {
 	TE_SetupBeamRingPoint(start_pos, 20.0, 99.0, XBeamSprite, HaloSprite, 0, 1, 0.5, 30.0, 0.0, {255,215,0,255}, 10, 0);
 	TE_SendToAll(0.3);
 
-	War3_DealDamage(victim, GetRandomInt(min, max), attacker ,DMG_FALL, "lucentbeam");
+	float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
+	War3_DealDamage(victim, RoundFloat(resistance*GetRandomInt(min, max)), attacker ,DMG_FALL, "lucentbeam");
 	if(ValidPlayer(victim,false))
 	{
 		W3PrintSkillDmgHintConsole(victim, attacker, War3_GetWar3DamageDealt(), SKILL_MOONBEAM);

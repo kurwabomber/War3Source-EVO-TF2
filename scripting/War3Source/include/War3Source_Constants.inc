@@ -25,7 +25,7 @@
 //dochecking up to <MAXRACES
 //limit check up to >=MAXRACES-1
 
-#define MAXRACES 100 //20 = [1]-[199]  ///can only hold X-1 races, IE 20 can only hold 19 races, we skip zeroth race!
+#define MAXRACES 200 //20 = [1]-[199]  ///can only hold X-1 races, IE 20 can only hold 19 races, we skip zeroth race!
 
 #define MAXSKILLS 100
 
@@ -539,6 +539,10 @@ enum W3Buff
 	fSustainEfficiency,
 	//73
 	fMagicDamageModifier,
+	//74
+	fAbilityResistance,
+	//75
+	fUltimateResistance,
 
 	MaxBuffLoopLimitTemp, //this is a variable that is for loops, this number is automatically generated from the enum.
 }
@@ -786,6 +790,12 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 
 	buffpropertiesarray[ fMagicDamageModifier ].DefaultValue=0.0;
 	buffpropertiesarray[ fMagicDamageModifier ].BuffStackType=fAbsolute;
+
+	buffpropertiesarray[ fAbilityResistance ].DefaultValue=1.0;
+	buffpropertiesarray[ fAbilityResistance ].BuffStackType=fStacked;
+
+	buffpropertiesarray[ fUltimateResistance ].DefaultValue=1.0;
+	buffpropertiesarray[ fUltimateResistance ].BuffStackType=fStacked;
 
 
 	//check that all indexes have been set

@@ -517,7 +517,7 @@ public Action OnW3TakeDmgAllPre(int victim, int attacker, float damage)
 				if(StrContains(WeaponName,"weapon_knife",false)<0&&!W3IsDamageFromMelee(WeaponName)){
 
 					//PrintToChatAll("block");
-					War3_DamageModPercent(0.0);
+					War3_DamageModPercent(1-W3GetBuffStackedFloat(victim, fUltimateResistance) );
 				}
 			}
 			else{
@@ -604,6 +604,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 					dmgamount=RoundToNearest(mathx);
 				}
 #endif
+				dmgamount = RoundFloat(dmgamount * W3GetBuffStackedFloat(attacker, fAbilityResistance));
 				PrintToConsole(victim,"Rewind +%i HP!",dmgamount);
 				RewindHPAmount[victim]+=dmgamount;//we create this variable
 				PrintHintText(victim,"Rewind +%i HP!",dmgamount);
@@ -620,7 +621,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 		skilllevel=War3_GetSkillLevel(attacker,thisRaceID,SKILL_TIMELOCK);
 		if(race_attacker==thisRaceID && skilllevel > 0 && victim!=attacker)
 		{
-			if(War3_SkillNotInCooldown(attacker, thisRaceID, SKILL_TIMELOCK, false) && War3_Chance(TimeLockChance[skilllevel]) && !Stunned(victim)&&!Hexed(attacker))
+			if(War3_SkillNotInCooldown(attacker, thisRaceID, SKILL_TIMELOCK, false) && War3_Chance(TimeLockChance[skilllevel] * W3GetBuffStackedFloat(victim, fAbilityResistance)) && !Stunned(victim)&&!Hexed(attacker))
 			{
 				if(!W3HasImmunity(victim,Immunity_Skills))
 				{

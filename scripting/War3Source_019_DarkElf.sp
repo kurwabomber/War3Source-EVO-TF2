@@ -155,7 +155,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 		{
 			//War3_GetTargetInViewCone(client,Float:max_distance=0.0,bool:include_friendlys=false,Float:cone_angle=23.0,Function:FilterFunction=INVALID_FUNCTION);
 			new target = War3_GetTargetInViewCone(client,DarkorbDistance,false,23.0,UltFilter,ULTIMATE_DARKORB);
-			new Float:duration = DarkorbDuration[ult_level];
+			new Float:duration = DarkorbDuration[ult_level] * W3GetBuffStackedFloat(client, fUltimateResistance);
 			if(target>0&&!W3HasImmunity(target,Immunity_Ultimates))
 			{
 				GetClientAbsOrigin(target,victimvec);

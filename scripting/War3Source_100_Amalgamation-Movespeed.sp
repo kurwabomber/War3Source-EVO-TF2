@@ -71,32 +71,32 @@ public OnWar3RaceDisabled(oldrace)
 new SKILL_ASSAULT, SKILL_LEAP, SKILL_WINDWALKER, ULT_WARCRY;
 
 //leap
-new Float:leapPowerTF[9]={0.0,500.0,550.0,600.0,650.0, 675.0, 700.0, 725.0, 750.0};
+new Float:leapPowerTF[]={650.0, 675.0, 700.0, 725.0, 750.0};
 
 //Assault Tackle
-new Float:assaultcooldown[]={0.0,10.0,9.0,8.0,7.0,6.6,6.0,5.6,5.0};
-new Float:assaultMoveMult[]={0.0,0.25,0.5,0.75,1.0,1.1,1.2,1.3,1.4};
+new Float:assaultcooldown[]={7.0,6.6,6.0,5.6,5.0};
+new Float:assaultMoveMult[]={1.0,1.1,1.2,1.3,1.4};
 
 // WindWalker
 new Float:WindWalkerStart = 3.0;
 new Float:WindWalkerTimer[MAXPLAYERS+1];
 new bool:WindWalkerActivated[MAXPLAYERS+1];
-new Float:WindWalkerInvis[] = {1.0,0.8,0.7,0.6,0.6,0.6,0.5,0.45,0.4};
-new Float:WindWalkerMoveSpeed[]={0.0,0.2,0.25,0.30,0.35,0.375,0.4,0.425,0.450};
+new Float:WindWalkerInvis[] = {0.6,0.6,0.5,0.45,0.4};
+new Float:WindWalkerMoveSpeed[]={0.35,0.375,0.4,0.425,0.450};
 
 // War Cry
 new bool:isInFlight[MAXPLAYERS+1] = {false,...};
-new Float:WingsOfGlory_Speed[] = { 0.0, 1.50, 2.00, 2.50, 3.00, 3.0, 3.0, 3.0, 3.0};
+new Float:WingsOfGlory_Speed[] = { 3.0, 3.0, 3.0, 3.0, 3.0};
 
 public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 {
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("speed",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Amalgamation - Speed","speed",reloadrace_id,"pure speed");
-		SKILL_LEAP=War3_AddRaceSkill(thisRaceID,"Time Leap","Burst of velocity forwards when jumping.",false,8);
-		SKILL_ASSAULT=War3_AddRaceSkill(thisRaceID,"Assault Tackle","Boosts speed when jumping.",false,8);
-		SKILL_WINDWALKER=War3_AddRaceSkill(thisRaceID,"Windwalker","Gain speed and invis while not in combat for 1 second.",false,8);
-		ULT_WARCRY=War3_AddRaceSkill(thisRaceID,"Wings of Glory","Toggles flight. (+ultimate)",true,8);
+		SKILL_LEAP=War3_AddRaceSkill(thisRaceID,"Time Leap","Burst of velocity forwards when jumping.",false,4);
+		SKILL_ASSAULT=War3_AddRaceSkill(thisRaceID,"Assault Tackle","Boosts speed when jumping.",false,4);
+		SKILL_WINDWALKER=War3_AddRaceSkill(thisRaceID,"Windwalker","Gain speed and invis while not in combat for 1 second.",false,4);
+		ULT_WARCRY=War3_AddRaceSkill(thisRaceID,"Wings of Glory","Toggles flight. (+ultimate)",true,4);
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }
@@ -339,55 +339,52 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 	if(race==thisRaceID && pressed && ValidPlayer(client,true))
 	{
 		new skill_level = War3_GetSkillLevel(client,thisRaceID,ULT_WARCRY);
-		if(HasLevels(client,skill_level,1))
+		if(!Silenced(client)&&War3_SkillNotInCooldown(client,thisRaceID,ULT_WARCRY,true ))
 		{
-			if(!Silenced(client)&&War3_SkillNotInCooldown(client,thisRaceID,ULT_WARCRY,true ))
+			if(!isInFlight[client])
 			{
-				if(!isInFlight[client])
-				{
-					War3_SetBuff(client,fMaxSpeed,thisRaceID,WingsOfGlory_Speed[skill_level]);
-					War3_SetBuff(client,bFlyMode,thisRaceID,1.0);
-					new Float:ClientPos[3];
-					GetClientAbsOrigin( client, ClientPos );
-					ClientPos[2] += 25;
-					TeleportEntity( client, ClientPos, NULL_VECTOR, NULL_VECTOR );
-					W3Hint(client,HINT_SKILL_STATUS,1.0,"Look up and Fly! Wings of Glory!");
-					isInFlight[client] = true;
-					/*
-					CreateParticle("community_sparkle", 10.0, client, 2,0.0,0.0,0.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,50.0,-25.0,0.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,50.0,0.0,0.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,50.0,25.0,0.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,100.0,-25.0,0.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,100.0,0.0,0.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,100.0,25.0,0.0);
-					// body
-					CreateParticle("community_sparkle", 10.0, client, 2,0.0,0.0,-25.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,50.0,-25.0,-25.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,50.0,0.0,-25.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,25.0,0.0,-40.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,100.0,-25.0,-25.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,100.0,0.0,-25.0);
-					CreateParticle("community_sparkle", 10.0, client, 2,30.0,25.0,-25.0);
-					// feet
-					CreateParticle("community_sparkle", 10.0, client, 2,30.0,0.0,-75.0);
-					CreateParticle("critical_rocket_red", 10.0, client, 2,20.0,0.0,-75.0);
-					CreateParticle("critical_rocket_blue", 10.0, client, 2,20.0,0.0,-75.0);
-					CreateParticle("teleporter_red_charged_wisps", 10.0, client, 2,10.0,0.0,-50.0);
-					CreateParticle("teleporter_blue_charged_wisps", 10.0, client, 2,10.0,0.0,-50.0);
-					CreateParticle("teleporter_blue_entrance", 10.0, client, 2,0.0,0.0,-50.0);
-					CreateParticle("teleporter_red_entrance", 10.0, client, 2,0.0,0.0,-50.0);
-					*/
-				}
-				else
-				{
-					isInFlight[client] = false;
-					W3ResetPlayerColor(client,thisRaceID);
-					War3_SetBuff(client,fSlow,thisRaceID,1.0);
-					War3_SetBuff(client,fMaxSpeed,thisRaceID,1.0);
-					W3Hint(client,HINT_SKILL_STATUS,1.0,"END OF:...Wings of Glory...");
-					War3_SetBuff(client,bFlyMode,thisRaceID,0.0);
-				}
+				War3_SetBuff(client,fMaxSpeed,thisRaceID,WingsOfGlory_Speed[skill_level]);
+				War3_SetBuff(client,bFlyMode,thisRaceID,1.0);
+				new Float:ClientPos[3];
+				GetClientAbsOrigin( client, ClientPos );
+				ClientPos[2] += 25;
+				TeleportEntity( client, ClientPos, NULL_VECTOR, NULL_VECTOR );
+				W3Hint(client,HINT_SKILL_STATUS,1.0,"Look up and Fly! Wings of Glory!");
+				isInFlight[client] = true;
+				/*
+				CreateParticle("community_sparkle", 10.0, client, 2,0.0,0.0,0.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,50.0,-25.0,0.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,50.0,0.0,0.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,50.0,25.0,0.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,100.0,-25.0,0.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,100.0,0.0,0.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,100.0,25.0,0.0);
+				// body
+				CreateParticle("community_sparkle", 10.0, client, 2,0.0,0.0,-25.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,50.0,-25.0,-25.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,50.0,0.0,-25.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,25.0,0.0,-40.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,100.0,-25.0,-25.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,100.0,0.0,-25.0);
+				CreateParticle("community_sparkle", 10.0, client, 2,30.0,25.0,-25.0);
+				// feet
+				CreateParticle("community_sparkle", 10.0, client, 2,30.0,0.0,-75.0);
+				CreateParticle("critical_rocket_red", 10.0, client, 2,20.0,0.0,-75.0);
+				CreateParticle("critical_rocket_blue", 10.0, client, 2,20.0,0.0,-75.0);
+				CreateParticle("teleporter_red_charged_wisps", 10.0, client, 2,10.0,0.0,-50.0);
+				CreateParticle("teleporter_blue_charged_wisps", 10.0, client, 2,10.0,0.0,-50.0);
+				CreateParticle("teleporter_blue_entrance", 10.0, client, 2,0.0,0.0,-50.0);
+				CreateParticle("teleporter_red_entrance", 10.0, client, 2,0.0,0.0,-50.0);
+				*/
+			}
+			else
+			{
+				isInFlight[client] = false;
+				W3ResetPlayerColor(client,thisRaceID);
+				War3_SetBuff(client,fSlow,thisRaceID,1.0);
+				War3_SetBuff(client,fMaxSpeed,thisRaceID,1.0);
+				W3Hint(client,HINT_SKILL_STATUS,1.0,"END OF:...Wings of Glory...");
+				War3_SetBuff(client,bFlyMode,thisRaceID,0.0);
 			}
 		}
 	}

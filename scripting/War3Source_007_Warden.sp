@@ -40,7 +40,7 @@ new const KnivesTFDamage = 50;
 new const Float:KnivesTFRadius = 300.0;
  
 //skill 2
-new Float:BlinkChanceArr[]={0.00,0.25,0.5,0.75,1.00};
+new Float:UltimateResistance[]={0.5, 0.45, 0.40, 0.375, 0.35};
 
 //skill 3
 new const ShadowStrikeInitialDamage=20;
@@ -144,7 +144,7 @@ public OnRaceChanged(client,oldrace,newrace)
 {
 	if(newrace!=thisRaceID)
 	{	
-		War3_SetBuff(client,bImmunityUltimates,thisRaceID,false);
+		War3_SetBuff(client,fUltimateResistance,thisRaceID,1.0);
 	}
 
 }
@@ -199,6 +199,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 			if(War3_GetRace(victim)==thisRaceID)
 			{
 				new Float:chance_mod=W3ChanceModifier(attacker);
+				
 				/// CHANCE MOD BY ATTACKER
 				new skill_level = War3_GetSkillLevel(victim,thisRaceID,SKILL_FANOFKNIVES);
 				if(!W3HasImmunity(victim,Immunity_Skills) && !Hexed(victim,false)&&GetRandomFloat(0.0,1.0)<=chance_mod*FanOfKnivesTFChanceArr[skill_level])
@@ -222,7 +223,9 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 							GetClientAbsOrigin(i,otherVec);
 							if(GetVectorDistance(playerVec,otherVec)<KnivesTFRadius)
 							{
-								if(War3_DealDamage(i,KnivesTFDamage,victim,DMG_BULLET,"knives",W3DMGORIGIN_SKILL,W3DMGTYPE_MAGIC))
+								float resistance = W3GetBuffStackedFloat(i, fAbilityResistance);
+
+								if(War3_DealDamage(i,RoundFloat(resistance*KnivesTFDamage),victim,DMG_BULLET,"knives",W3DMGORIGIN_SKILL,W3DMGTYPE_MAGIC))
 								{
 									W3FlashScreen(i,RGBA_COLOR_RED);
 									W3MsgHitByKnives(i);
@@ -266,7 +269,9 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 						
 						BeingStrikedBy[victim]=attacker;
 						StrikesRemaining[victim]=ShadowStrikeTimes[skill_level];
-						War3_DealDamage(victim,ShadowStrikeInitialDamage,attacker,DMG_BULLET,"shadowstrike");
+
+						float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
+						War3_DealDamage(victim,RoundFloat(resistance*ShadowStrikeInitialDamage),attacker,DMG_BULLET,"shadowstrike");
 						W3FlashScreen(victim,RGBA_COLOR_RED);
 						
 						War3_EmitSoundToAll(shadowstrikestr,attacker);
@@ -284,7 +289,8 @@ public Action:ShadowStrikeLoop(Handle:timer,any:userid)
 	new victim = GetClientOfUserId(userid);
 	if(StrikesRemaining[victim]>0 && ValidPlayer(BeingStrikedBy[victim]) && ValidPlayer(victim,true))
 	{
-		War3_DealDamage(victim,ShadowStrikeTrailingDamage,BeingStrikedBy[victim],DMG_BULLET,"shadowstrike");
+		float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
+		War3_DealDamage(victim,RoundFloat(resistance*ShadowStrikeTrailingDamage),BeingStrikedBy[victim],DMG_BULLET,"shadowstrike");
 		StrikesRemaining[victim]--;
 		W3FlashScreen(victim,RGBA_COLOR_RED);
 		CreateTimer(1.0,ShadowStrikeLoop,userid);
@@ -302,7 +308,7 @@ public Action:CalcBlink(Handle:timer,any:userid)
 		{
 			if(ValidPlayer(i,true)&&War3_GetRace(i)==thisRaceID)
 			{
-				War3_SetBuff(i,bImmunityUltimates,thisRaceID, (GetRandomFloat(0.0,1.0)<BlinkChanceArr[War3_GetSkillLevel(i,thisRaceID,SKILL_BLINK)]) ? true:false);
+				War3_SetBuff(i,fUltimateResistance,thisRaceID, UltimateResistance[War3_GetSkillLevel(i,thisRaceID,SKILL_BLINK)] );
 			}
 		}
 	}
@@ -318,12 +324,17 @@ public bool:blockingVengence(client)  //TF2 only
 
 	for(new i=1;i<=MaxClients;i++)
 	{
-		if(ValidPlayer(i,true)&&GetClientTeam(i)!=team&&W3HasImmunity(i,Immunity_Ultimates))
+		if(ValidPlayer(i,true)&&GetClientTeam(i)!=team)
 		{
 			GetClientAbsOrigin(i,otherVec);
-			if(GetVectorDistance(playerVec,otherVec)<IMMUNITYBLOCKDISTANCE)
-			{
-				return true;
+			float resistance = W3GetBuffStackedFloat(i, fUltimateResistance);
+			if(W3HasImmunity(i,Immunity_Ultimates)){
+				if(GetVectorDistance(playerVec,otherVec)<IMMUNITYBLOCKDISTANCE)
+					return true;
+			}
+			else if(resistance != 1.0){
+				if(GetVectorDistance(playerVec, otherVec)<IMMUNITYBLOCKDISTANCE*(1-resistance))
+					return true;
 			}
 		}
 	}

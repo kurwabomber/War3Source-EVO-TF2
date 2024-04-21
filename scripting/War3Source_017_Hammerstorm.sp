@@ -194,8 +194,7 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 			{
 				// GODS STRENGTH!
 				skilllvl = War3_GetSkillLevel(attacker,thisRaceID,ULT_STRENGTH);
-				War3_DamageModPercent(GodsStrength[skilllvl]);
-
+				War3_DamageModPercent(1+(GodsStrength[skilllvl]-1)*W3GetBuffStackedFloat(victim, fUltimateResistance));
 			}
 		}
 	}
@@ -213,12 +212,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 		{
 			// Cleave
 			new skilllvl = War3_GetSkillLevel(attacker,thisRaceID,SKILL_CLEAVE);
-			new splashdmg = RoundToFloor(damage * CleaveMultiplier[skilllvl]);
-			// AWP? AWP!
-			if(splashdmg>65)
-			{
-				splashdmg = 65;
-			}
+			float splashdmg = damage * CleaveMultiplier[skilllvl];
 			new Float:dist = CleaveDistance;
 			new AttackerTeam = GetClientTeam(attacker);
 			new Float:OriginalVictimPos[3];
@@ -234,10 +228,11 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 						GetClientAbsOrigin(i,VictimPos);
 						if(GetVectorDistance(OriginalVictimPos,VictimPos)<=dist)
 						{
-							if(War3_DealDamage(i,splashdmg,attacker,_,"greatcleave"))
+							int dmg = RoundFloat(splashdmg*W3GetBuffStackedFloat(i, fAbilityResistance))
+							if(War3_DealDamage(i,dmg,attacker,_,"greatcleave"))
 							{
 								//W3PrintSkillDmgConsole(i,attacker,War3_GetWar3DamageDealt(),SKILL_CLEAVE);
-								War3_NotifyPlayerTookDamageFromSkill(i, attacker, splashdmg, SKILL_CLEAVE);
+								War3_NotifyPlayerTookDamageFromSkill(i, attacker, dmg, SKILL_CLEAVE);
 							}
 						}
 					}
@@ -283,7 +278,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 						{
 							if(!W3HasImmunity(i,Immunity_Skills))
 							{
-								if(War3_DealDamage(i,damage,client,DMG_GENERIC,"stormbolt",W3DMGORIGIN_SKILL))
+								if(War3_DealDamage(i,RoundFloat(damage*W3GetBuffStackedFloat(i, fAbilityResistance)),client,DMG_GENERIC,"stormbolt",W3DMGORIGIN_SKILL))
 								{
 									//W3PrintSkillDmgConsole(i,client,War3_GetWar3DamageDealt(),SKILL_BOLT);
 									War3_NotifyPlayerTookDamageFromSkill(i, client, War3_GetWar3DamageDealt(), SKILL_BOLT);
@@ -293,7 +288,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 								War3_SetBuff(i,bStunned,thisRaceID,true);
 
 								W3FlashScreen(i,RGBA_COLOR_RED);
-								CreateTimer(BoltStunDuration,UnstunPlayer,i);
+								CreateTimer(BoltStunDuration*W3GetBuffStackedFloat(i, fAbilityResistance),UnstunPlayer,i);
 
 								PrintHintText(i,"You were stunned by Storm Bolt");
 							}

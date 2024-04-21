@@ -23,7 +23,6 @@ public void Load_Hooks()
 	if(HooksLoaded) return;
 	HooksLoaded = true;
 
-	W3Hook(W3Hook_OnUltimateCommand, OnUltimateCommand);
 	W3Hook(W3Hook_OnW3TakeDmgBulletPre, OnW3TakeDmgBulletPre);
 }
 public void UnLoad_Hooks()
@@ -31,7 +30,6 @@ public void UnLoad_Hooks()
 	if(!HooksLoaded) return;
 	HooksLoaded = false;
 
-	W3Unhook(W3Hook_OnUltimateCommand, OnUltimateCommand);
 	W3Unhook(W3Hook_OnW3TakeDmgBulletPre, OnW3TakeDmgBulletPre);
 }
 bool RaceDisabled=true;
@@ -64,7 +62,6 @@ new PlatingHealth[]={60,65,70,75,80};
 new Float:AmmoRegen[]={0.2,0.225,0.25,0.275,0.3};
 //Frenzied
 new Float:FrenzyCooldown[]={4.5,4.25,4.0,3.75,3.5};
-bool isFrenzied[MAXPLAYERSCUSTOM] = {false,...};
 new String:ultsnd[]="war3source/ultralisk_ult.mp3";
 
 public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
@@ -75,7 +72,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_ORGAN=War3_AddRaceSkill(thisRaceID,"Organ Redundancy","20% to 30% max ammo per 5 seconds.",false,4);
 		SKILL_REGEN=War3_AddRaceSkill(thisRaceID,"Anabolic Synthesis","Increases health regen by 5 to 7 per second.",false,4);
 		SKILL_PLATING=War3_AddRaceSkill(thisRaceID,"Chitinous Plating","Increase health by 60 to 80.",false,4);
-		ULT_FRENZY=War3_AddRaceSkill(thisRaceID,"Frenzied","Reduce damage by 75% for the next hit taken. Cooldown is 4.5-3.5 seconds.",true,4);
+		ULT_FRENZY=War3_AddRaceSkill(thisRaceID,"Frenzied","Reduce damage by 75% for the next hit taken. Cooldown is 4.5-3.5 seconds.\nPierces through attacker ultimate immunity.",true,4);
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_REGEN, fHPRegen, SynthesisRegen);
 		War3_AddSkillBuff(thisRaceID, SKILL_PLATING, iAdditionalMaxHealth, PlatingHealth);
@@ -120,7 +117,6 @@ public Event_PlayerreSpawn(Handle:event, const String:name[], bool:dontBroadcast
 		new skill_level = War3_GetSkillLevel(client,thisRaceID,SKILL_ORGAN);
 		TF2Attrib_SetByName(client,"ammo regen", AmmoRegen[skill_level]);
 	}
-	isFrenzied[client] = false;
 }
 public OnRaceChanged(client,oldrace,newrace)
 {
@@ -133,25 +129,6 @@ public OnRaceChanged(client,oldrace,newrace)
 		TF2Attrib_RemoveByName(client,"ammo regen");
 	}
 }
-public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
-{
-	if(RaceDisabled)
-		return;
-
-	if(race==thisRaceID && pressed && ValidPlayer(client,true))
-	{
-		new skill_level = War3_GetSkillLevel(client,thisRaceID,ULT_FRENZY);
-		if(HasLevels(client,skill_level,1))
-		{
-			if(!Silenced(client)&&War3_SkillNotInCooldown(client,thisRaceID,ULT_FRENZY,true ))
-			{
-				War3_CooldownMGR(client,FrenzyCooldown[skill_level],thisRaceID,ULT_FRENZY,_,_);
-				isFrenzied[client] = true;
-				War3_EmitSoundToAll(ultsnd,client);
-			}
-		}
-	}
-}
 public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int damagecustom)
 {
 	if(RaceDisabled)
@@ -162,13 +139,15 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 		if(GetClientTeam(victim)==GetClientTeam(attacker))
 			return Plugin_Continue;
 	}
-	if(ValidPlayer(victim,true)&&ValidPlayer(attacker,false))
+	if(ValidPlayer(victim,true)&&ValidPlayer(attacker,false)&&War3_GetRace(victim)==thisRaceID)
 	{
-		if(isFrenzied[victim])
+		if(!Silenced(victim)&&War3_SkillNotInCooldown(victim,thisRaceID,ULT_FRENZY,true ))
 		{
-			isFrenzied[victim] = false;
+			new skill_level = War3_GetSkillLevel(victim,thisRaceID,ULT_FRENZY);
+			War3_EmitSoundToAll(ultsnd,victim);
 			PrintHintText(victim, "Frenzy took off %.0f damage!",damage * 0.75);
 			War3_DamageModPercent(0.25);
+			War3_CooldownMGR(victim,FrenzyCooldown[skill_level],thisRaceID,ULT_FRENZY,_,_);
 		}
 	}
 	return Plugin_Changed;

@@ -179,11 +179,11 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 		new skill_level=War3_GetSkillLevel(attacker,thisRaceID,SKILL_STR);
 		if(War3_IsUsingMeleeWeapon(attacker))
 		{
-			War3_DamageModPercent(meleeDamageMult[skill_level]);
+			War3_DamageModPercent(1+(meleeDamageMult[skill_level]-1) * W3GetBuffStackedFloat(victim, fAbilityResistance));
 		}
 		else
 		{
-			War3_DamageModPercent(allDamageMult[skill_level]);
+			War3_DamageModPercent(1+(allDamageMult[skill_level]-1) * W3GetBuffStackedFloat(victim, fAbilityResistance));
 		}
 	}
 	return Plugin_Changed;
@@ -341,7 +341,7 @@ stock ExplodeDamage(client, Float:dmg, Float:distance, damagetype, enemy)
 		{
 			if(client != i && !W3HasImmunity(i,Immunity_Ultimates))
 			{
-				War3_DealDamage(i, RoundToNearest(dmg), enemy ,DMG_BLAST, "spearThrow");
+				War3_DealDamage(i, RoundToNearest(dmg*W3GetBuffStackedFloat(i, fUltimateResistance)), enemy ,DMG_BLAST, "spearThrow");
 			}
 		}
 	}

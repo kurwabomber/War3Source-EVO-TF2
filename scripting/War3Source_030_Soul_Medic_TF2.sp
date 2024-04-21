@@ -217,7 +217,7 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 				new HealVictim = TF2_GetHealingTarget(healer);
 				if (HealVictim == attacker)
 				{
-					War3_DamageModPercent(fDamageBoost[skill]);
+					War3_DamageModPercent(1+(fDamageBoost[skill]-1)* W3GetBuffStackedFloat(victim, fAbilityResistance));
 					//new String:attackerName[128],String:HealerName[128];
 					//GetClientName(healer,HealerName,sizeof(HealerName));
 					//GetClientName(HealVictim,attackerName,sizeof(attackerName));
