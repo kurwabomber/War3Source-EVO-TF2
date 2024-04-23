@@ -127,7 +127,7 @@ enum SHOPITEMS3{
 
 #define DEF_MAX_SKILL_LEVEL 4 //DO NOT CHANGE
 
-#define MAXLEVELXPDEFINED 40 //maximum where level XP is defined, if a race has more than MAXLEVELXPDEFINED levles, xp given and xp to next level is still MAXLEVELXPDEFINED
+#define MAXLEVELXPDEFINED 32 //maximum where level XP is defined, if a race has more than MAXLEVELXPDEFINED levles, xp given and xp to next level is still MAXLEVELXPDEFINED
 
 #define CUSTOMMODIFIERS 5 //how many race indexes extra for modifying buffs without conflicting other races
 

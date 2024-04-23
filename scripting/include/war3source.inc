@@ -969,7 +969,7 @@ stock CheckRaceTeamLimit(raceid,team)
 stock CheckPendingRace(client)
 {
 	int pendingrace=W3GetPendingRace(client);
-	if(ValidRace(0))
+	if(ValidRace(pendingrace))
 	{
 		W3SetPendingRace(client,-1);
 
