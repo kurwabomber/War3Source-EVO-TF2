@@ -80,7 +80,7 @@ public OnPluginStart()
 #if GGAMETYPE == GGAME_TF2
 	CreateTimer(1.0,SecondLoop,_,TIMER_REPEAT);
 #endif
-
+	CreateTimer(5.0,FiveSecondLoop,_,TIMER_REPEAT);
 	for(new i=1;i<=MaxClients;i++){
 		maskSoundDelay[i]=War3_RegisterDelayTracker();
 	}
@@ -143,9 +143,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 
 		shopItem[SOCK]=War3_CreateShopItemT("sock","-60% gravity",2,1500);
 
-		shopItem[OIL]=War3_CreateShopItem("Oil of Penetration","oil","ignore helm/plates","Coats your weapons with ability to penetrate helm.",8,3500);
-
-		shopItem[HELM]=War3_CreateShopItemT("helm","immunity to headshots",10,3500);
+		shopItem[OIL]=War3_CreateShopItem("Oil of Penetration","oil","+2 armor penetration","Coats your weapons with ability to armor.\n+2 armor penetration.",11,3500);
 
 		shopItem[SHIELD]=War3_CreateShopItemT("shield","40% immunity to skills",3,2000);
 
@@ -167,25 +165,24 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		shopItem[MHEALTH]=War3_CreateShopItem("Medi Health","mhealth","healing gives health","Gives healing target extra hp",9,3000);
 		War3_TFSetItemClasses(shopItem[MHEALTH],TFClass_Medic);
 
-		shopItem[DIVINERAPIER]=War3_CreateShopItem("Divine Rapier", "rapier", "+8 additive damage", "+8 additive damage", 15, 10000);
+		shopItem[DIVINERAPIER]=War3_CreateShopItem("Divine Rapier", "rapier", "+6 additive damage", "+6 additive damage", 12, 10000);
 		shopItem[REFRESHERORB]=War3_CreateShopItem("Refresh Orb", "refreshorb", "1.4x faster ability cooldown", "1.4x faster ability cooldown", 15, 10000);
 		shopItem[REFRESHSHARD]=War3_CreateShopItem("Refresh Shard", "refreshshard", "instantly resets cooldowns", "Instantly resets cooldowns", 5, 10000);
 		War3_SetItemProperty(shopItem[REFRESHSHARD], ITEM_USED_ON_BUY,true);
 		
 		shopItem[GLIMMERCAPE]=War3_CreateShopItem("Glimmer Cape", "cape", "+7 magic dmg reduction", "+7 magic dmg reduction", 15, 10000);
 		shopItem[AGHANIMSCEPTRE]=War3_CreateShopItem("Aghanim's Sceptre", "sceptre", "WIP:NOT WORKING upgrades all ultimates", "WIP:NOT WORKING upgrades all ultimates", 25, 10000);
-		shopItem[BLINKDAGGER]=War3_CreateShopItem("Blink Dagger", "blink", "shift+right-click teleport", "shift+right-click teleport", 15, 10000);
-		shopItem[ORBOFVENOM]=War3_CreateShopItem("Orb of Venom", "venom", "attacks apply venom dot (4dps)", "attacks apply venom dot (4dps)", 3, 10000);
+		shopItem[ORBOFVENOM]=War3_CreateShopItem("Orb of Venom", "venom", "attacks apply venom dot (4dps)", "attacks apply venom dot (4dps)", 1, 10000);
 		shopItem[RINGOFPROTECTION]=War3_CreateShopItem("Ring of Protection", "protection", "+3 dmg reduction", "+3 dmg reduction", 5, 10000);
 		shopItem[TALISMANOFEVASION]=War3_CreateShopItem("Talisman of Evasion", "evasion", "+15% evasion", "+15% evasion", 10, 10000);
 		shopItem[BLADEMAIL]=War3_CreateShopItem("Blade Mail", "blademail", "+7 dmg reduction & 40% melee reflect", "+7 dmg reduction & 40% melee reflect", 20, 10000);
 		shopItem[ASSAULTCUIRASS]=War3_CreateShopItem("Assault Cuirass", "cuirass", "+5 dmg reduction & +10% attack speed", "+5 dmg reduction & +10% attack speed", 20, 10000);
 		shopItem[HEARTOFTARRASQUE]=War3_CreateShopItem("Heart of Tarrasque", "heart", "+4% maxHPR", "+4% maxHPR", 15, 10000);
-		shopItem[NULLTALISMAN]=War3_CreateShopItem("Null Talisman", "talisman", "+1 hpr, phys & magic dmg reduction, +5% ms and dmg.", "+1 hpr, phys & magic dmg reduction, +5% ms and dmg.", 10, 10000);
+		shopItem[NULLTALISMAN]=War3_CreateShopItem("Null Talisman", "talisman", "+1 hpr, phys & magic dmg reduction, +5% ms and dmg.", "+1 hpr, phys & magic dmg reduction, +5% ms and dmg.", 2, 10000);
 		shopItem[DAEDALUS]=War3_CreateShopItem("Daedalus", "daedalus", "+20% crit chance. crit dmg default to 1.5x if none", "+20% crit chance. crit dmg default to 1.5x if none", 15, 10000);
-		shopItem[DESOLATOR]=War3_CreateShopItem("Desolator", "desolator", "-0.5 phys dmg reduction per second on targets.", "-0.5 phys dmg reduction per second on targets.", 15, 10000);
-		shopItem[PANICNECKLACE]=War3_CreateShopItem("Panic Necklade", "panic", "+2s speed boost when hit", "+2s speed boost when hit", 5, 10000);
-		shopItem[BLOODBOUNDGEM]=War3_CreateShopItem("Bloodbound Gem", "bloodbound", "+20% lifesteal and regen boost", "+20% lifesteal and regen boost", 20, 10000);
+		shopItem[DESOLATOR]=War3_CreateShopItem("Desolator", "desolator", "+3 armor penetration", "+3 armor penetration", 15, 10000);
+		shopItem[PANICNECKLACE]=War3_CreateShopItem("Panic Necklade", "panic", "+2s speed boost when hit", "+2s speed boost when hit", 2, 10000);
+		shopItem[BLOODBOUNDGEM]=War3_CreateShopItem("Bloodbound Gem", "bloodbound", "+40% sustain boost", "+40% sustain boost", 12, 10000);
 		shopItem[MEKANSM]=War3_CreateShopItem("Mekansm", "mekansm", "+15HP AOE heal/5s", "+15HP AOE heal/5s", 10, 10000);
 		shopItem[MANTLEOFINTEL]=War3_CreateShopItem("Mantle of Intelligence", "mantle", "+25% magic dmg", "+25% magic dmg", 6, 10000);
 
@@ -217,7 +214,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		War3_AddItemBuff(shopItem[ARMBAND], fAttackSpeed, 1.15);
 		War3_AddItemBuff(shopItem[CLAW],fDamageModifier,GetConVarFloat(ClawsAttackCvar));
 		War3_AddItemBuff(shopItem[MASK],fVampirePercent,GetConVarFloat(MaskDeathCvar));
-		War3_AddItemBuff(shopItem[DIVINERAPIER], iDamageBonus, 8);
+		War3_AddItemBuff(shopItem[DIVINERAPIER], iDamageBonus, 6);
 		War3_AddItemBuff(shopItem[FAITH],fArmorMagic,5.0);
 		War3_AddItemBuff(shopItem[COURAGE],fArmorPhysical,5.0);
 		War3_AddItemBuff(shopItem[REFRESHERORB],fCooldownReduction,1.4);
@@ -235,10 +232,36 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fMaxSpeed2,0.05);
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fDamageModifier,0.05);
 		War3_AddItemBuff(shopItem[DAEDALUS],fCritChance,0.2);
-		War3_AddItemBuff(shopItem[DAEDALUS],fCritModifier,0.5);
-		War3_AddItemBuff(shopItem[BLOODBOUNDGEM],fSustainEfficiency,0.2);
+		War3_AddItemBuff(shopItem[DAEDALUS],fCritModifier,1.5);
+		War3_AddItemBuff(shopItem[BLOODBOUNDGEM],fSustainEfficiency,0.4);
 		War3_AddItemBuff(shopItem[MANTLEOFINTEL],fMagicDamageModifier,0.25);
+		War3_AddItemBuff(shopItem[OIL],fArmorPenetration,2.0);
+		War3_AddItemBuff(shopItem[DESOLATOR],fArmorPenetration,3.0);
 	}
+}
+
+public Action FiveSecondLoop(Handle timer, any data){
+	if(W3Paused()) return Plugin_Continue;
+
+	for(int client=1; client <= MaxClients; client++)
+	{
+		if(!ValidPlayer(client, true))
+			continue;
+
+		if(War3_GetOwnsItem(client, MEKANSM)){
+			for(int i=1;i<=MaxClients;++i){
+				if(!ValidPlayer(i,true))
+					continue;
+				if(IsOnDifferentTeams(client, i))
+					continue;
+				if(GetPlayerDistance(client, i) > 350.0)
+					continue;
+				
+				War3_HealToMaxHP(i, 15);
+			}
+		}
+	}
+	return Plugin_Continue;
 }
 
 #if GGAMETYPE == GGAME_TF2
@@ -526,19 +549,25 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 
 			if(!Perplexed(attacker))
 			{
-				if(ValidPlayer(victim) && War3_GetOwnsItem(attacker,shopItem[FROST]) && !bFrosted[victim])
+				if(ValidPlayer(victim))
 				{
-					if(W3Chance(W3ChanceModifier(attacker)) && GetRandomFloat(0.0,1.0)<=0.25)
+					if(War3_GetOwnsItem(attacker,shopItem[FROST]) && !bFrosted[victim])
 					{
-						float speed_frost=GetConVarFloat(OrbFrostCvar);
-						if(speed_frost<=0.0) speed_frost=0.01; // 0.0 for override removes
-						if(speed_frost>1.0)	speed_frost=1.0;
-						War3_SetBuffItem(victim,fSlow,shopItem[FROST],speed_frost);
-						bFrosted[victim]=true;
+						if(W3Chance(W3ChanceModifier(attacker)) && GetRandomFloat(0.0,1.0)<=0.25)
+						{
+							float speed_frost=GetConVarFloat(OrbFrostCvar);
+							if(speed_frost<=0.0) speed_frost=0.01; // 0.0 for override removes
+							if(speed_frost>1.0)	speed_frost=1.0;
+							War3_SetBuffItem(victim,fSlow,shopItem[FROST],speed_frost);
+							bFrosted[victim]=true;
 
-						PrintHintText(victim,"Frosted! %.2f% speed!", 100.0*(speed_frost-1.0));
+							PrintHintText(victim,"Frosted! %.2f% speed!", 100.0*(speed_frost-1.0));
 
-						CreateTimer(1.0,Unfrost,victim);
+							CreateTimer(1.0,Unfrost,victim);
+						}	
+					}
+					if(War3_GetOwnsItem(victim,shopItem[PANICNECKLACE])){
+						TF2_AddCondition(victim, TFCond_SpeedBuffAlly, 2.0);
 					}
 				}
 			}
@@ -562,46 +591,6 @@ public void OnWar3Event(W3EVENT event,int client)
 	if(event==ClearPlayerVariables){
 		bDidDie[client]=false;
 	}
-}
-
-public OnClientPutInServer(client)
-{
-	SDKHook(client,SDKHook_TraceAttack,SDK_Forwarded_TraceAttack);
-}
-
-public OnClientDisconnect(client)
-{
-	SDKUnhook(client,SDKHook_TraceAttack,SDK_Forwarded_TraceAttack);
-}
-
-public Action:SDK_Forwarded_TraceAttack(victim, &attacker, &inflictor, &Float:damage, &damagetype, &ammotype, hitbox, hitgroup)
-{
-	new Oil_item = War3_GetItemIdByShortname("oil");
-	new Owns_item = War3_GetOwnsItem(attacker,Oil_item);
-
-	// helms
-	if((Owns_item!=1)&&hitgroup==1&&War3_GetOwnsItem(victim,shopItem[HELM])&&!Perplexed(victim) && ValidPlayer(attacker,false) && ValidPlayer(victim,false)&& GetClientTeam(victim) != GetClientTeam(attacker) ){
-		damage=0.0;
-		new random = GetRandomInt(0,3);
-		if(random==0){
-			War3_EmitSoundToAll(helmSound0,victim);
-		}else if(random==1){
-			War3_EmitSoundToAll(helmSound1,victim);
-		}else if(random==2){
-			War3_EmitSoundToAll(helmSound2,victim);
-		}else{
-			War3_EmitSoundToAll(helmSound3,victim);
-		}
-		W3FlashScreen(victim,RGBA_COLOR_BLACK);
-#if GGAMETYPE == GGAME_TF2
-		decl Float:pos[3];
-		GetClientEyePosition(victim, pos);
-		pos[2] += 4.0;
-		War3_TF_ParticleToClient(0, "miss_text", pos); //to the attacker at the enemy pos
-#endif
-		W3Hint(attacker,HINT_LOWEST,5.0,"The enemy you hit has \"helm\" from \"sh1\". Type \"oil\" to counter!");
-	}
-	return Plugin_Changed;
 }
 
 stock GetMoney(player)

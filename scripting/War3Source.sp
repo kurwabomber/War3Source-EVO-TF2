@@ -183,6 +183,8 @@
 #include "War3Source/War3Source_002_OnW3SupplyLocker.sp"
 #endif
 
+#include "War3Source/War3Source_002_OnW3MissionComplete.sp"
+
 #include "War3Source/War3Source_Engine_WCX_Engine_Vampire.sp"
 
 #include "War3Source/War3Source_Engine_GameData.sp"

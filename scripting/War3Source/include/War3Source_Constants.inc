@@ -45,7 +45,6 @@ enum SHOPITEMS1{
 	SOCK,
 	RING,
 	OIL,
-	HELM,
 	SHIELD,
 	GAUNTLET,
 	FIREORB,
@@ -61,7 +60,6 @@ enum SHOPITEMS1{
 	GLIMMERCAPE, // Magic Defense
 	BUCKLER, // Defense
 	AGHANIMSCEPTRE, //Upgrades Ultimates
-	BLINKDAGGER, // Teleport on shift + right click
 	ORBOFVENOM, //4 Magic DPS
 	RINGOFPROTECTION, //Defense
 	TALISMANOFEVASION, //Evasion 
@@ -543,6 +541,8 @@ enum W3Buff
 	fAbilityResistance,
 	//75
 	fUltimateResistance,
+	//76
+	fArmorPenetration,
 
 	MaxBuffLoopLimitTemp, //this is a variable that is for loops, this number is automatically generated from the enum.
 }
@@ -797,6 +797,8 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 	buffpropertiesarray[ fUltimateResistance ].DefaultValue=1.0;
 	buffpropertiesarray[ fUltimateResistance ].BuffStackType=fStacked;
 
+	buffpropertiesarray[ fArmorPenetration ].DefaultValue=0.0;
+	buffpropertiesarray[ fArmorPenetration ].BuffStackType=fAbsolute;
 
 	//check that all indexes have been set
 	for(new i=0;i<MaxBuffLoopLimit;i++)
