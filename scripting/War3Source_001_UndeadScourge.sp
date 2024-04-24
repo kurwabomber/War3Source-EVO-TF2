@@ -326,7 +326,6 @@ public OnWar3EventDeath(victim, attacker)
 		return;
 
 	int race=W3GetVar(DeathRace);
-	int skill=pVictim.getskilllevel(thisRaceID,SKILL_SUICIDE);
 
 	if(race==thisRaceID && !pVictim.hexed && pVictim.skillnotcooldown(thisRaceID,SKILL_SUICIDE,true))
 	{

@@ -248,7 +248,7 @@ public Action FiveSecondLoop(Handle timer, any data){
 		if(!ValidPlayer(client, true))
 			continue;
 
-		if(War3_GetOwnsItem(client, MEKANSM)){
+		if(War3_GetOwnsItem(client, shopItem[MEKANSM])){
 			for(int i=1;i<=MaxClients;++i){
 				if(!ValidPlayer(i,true))
 					continue;

@@ -303,7 +303,6 @@ public OnWar3EventSpawn(client){
 public OnAbilityCommand(client,ability,bool:pressed)
 {
 	//if(War3_GetRace(client)==thisRaceID && ability==0 && pressed && IsPlayerAlive(client))
-	new skilllevelz = War3_GetSkillLevel(client,thisRaceID,SKILL_SIEGE);
 	if(War3_GetRace(client)==thisRaceID && ability==0 && pressed && ValidPlayer(client,true))
 	{
 	   if(ARMOR_ENABLED[client]==true && !ARMOR_BUTTON_PRESSED[client])
