@@ -211,7 +211,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 				HitOnForwardTide[i][client]=false;
 			}
 			//50 IS THE CLOSE CHECK
-			TE_SetupBeamRingPoint(ElectricTideOrigin[client], 20.0, ElectricTideRadius+50, BeamSprite, HaloSprite, 0, 5, 0.5, 10.0, 1.0, {255,0,255,133}, 60, 0);
+			TE_SetupBeamRingPoint(ElectricTideOrigin[client], 20.0, 2*ElectricTideRadius+20, BeamSprite, HaloSprite, 0, 5, 0.5, 10.0, 1.0, {255,0,255,133}, 60, 0);
 			TE_SendToAll();
 
 			CreateTimer(0.1,BurnLoop,GetClientUserId(client)); //damage
@@ -233,7 +233,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 public Action:SecondRing(Handle:timer,any:userid)
 {
 	new client=GetClientOfUserId(userid);
-	TE_SetupBeamRingPoint(ElectricTideOrigin[client], ElectricTideRadius+50,20.0, BeamSprite, HaloSprite, 0, 5, 0.5, 10.0, 1.0, {255,0,255,133}, 60, 0);
+	TE_SetupBeamRingPoint(ElectricTideOrigin[client], 2*ElectricTideRadius+20,20.0, BeamSprite, HaloSprite, 0, 5, 0.5, 10.0, 1.0, {255,0,255,133}, 60, 0);
 	TE_SendToAll();
 }
 public Action:BurnLoop(Handle:timer,any:userid)
@@ -277,13 +277,15 @@ public Action:BurnLoop(Handle:timer,any:userid)
 					{
 						if(FloatAbs(victimdistance-damagingRadius)<(ElectricTideRadius/10.0))
 						{
+							float distFactor = (1+victimdistance/ElectricTideRadius)/2.0;
+
 							if(ElectricTideLoopCountdown[attacker]<10){
 								HitOnBackwardTide[i][attacker]=true;
 							}
 							else{
 								HitOnForwardTide[i][attacker]=true;
 							}
-							if(War3_DealDamage(i,RoundFloat(resistance*ElectricTideMaxDamage[War3_GetSkillLevel(attacker,thisRaceID,SKILL_TIDE)]*victimdistance/ElectricTideRadius/2.0),attacker,DMG_ENERGYBEAM,"electrictide"))
+							if(War3_DealDamage(i,RoundFloat(resistance*ElectricTideMaxDamage[War3_GetSkillLevel(attacker,thisRaceID,SKILL_TIDE)]*distFactor/2.0),attacker,DMG_ENERGYBEAM,"electrictide"))
 							{
 								War3_NotifyPlayerTookDamageFromSkill(i, attacker, War3_GetWar3DamageDealt(), SKILL_TIDE);
 							}
