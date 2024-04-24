@@ -143,34 +143,31 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 			new bool:lastwasgroundtemp=lastframewasground[client];
 			lastframewasground[client]=bool:(GetEntityFlags(client) & FL_ONGROUND);
 			new skill_Leap=War3_GetSkillLevel(client,thisRaceID,SKILL_LEAP);
-			if (skill_Leap)
+			if(!Hexed(client)&&War3_SkillNotInCooldown(client,thisRaceID,SKILL_LEAP) &&  lastwasgroundtemp &&   !(GetEntityFlags(client) & FL_ONGROUND) )
 			{
-				if(!Hexed(client)&&War3_SkillNotInCooldown(client,thisRaceID,SKILL_LEAP) &&  lastwasgroundtemp &&   !(GetEntityFlags(client) & FL_ONGROUND) )
-				{
-					#if GGAMETYPE == GGAME_TF2
-					if (TF2_HasTheFlag(client))
-						return Plugin_Continue;
-					#endif
-					decl Float:velocity[3];
-					GetEntDataVector(client, m_vecVelocity_0, velocity); //gets all 3
-					new Float:oldz=velocity[2];
-					velocity[2]=0.0;
-					new Float:len=GetVectorLength(velocity);
-					if(len>3.0){
-						ScaleVector(velocity,leapPowerTF[skill_Leap]/len);
-						velocity[2]=oldz;
-						TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
-					}
-
-
-					War3_EmitSoundToAll(leapsnd,client);
-					War3_EmitSoundToAll(leapsnd,client);
-
-					War3_CooldownMGR(client,6.5,thisRaceID,SKILL_LEAP,_,_);
+				#if GGAMETYPE == GGAME_TF2
+				if (TF2_HasTheFlag(client))
+					return Plugin_Continue;
+				#endif
+				decl Float:velocity[3];
+				GetEntDataVector(client, m_vecVelocity_0, velocity); //gets all 3
+				new Float:oldz=velocity[2];
+				velocity[2]=0.0;
+				new Float:len=GetVectorLength(velocity);
+				if(len>3.0){
+					ScaleVector(velocity,leapPowerTF[skill_Leap]/len);
+					velocity[2]=oldz;
+					TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
 				}
+
+
+				War3_EmitSoundToAll(leapsnd,client);
+				War3_EmitSoundToAll(leapsnd,client);
+
+				War3_CooldownMGR(client,6.5,thisRaceID,SKILL_LEAP,_,_);
 			}
 			new skill_SKILL_ASSAULT=War3_GetSkillLevel(client,thisRaceID,SKILL_ASSAULT);
-			if(skill_SKILL_ASSAULT && War3_SkillNotInCooldown(client,thisRaceID,SKILL_ASSAULT) &&  lastwasgroundtemp &&   !(GetEntityFlags(client) & FL_ONGROUND) &&!Hexed(client) )
+			if(War3_SkillNotInCooldown(client,thisRaceID,SKILL_ASSAULT) &&  lastwasgroundtemp &&   !(GetEntityFlags(client) & FL_ONGROUND) &&!Hexed(client) )
 			{
 				#if GGAMETYPE == GGAME_TF2
 				if (TF2_HasTheFlag(client))

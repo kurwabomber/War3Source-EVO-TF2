@@ -296,42 +296,39 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 	if(War3_GetRace(client)==thisRaceID && ability==0 && pressed && IsPlayerAlive(client))
 	{
 		new skilllvl = War3_GetSkillLevel(client,thisRaceID,SKILL_ORB);
-		if(skilllvl > 0)
+		if(!Silenced(client)&&(bypass||War3_SkillNotInCooldown(client,thisRaceID,SKILL_ORB,true)))
 		{
-			if(!Silenced(client)&&(bypass||War3_SkillNotInCooldown(client,thisRaceID,SKILL_ORB,true)))
+			new Float:Range = 300.0;
+			new Float:AttackerPos[3];
+			GetClientAbsOrigin(client,AttackerPos);
+			new AttackerTeam = GetClientTeam(client);
+			float VictimPos[3];
+			bool victimfound = false;
+			for(int i=1;i<=MaxClients;i++)
 			{
-				new Float:Range = 300.0;
-				new Float:AttackerPos[3];
-				GetClientAbsOrigin(client,AttackerPos);
-				new AttackerTeam = GetClientTeam(client);
-				float VictimPos[3];
-				bool victimfound = false;
-				for(int i=1;i<=MaxClients;i++)
+				if(ValidPlayer(i,true))
 				{
-					if(ValidPlayer(i,true))
+					int VictimTeam = GetClientTeam(i);
+					GetClientAbsOrigin(i,VictimPos);
+					if(GetVectorDistance(AttackerPos,VictimPos)<Range && VictimTeam == AttackerTeam)
 					{
-						int VictimTeam = GetClientTeam(i);
 						GetClientAbsOrigin(i,VictimPos);
-						if(GetVectorDistance(AttackerPos,VictimPos)<Range && VictimTeam == AttackerTeam)
-						{
-							GetClientAbsOrigin(i,VictimPos);
-							bOrbActivated[i] = true;
-							orbInflictor[i] = client;
-							CreateTimer(6.0,BuffOff,i);
-							War3_SetBuff(i, fAttackSpeed, thisRaceID, 1.0+OrbAttackspeed[skilllvl]);
-							W3Hint(i,HINT_COOLDOWN_NOTREADY,5.0,"You were shocked! Increased attackspeed and attacks cleave.");
-							victimfound = true;
-						}
+						bOrbActivated[i] = true;
+						orbInflictor[i] = client;
+						CreateTimer(6.0,BuffOff,i);
+						War3_SetBuff(i, fAttackSpeed, thisRaceID, 1.0+OrbAttackspeed[skilllvl]);
+						W3Hint(i,HINT_COOLDOWN_NOTREADY,5.0,"You were shocked! Increased attackspeed and attacks cleave.");
+						victimfound = true;
 					}
 				}
-				if(victimfound)
-				{
-					War3_CooldownMGR(client,30.0,thisRaceID,SKILL_ORB,_,_);
-				}
-				if(victimfound == false)
-				{
-					W3MsgNoTargetFound(client,Range);
-				}
+			}
+			if(victimfound)
+			{
+				War3_CooldownMGR(client,30.0,thisRaceID,SKILL_ORB,_,_);
+			}
+			if(victimfound == false)
+			{
+				W3MsgNoTargetFound(client,Range);
 			}
 		}
 	}
