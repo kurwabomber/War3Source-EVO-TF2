@@ -131,7 +131,7 @@ public Action:Timer_CheckWindWalker(Handle:timer)
 			if(War3_GetRace(i)==thisRaceID && WindWalkerActivated[i] == false)
 			{
 				new skilllvl = War3_GetSkillLevel(i,thisRaceID,SKILL_WINDWALKER);
-				if(skilllvl > 0 && WindWalkerTimer[i] <= 0.0 )
+				if(WindWalkerTimer[i] <= 0.0 )
 				{
 					WindWalkerActivated[i] = true;
 					War3_SetBuff(i,fInvisibilitySkill,thisRaceID,1.0-WindWalkerInvis[skilllvl]);
@@ -189,11 +189,7 @@ public Action:TF2_CalcIsAttackCritical(client, weapon, String:weaponname[], &boo
 		
 	if(War3_GetRace(client)==thisRaceID)	
 	{
-		new skilllvl = War3_GetSkillLevel(client,thisRaceID,SKILL_WINDWALKER);
-		if(skilllvl > 0)
-		{
-			StopWindWalker(client);
-		}
+		StopWindWalker(client);
 	}
 	return Plugin_Continue;
 }
@@ -211,30 +207,23 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 	{
 		if(ValidPlayer(victim,true) && War3_GetRace(victim)==thisRaceID)
 		{
-			new skilllvl = War3_GetSkillLevel(victim,thisRaceID,SKILL_WINDWALKER);
-			if(skilllvl > 0)
-			{
-				StopWindWalker(victim);
-			}
+			StopWindWalker(victim);
 		}
 		if(War3_GetRace(attacker)==thisRaceID)
 		{
 			new skilllvl = War3_GetSkillLevel(attacker,thisRaceID,SKILL_CRITS);
-			if(skilllvl > 0)
-			{
-				new Float:Chance = GetRandomFloat(0.0, 1.0);
-				float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
+			new Float:Chance = GetRandomFloat(0.0, 1.0);
+			float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
 
-				if(!ValidPlayer(victim,false) && CritChance*resistance >= Chance)
-				{
-					War3_DamageModPercent(CritMultiplier[skilllvl]);
-					W3Hint(attacker,HINT_COOLDOWN_NOTREADY,2.0,"Crit!");
-				}
-				if(ValidPlayer(victim,false) && CritChance*resistance >= Chance && !W3HasImmunity(victim,Immunity_Skills))
-				{
-					War3_DamageModPercent(CritMultiplier[skilllvl]);
-					W3Hint(attacker,HINT_COOLDOWN_NOTREADY,2.0,"Crit!");			
-				}
+			if(!ValidPlayer(victim,false) && CritChance*resistance >= Chance)
+			{
+				War3_DamageModPercent(CritMultiplier[skilllvl]);
+				W3Hint(attacker,HINT_COOLDOWN_NOTREADY,2.0,"Crit!");
+			}
+			if(ValidPlayer(victim,false) && CritChance*resistance >= Chance && !W3HasImmunity(victim,Immunity_Skills))
+			{
+				War3_DamageModPercent(CritMultiplier[skilllvl]);
+				W3Hint(attacker,HINT_COOLDOWN_NOTREADY,2.0,"Crit!");			
 			}
 		}
 	}

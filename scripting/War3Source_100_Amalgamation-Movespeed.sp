@@ -109,7 +109,7 @@ public Action:Timer_CheckWindWalker(Handle:timer)
 			if(War3_GetRace(i)==thisRaceID && WindWalkerActivated[i] == false)
 			{
 				new skilllvl = War3_GetSkillLevel(i,thisRaceID,SKILL_WINDWALKER);
-				if(skilllvl > 0 && WindWalkerTimer[i] <= 0.0 )
+				if(WindWalkerTimer[i] <= 0.0 )
 				{
 					WindWalkerActivated[i] = true;
 					War3_SetBuff(i,fInvisibilitySkill,thisRaceID,1.0-WindWalkerInvis[skilllvl]);
@@ -303,11 +303,7 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 	{
 		if(War3_GetRace(victim)==thisRaceID)
 		{
-			new skilllvl = War3_GetSkillLevel(attacker,thisRaceID,SKILL_WINDWALKER);
-			if(skilllvl > 0)
-			{
-				StopWindWalker(victim);
-			}
+			StopWindWalker(victim);
 		}
 	}
 	return Plugin_Continue;
@@ -320,11 +316,7 @@ public Action:TF2_CalcIsAttackCritical(client, weapon, String:weaponname[], &boo
 		
 	if(War3_GetRace(client)==thisRaceID)	
 	{
-		new skilllvl = War3_GetSkillLevel(client,thisRaceID,SKILL_WINDWALKER);
-		if(skilllvl > 0)
-		{
-			StopWindWalker(client);
-		}
+		StopWindWalker(client);
 	}
 	return Plugin_Continue;
 }

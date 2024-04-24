@@ -805,18 +805,15 @@ public OnUltimateCommand(client,ability,bool:pressed)
 	if(War3_GetRace(client)==thisRaceID && pressed && IsPlayerAlive(client))
 	{
 		new skilllevelz = War3_GetSkillLevel(client,thisRaceID,ULTIMATE_LORDSREWARD);
-		if(skilllevelz > 0)
+		if(!Silenced(client))
 		{
-			if(!Silenced(client))
+			if(War3_SkillNotInCooldown(client,thisRaceID,ULTIMATE_LORDSREWARD,true))
 			{
-				if(War3_SkillNotInCooldown(client,thisRaceID,ULTIMATE_LORDSREWARD,true))
-				{
-                   MadMilkBomber( client, skilllevelz );
-                   new Float:MadMilkcooldowntime = GetConVarFloat(ultCooldownCvar);
-                   War3_CooldownMGR(client,MadMilkcooldowntime,thisRaceID,ULTIMATE_LORDSREWARD,_,_);
-                }
-            }
-        }
+				MadMilkBomber( client, skilllevelz );
+				new Float:MadMilkcooldowntime = GetConVarFloat(ultCooldownCvar);
+				War3_CooldownMGR(client,MadMilkcooldowntime,thisRaceID,ULTIMATE_LORDSREWARD,_,_);
+			}
+		}
     }
 }
 
@@ -950,7 +947,7 @@ public Action:OnW3TakeDmgBullet( victim, attacker, Float:damage )
 		new skill_level = War3_GetSkillLevel( attacker, thisRaceID, SKILL_MOONBEAM );
 		if( race_attacker == thisRaceID &&!Hexed(attacker))
 		{
-			if(skill_level > 0 && SkillAvailable(attacker,thisRaceID,SKILL_MOONBEAM,false))
+			if(SkillAvailable(attacker,thisRaceID,SKILL_MOONBEAM,false))
 			{
 				MoonBeamDamageAndEffect(victim, attacker, LucentBeamMin[skill_level], LucentBeamMax[skill_level]);
 

@@ -325,7 +325,7 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 	{
 		//DP("bullet succ vic alive %d",ValidPlayer(victim,true));
 		new skilllevelheadhunter = War3_GetSkillLevel(attacker,thisRaceID,SKILL_HEADHUNTER);
-		if (skilllevelheadhunter > 0 &&!Hexed(attacker))
+		if (!Hexed(attacker))
 		{
 			//DP("health %d",GetClientHealth(victim));
 			//new xdamage= RoundFloat(0.2*float(damage) * skulls[attacker]/20 );
@@ -348,7 +348,7 @@ public OnWar3EventDeath(victim,attacker){
 		return;
 
 	new skilllevelheadhunter=War3_GetSkillLevel(attacker,thisRaceID,SKILL_HEADHUNTER);
-	if (skilllevelheadhunter &&!Hexed(attacker)&&victim!=attacker)
+	if (!Hexed(attacker)&&victim!=attacker)
 	{
 		if (skulls[attacker]<HeadCap[skilllevelheadhunter])
 		{
@@ -366,61 +366,57 @@ public PlayerJumpEvent(Handle:event,const String:name[],bool:dontBroadcast)
 	new race=War3_GetRace(client);
 	if (race==thisRaceID)
 	{
-
 		new skill_SKILL_ASSAULT=War3_GetSkillLevel(client,race,SKILL_ASSAULT);
-
-		if (skill_SKILL_ASSAULT){
-			//assaultskip[client]--;
-			//if(assaultskip[client]<1||
-			if(War3_SkillNotInCooldown(client,thisRaceID,SKILL_ASSAULT)&&!Hexed(client))
-			{
-				//assaultskip[client]+=2;
-				new Float:velocity[3]={0.0,0.0,0.0};
-				velocity[0]= GetEntDataFloat(client,m_vecVelocity_0);
-				velocity[0]*=assaultMoveMult[skill_SKILL_ASSAULT];
+		//assaultskip[client]--;
+		//if(assaultskip[client]<1||
+		if(War3_SkillNotInCooldown(client,thisRaceID,SKILL_ASSAULT)&&!Hexed(client))
+		{
+			//assaultskip[client]+=2;
+			new Float:velocity[3]={0.0,0.0,0.0};
+			velocity[0]= GetEntDataFloat(client,m_vecVelocity_0);
+			velocity[0]*=assaultMoveMult[skill_SKILL_ASSAULT];
 #if (GGAMETYPE == GGAME_CSS || GGAMETYPE == GGAME_CSGO)
-				velocity[1]= GetEntDataFloat(client,m_vecVelocity_1);
-				velocity[1]*=assaultMoveMult[skill_SKILL_ASSAULT];
+			velocity[1]= GetEntDataFloat(client,m_vecVelocity_1);
+			velocity[1]*=assaultMoveMult[skill_SKILL_ASSAULT];
 #endif
 
-				//new Float:len=GetVectorLength(velocity,false);
-				//if(len>100.0){
-				//	velocity[0]*=100.0/len;
-				//	velocity[1]*=100.0/len;
-				//}
-				//PrintToChatAll("speed vector length %f cd %d",len,War3_SkillNotInCooldown(client,thisRaceID,SKILL_ASSAULT)?0:1);
-				/*len=GetVectorLength(velocity,false);
-				PrintToChatAll("speed vector length %f",len);
-				*/
+			//new Float:len=GetVectorLength(velocity,false);
+			//if(len>100.0){
+			//	velocity[0]*=100.0/len;
+			//	velocity[1]*=100.0/len;
+			//}
+			//PrintToChatAll("speed vector length %f cd %d",len,War3_SkillNotInCooldown(client,thisRaceID,SKILL_ASSAULT)?0:1);
+			/*len=GetVectorLength(velocity,false);
+			PrintToChatAll("speed vector length %f",len);
+			*/
 #if (GGAMETYPE == GGAME_CSS || GGAMETYPE == GGAME_CSGO)
-				SetEntDataVector(client,m_vecBaseVelocity,velocity,true);
+			SetEntDataVector(client,m_vecBaseVelocity,velocity,true);
 #endif
-				War3_CooldownMGR(client,assaultcooldown[skill_SKILL_ASSAULT],thisRaceID,SKILL_ASSAULT,_,_);
+			War3_CooldownMGR(client,assaultcooldown[skill_SKILL_ASSAULT],thisRaceID,SKILL_ASSAULT,_,_);
 
-				new String:wpnstr[32];
-				GetClientWeapon(client, wpnstr, 32);
-				for(new slot=0;slot<10;slot++){
+			new String:wpnstr[32];
+			GetClientWeapon(client, wpnstr, 32);
+			for(new slot=0;slot<10;slot++){
 
-					new wpn=GetPlayerWeaponSlot(client, slot);
-					if(wpn>0){
-						//PrintToChatAll("wpn %d",wpn);
-						new String:comparestr[32];
-						GetEdictClassname(wpn, comparestr, 32);
-						//PrintToChatAll("%s %s",wpn, comparestr);
-						if(StrEqual(wpnstr,comparestr,false)){
+				new wpn=GetPlayerWeaponSlot(client, slot);
+				if(wpn>0){
+					//PrintToChatAll("wpn %d",wpn);
+					new String:comparestr[32];
+					GetEdictClassname(wpn, comparestr, 32);
+					//PrintToChatAll("%s %s",wpn, comparestr);
+					if(StrEqual(wpnstr,comparestr,false)){
 
-							TE_SetupKillPlayerAttachments(wpn);
-							TE_SendToAll();
+						TE_SetupKillPlayerAttachments(wpn);
+						TE_SendToAll();
 
-							new color[4]={0,25,255,200};
-							if(GetClientTeam(client)==TEAM_T||GetClientTeam(client)==TEAM_RED){
-								color[0]=255;
-								color[2]=0;
-							}
-							TE_SetupBeamFollow(wpn,Laser,0,0.5,2.0,7.0,1,color);
-							TE_SendToAll();
-							break;
+						new color[4]={0,25,255,200};
+						if(GetClientTeam(client)==TEAM_T||GetClientTeam(client)==TEAM_RED){
+							color[0]=255;
+							color[2]=0;
 						}
+						TE_SetupBeamFollow(wpn,Laser,0,0.5,2.0,7.0,1,color);
+						TE_SendToAll();
+						break;
 					}
 				}
 			}
@@ -440,102 +436,99 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 		if (War3_GetRace(client) == thisRaceID)
 		{
 			new skill_SKILL_ASSAULT=War3_GetSkillLevel(client,thisRaceID,SKILL_ASSAULT);
-			if (skill_SKILL_ASSAULT)
+			//assaultskip[client]--;
+			//if(assaultskip[client]<1&&
+			new bool:lastwasgroundtemp=lastframewasground[client];
+			lastframewasground[client]=bool:(GetEntityFlags(client) & FL_ONGROUND);
+			if(War3_SkillNotInCooldown(client,thisRaceID,SKILL_ASSAULT) &&  lastwasgroundtemp &&   !(GetEntityFlags(client) & FL_ONGROUND) &&!Hexed(client) )
 			{
-				//assaultskip[client]--;
-				//if(assaultskip[client]<1&&
-				new bool:lastwasgroundtemp=lastframewasground[client];
-				lastframewasground[client]=bool:(GetEntityFlags(client) & FL_ONGROUND);
-				if(War3_SkillNotInCooldown(client,thisRaceID,SKILL_ASSAULT) &&  lastwasgroundtemp &&   !(GetEntityFlags(client) & FL_ONGROUND) &&!Hexed(client) )
+				//assaultskip[client]+=2;
+
+#if GGAMETYPE == GGAME_TF2
+				if (TF2_HasTheFlag(client))
+					return Plugin_Continue;
+#endif
+
+
+				decl Float:velocity[3];
+				GetEntDataVector(client, m_vecVelocity_0, velocity); //gets all 3
+
+				/*if he is not in speed ult
+				if (!(GetEntityFlags(client) & FL_ONGROUND))
 				{
-					//assaultskip[client]+=2;
+					new Float:absvel = velocity[0];
+					if (absvel < 0.0)
+						absvel *= -1.0;
 
-#if GGAMETYPE == GGAME_TF2
-					if (TF2_HasTheFlag(client))
+					if (velocity[1] < 0.0)
+						absvel -= velocity[1];
+					else
+						absvel += velocity[1];
+
+					new Float:maxvel = m_IsULT_TRANSFORMformed[client] ? 1000.0 : 500.0;
+					if (absvel > maxvel)
 						return Plugin_Continue;
-#endif
+				}*/
 
 
-					decl Float:velocity[3];
-					GetEntDataVector(client, m_vecVelocity_0, velocity); //gets all 3
-
-					/*if he is not in speed ult
-					if (!(GetEntityFlags(client) & FL_ONGROUND))
-					{
-						new Float:absvel = velocity[0];
-						if (absvel < 0.0)
-							absvel *= -1.0;
-
-						if (velocity[1] < 0.0)
-							absvel -= velocity[1];
-						else
-							absvel += velocity[1];
-
-						new Float:maxvel = m_IsULT_TRANSFORMformed[client] ? 1000.0 : 500.0;
-						if (absvel > maxvel)
-							return Plugin_Continue;
-					}*/
-
-
-					new Float:oldz=velocity[2];
-					velocity[2]=0.0; //zero z
-					new Float:len=GetVectorLength(velocity);
-					if(len>3.0){
-						new Float:amt = 1.2 + (assaultMoveMult[skill_SKILL_ASSAULT]);
-						velocity[0]*=amt;
-						velocity[1]*=amt;
-						//ScaleVector(velocity,700.0/len);
-						velocity[2]=oldz;
-						TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
-						//SetEntDataVector(client,m_vecBaseVelocity,velocity,true); //CS
-					}
+				new Float:oldz=velocity[2];
+				velocity[2]=0.0; //zero z
+				new Float:len=GetVectorLength(velocity);
+				if(len>3.0){
+					new Float:amt = 1.2 + (assaultMoveMult[skill_SKILL_ASSAULT]);
+					velocity[0]*=amt;
+					velocity[1]*=amt;
+					//ScaleVector(velocity,700.0/len);
+					velocity[2]=oldz;
+					TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
+					//SetEntDataVector(client,m_vecBaseVelocity,velocity,true); //CS
+				}
 
 
 
 
 
-					//new Float:amt = 1.0 + (float(skill_SKILL_ASSAULT)*0.2);
-					//velocity[0]*=amt;
-					//velocity[1]*=amt;
-					//TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
+				//new Float:amt = 1.0 + (float(skill_SKILL_ASSAULT)*0.2);
+				//velocity[0]*=amt;
+				//velocity[1]*=amt;
+				//TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
 
-					War3_CooldownMGR(client,assaultcooldown[skill_SKILL_ASSAULT],thisRaceID,SKILL_ASSAULT,_,_);
-					//new color[4] = {255,127,0,255};
+				War3_CooldownMGR(client,assaultcooldown[skill_SKILL_ASSAULT],thisRaceID,SKILL_ASSAULT,_,_);
+				//new color[4] = {255,127,0,255};
 
 #if GGAMETYPE == GGAME_TF2
-					if (!War3_IsCloaked(client))
-					{
+				if (!War3_IsCloaked(client))
+				{
 #endif
-						new String:wpnstr[32];
-						GetClientWeapon(client, wpnstr, 32);
-						for(new slot=0;slot<10;slot++){
+					new String:wpnstr[32];
+					GetClientWeapon(client, wpnstr, 32);
+					for(new slot=0;slot<10;slot++){
 
-							new wpn=GetPlayerWeaponSlot(client, slot);
-							if(wpn>0){
-								//PrintToChatAll("wpn %d",wpn);
-								new String:comparestr[32];
-								GetEdictClassname(wpn, comparestr, 32);
-								//PrintToChatAll("%s %s",wpn, comparestr);
-								if(StrEqual(wpnstr,comparestr,false)){
+						new wpn=GetPlayerWeaponSlot(client, slot);
+						if(wpn>0){
+							//PrintToChatAll("wpn %d",wpn);
+							new String:comparestr[32];
+							GetEdictClassname(wpn, comparestr, 32);
+							//PrintToChatAll("%s %s",wpn, comparestr);
+							if(StrEqual(wpnstr,comparestr,false)){
 
-									TE_SetupKillPlayerAttachments(wpn);
-									TE_SendToAll();
+								TE_SetupKillPlayerAttachments(wpn);
+								TE_SendToAll();
 
-									new color[4]={0,25,255,200};
-									if(GetClientTeam(client)==TEAM_T||GetClientTeam(client)==TEAM_RED){
-										color[0]=255;
-										color[2]=0;
-									}
-									TE_SetupBeamFollow(wpn,Laser,0,0.5,2.0,7.0,1,color);
-									TE_SendToAll();
-									break;
+								new color[4]={0,25,255,200};
+								if(GetClientTeam(client)==TEAM_T||GetClientTeam(client)==TEAM_RED){
+									color[0]=255;
+									color[2]=0;
 								}
+								TE_SetupBeamFollow(wpn,Laser,0,0.5,2.0,7.0,1,color);
+								TE_SendToAll();
+								break;
 							}
 						}
-#if GGAMETYPE == GGAME_TF2
 					}
-#endif
+#if GGAMETYPE == GGAME_TF2
 				}
+#endif
 			}
 		}
 	}

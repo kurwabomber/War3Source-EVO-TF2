@@ -220,11 +220,8 @@ public ActivateSkills(client)
 {
 	// Physical Armor
 	new skill_armor=War3_GetSkillLevel(client,thisRaceID,SKILL_ARMOR);
-	if(skill_armor>0)
-	{
-		War3_SetBuff(client,fMaxSpeed,thisRaceID,1.0);
-		War3_SetBuff(client,fSlow,thisRaceID,fSpeedReduction[skill_armor]);
-	}
+	War3_SetBuff(client,fMaxSpeed,thisRaceID,1.0);
+	War3_SetBuff(client,fSlow,thisRaceID,fSpeedReduction[skill_armor]);
 	new Float:humanarmor=fHumanArmor[skill_armor];
 	War3_SetBuff(client,fArmorPhysical,thisRaceID,humanarmor);
 }
@@ -307,7 +304,7 @@ public OnAbilityCommand(client,ability,bool:pressed)
 {
 	//if(War3_GetRace(client)==thisRaceID && ability==0 && pressed && IsPlayerAlive(client))
 	new skilllevelz = War3_GetSkillLevel(client,thisRaceID,SKILL_SIEGE);
-	if(skilllevelz>0 && War3_GetRace(client)==thisRaceID && ability==0 && pressed && ValidPlayer(client,true))
+	if(War3_GetRace(client)==thisRaceID && ability==0 && pressed && ValidPlayer(client,true))
 	{
 	   if(ARMOR_ENABLED[client]==true && !ARMOR_BUTTON_PRESSED[client])
 	   {
@@ -339,30 +336,27 @@ public Action:Timer_Enable_Siege(Handle:timer, any:client)
 			// Devotion Aura
 		new skill_devo=War3_GetSkillLevel(client,thisRaceID,SKILL_HEALTH);
 		new Float:magichumanarmor=fHumanArmor[skill_devo];
-		if(skill_devo>0)
+		// Magical Armor increase for Devotion Aura
+		magichumanarmor=fHumanArmor[skill_devo];
+
+		new hpadd=DevotionHealth[skill_devo];
+		new Float:vec[3];
+		GetClientAbsOrigin(client,vec);
+		vec[2]+=20.0;
+		new ringColor[4]={0,0,0,0};
+		new team=GetClientTeam(client);
+		if(team==2)
 		{
-			// Magical Armor increase for Devotion Aura
-			magichumanarmor=fHumanArmor[skill_devo];
-
-			new hpadd=DevotionHealth[skill_devo];
-			new Float:vec[3];
-			GetClientAbsOrigin(client,vec);
-			vec[2]+=20.0;
-			new ringColor[4]={0,0,0,0};
-			new team=GetClientTeam(client);
-			if(team==2)
-			{
-	ringColor={255,0,0,255};
-			}
-			else if(team==3)
-			{
-	ringColor={0,0,255,255};
-			}
-			TE_SetupBeamRingPoint(vec,40.0,10.0,BeamSprite,HaloSprite,0,15,1.0,15.0,0.0,ringColor,10,0);
-			TE_SendToAll();
-
-			War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,hpadd);
+ringColor={255,0,0,255};
 		}
+		else if(team==3)
+		{
+ringColor={0,0,255,255};
+		}
+		TE_SetupBeamRingPoint(vec,40.0,10.0,BeamSprite,HaloSprite,0,15,1.0,15.0,0.0,ringColor,10,0);
+		TE_SendToAll();
+
+		War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,hpadd);
 
 		new skilllevel_siege_Armor=War3_GetSkillLevel(client,thisRaceID,SKILL_SIEGE);
 		new Float:siegehumanarmor=fSiegeArmor[skilllevel_siege_Armor];
@@ -381,7 +375,7 @@ public Action:Timer_Enable_Siege(Handle:timer, any:client)
 		}
 
 		new skill_advanced_armor=War3_GetSkillLevel(client,thisRaceID,SKILL_ADVANCED_ARMOR);
-		if(skilllevel_siege_Armor>=4 && skill_advanced_armor>0)
+		if(skilllevel_siege_Armor>=4)
 		{
 			new Float:advancedhumanarmor=fAdvancedHumanArmor[skill_advanced_armor] + siegehumanarmor;
 			War3_SetBuff(client,fArmorPhysical,thisRaceID,advancedhumanarmor);

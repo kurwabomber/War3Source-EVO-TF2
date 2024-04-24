@@ -286,7 +286,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 			#if GGAMETYPE == GGAME_TF2
 			if(!W3IsOwnerSentry(attacker) && SkillAvailable(attacker,thisRaceID,SKILL_MOONBEAM,false))
 			#else
-			if(skill_level > 0 && SkillAvailable(attacker,thisRaceID,SKILL_MOONBEAM,false))
+			if(SkillAvailable(attacker,thisRaceID,SKILL_MOONBEAM,false))
 			#endif
 			{
 				MoonBeamDamageAndEffect(victim, attacker, LucentBeamMin[skill_level], LucentBeamMax[skill_level]);

@@ -292,72 +292,69 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 		if (War3_GetRace(client) == thisRaceID)
 		{
 			new skill_SKILL_ASSAULT=War3_GetSkillLevel(client,thisRaceID,SKILL_LEAP);
-			if (skill_SKILL_ASSAULT)
+			//assaultskip[client]--;
+			//if(assaultskip[client]<1&&
+			new bool:lastwasgroundtemp=lastframewasground[client];
+			lastframewasground[client]=bool:(GetEntityFlags(client) & FL_ONGROUND);
+			if(!Hexed(client)&&War3_SkillNotInCooldown(client,thisRaceID,SKILL_LEAP) &&  lastwasgroundtemp &&   !(GetEntityFlags(client) & FL_ONGROUND) )
 			{
-				//assaultskip[client]--;
-				//if(assaultskip[client]<1&&
-				new bool:lastwasgroundtemp=lastframewasground[client];
-				lastframewasground[client]=bool:(GetEntityFlags(client) & FL_ONGROUND);
-				if(!Hexed(client)&&War3_SkillNotInCooldown(client,thisRaceID,SKILL_LEAP) &&  lastwasgroundtemp &&   !(GetEntityFlags(client) & FL_ONGROUND) )
-				{
-					//assaultskip[client]+=2;
+				//assaultskip[client]+=2;
 
 #if GGAMETYPE == GGAME_TF2
-					if (TF2_HasTheFlag(client))
-						return Plugin_Continue;
+				if (TF2_HasTheFlag(client))
+					return Plugin_Continue;
 #endif
 
 
 
 
-					decl Float:velocity[3];
-					GetEntDataVector(client, m_vecVelocity_0, velocity); //gets all 3
+				decl Float:velocity[3];
+				GetEntDataVector(client, m_vecVelocity_0, velocity); //gets all 3
 
-					/*if he is not in speed ult
-					if (!(GetEntityFlags(client) & FL_ONGROUND))
-					{
-						new Float:absvel = velocity[0];
-						if (absvel < 0.0)
-							absvel *= -1.0;
+				/*if he is not in speed ult
+				if (!(GetEntityFlags(client) & FL_ONGROUND))
+				{
+					new Float:absvel = velocity[0];
+					if (absvel < 0.0)
+						absvel *= -1.0;
 
-						if (velocity[1] < 0.0)
-							absvel -= velocity[1];
-						else
-							absvel += velocity[1];
+					if (velocity[1] < 0.0)
+						absvel -= velocity[1];
+					else
+						absvel += velocity[1];
 
-						new Float:maxvel = m_IsULT_TRANSFORMformed[client] ? 1000.0 : 500.0;
-						if (absvel > maxvel)
-							return Plugin_Continue;
-					}*/
-
-
-					new Float:oldz=velocity[2];
-					velocity[2]=0.0; //zero z
-					new Float:len=GetVectorLength(velocity);
-					if(len>3.0){
-					//	new Float:amt = 1.2 + (float(skill_SKILL_ASSAULT)*0.20);
-						//velocity[0]*=amt;
-					//	velocity[1]*=amt;
-						ScaleVector(velocity,leapPowerTF[skill_SKILL_ASSAULT]/len);
-						velocity[2]=oldz;
-						TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
-						//SetEntDataVector(client,m_vecBaseVelocity,velocity,true); //CS
-					}
+					new Float:maxvel = m_IsULT_TRANSFORMformed[client] ? 1000.0 : 500.0;
+					if (absvel > maxvel)
+						return Plugin_Continue;
+				}*/
 
 
-					War3_EmitSoundToAll(leapsnd,client);
-					War3_EmitSoundToAll(leapsnd,client);
-
-
-					//new Float:amt = 1.0 + (float(skill_SKILL_ASSAULT)*0.2);
+				new Float:oldz=velocity[2];
+				velocity[2]=0.0; //zero z
+				new Float:len=GetVectorLength(velocity);
+				if(len>3.0){
+				//	new Float:amt = 1.2 + (float(skill_SKILL_ASSAULT)*0.20);
 					//velocity[0]*=amt;
-					//velocity[1]*=amt;
-					//TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
-
-					War3_CooldownMGR(client,10.0,thisRaceID,SKILL_LEAP,_,_);
-					//new color[4] = {255,127,0,255};
-
+				//	velocity[1]*=amt;
+					ScaleVector(velocity,leapPowerTF[skill_SKILL_ASSAULT]/len);
+					velocity[2]=oldz;
+					TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
+					//SetEntDataVector(client,m_vecBaseVelocity,velocity,true); //CS
 				}
+
+
+				War3_EmitSoundToAll(leapsnd,client);
+				War3_EmitSoundToAll(leapsnd,client);
+
+
+				//new Float:amt = 1.0 + (float(skill_SKILL_ASSAULT)*0.2);
+				//velocity[0]*=amt;
+				//velocity[1]*=amt;
+				//TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, velocity);
+
+				War3_CooldownMGR(client,10.0,thisRaceID,SKILL_LEAP,_,_);
+				//new color[4] = {255,127,0,255};
+
 			}
 		}
 	}

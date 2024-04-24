@@ -277,11 +277,7 @@ public Action:TF2_CalcIsAttackCritical(client, weapon, String:weaponname[], &boo
 		
 	if(War3_GetRace(client)==thisRaceID)	
 	{
-		new skilllvl = War3_GetSkillLevel(client,thisRaceID,SKILL_SALVE);
-		if(skilllvl > 0)
-		{
-			StopSalve(client);
-		}
+		StopSalve(client);
 	}
 	return Plugin_Continue;
 }

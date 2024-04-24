@@ -101,8 +101,7 @@ public OnWar3EventDeath(victim, attacker)
 		return;
 
 	int race=W3GetVar(DeathRace);
-	int skill=War3_GetSkillLevel(victim,thisRaceID,SKILL_REVIVE);
-	if(race==thisRaceID && skill>0 && !Silenced(victim) && War3_SkillNotInCooldown(victim,thisRaceID,SKILL_REVIVE,true))
+	if(race==thisRaceID && !Silenced(victim) && War3_SkillNotInCooldown(victim,thisRaceID,SKILL_REVIVE,true))
 	{
 		float VecPos[3];
 		float Angles[3];
@@ -116,12 +115,12 @@ public OnWar3EventDeath(victim, attacker)
 public Action:DoDeathReject(Handle:timer,any:userid)
 {
 	int client=GetClientOfUserId(userid);
-	if(ValidPlayer(client,false))
+	if(ValidPlayer(client))
 	{
 		int skilllevel=War3_GetSkillLevel(client,thisRaceID,SKILL_REVIVE);
-		TF2_RespawnPlayer(client);
-		War3_RestoreItemsFromDeath(client,false);
+		War3_SpawnPlayer(client);
 		TeleportEntity(client, djPos[client], djAngle[client], NULL_VECTOR);
+		War3_RestoreItemsFromDeath(client,false);
 		War3_CooldownMGR(client,Reincarnation[skilllevel],thisRaceID,SKILL_REVIVE,false,true);
 	}
 	return Plugin_Continue;

@@ -197,33 +197,30 @@ public OnWar3EventPostHurt(victim,attacker,float dmgamount,const String:weapon[3
 public ActivateSkills(client)
 {
 	new skill_devo=War3_GetSkillLevel(client,thisRaceID,SKILL_HEALTH);
-	if(skill_devo)
+	// Devotion Aura
+	new hpadd=DevotionHealth[skill_devo];
+	float vec[3];
+	GetClientAbsOrigin(client,vec);
+	vec[2]+=20.0;
+	new ringColor[4]={0,0,0,0};
+	new team=GetClientTeam(client);
+	if(team==2)
 	{
-		// Devotion Aura
-		new hpadd=DevotionHealth[skill_devo];
-		float vec[3];
-		GetClientAbsOrigin(client,vec);
-		vec[2]+=20.0;
-		new ringColor[4]={0,0,0,0};
-		new team=GetClientTeam(client);
-		if(team==2)
-		{
-			ringColor={255,0,0,255};
-		}
-		else if(team==3)
-		{
-			ringColor={0,0,255,255};
-		}
-		TE_SetupBeamRingPoint(vec,40.0,10.0,BeamSprite,HaloSprite,0,15,1.0,15.0,0.0,ringColor,10,0);
-		TE_SendToAll();
+		ringColor={255,0,0,255};
+	}
+	else if(team==3)
+	{
+		ringColor={0,0,255,255};
+	}
+	TE_SetupBeamRingPoint(vec,40.0,10.0,BeamSprite,HaloSprite,0,15,1.0,15.0,0.0,ringColor,10,0);
+	TE_SendToAll();
 
 #if (GGAMETYPE == GGAME_CSS || GGAMETYPE == GGAME_CSGO)
-		new old_health=GetClientHealth(client);
-		SetEntityHealth(client,old_health+hpadd);
+	new old_health=GetClientHealth(client);
+	SetEntityHealth(client,old_health+hpadd);
 #endif
 
-		War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,hpadd);
-	}
+	War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,hpadd);
 
 	//new skilllevel=War3_GetSkillLevel(client,thisRaceID,SKILL_INVIS);
 	//float alpha=InvisibilityAlphaTF[skilllevel];

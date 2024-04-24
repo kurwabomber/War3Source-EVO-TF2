@@ -328,7 +328,7 @@ public OnWar3EventDeath(victim, attacker)
 	int race=W3GetVar(DeathRace);
 	int skill=pVictim.getskilllevel(thisRaceID,SKILL_SUICIDE);
 
-	if(race==thisRaceID && skill>0 && !pVictim.hexed && pVictim.skillnotcooldown(thisRaceID,SKILL_SUICIDE,true))
+	if(race==thisRaceID && !pVictim.hexed && pVictim.skillnotcooldown(thisRaceID,SKILL_SUICIDE,true))
 	{
 		pVictim.RESwarn = true;
 		float VecPos[3];
