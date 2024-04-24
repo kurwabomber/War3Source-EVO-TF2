@@ -14,11 +14,11 @@
 !scripting/include/GAME_SWITCHER
 !scripting/include/GAME_SWITCHER/currentgame.inc
 !scripting/War3Source
+!scripting/War3Source/*
 !scripting/War3Source/include
 !scripting/War3Source/include/*
 !scripting/W3SIncs
 !scripting/W3SIncs/*
-!scripting/War3Source*
 
 !translations
 !translations/w3s*

@@ -485,16 +485,13 @@ stock KillParticle(int entity)
 		AcceptEntityInput(entity, "Kill");
 	}
 }
-stock bool:IsValidForDamage(entity)
+stock bool IsValidForDamage(entity)
 {
-	if(!IsValidEntity(entity)) return false;
-	if(ValidPlayer(entity,false) && !IsPlayerAlive(entity))
-	{
-		return false;
-	}
-	if(HasEntProp(entity, Prop_Data, "m_flMaxspeed")) return true;
-	if(HasEntProp(entity, Prop_Send, "m_hBuilder")) return true;
-	return false;
+	if(!IsValidEdict(entity)) return false; 
+	if(ValidPlayer(entity) && (!IsPlayerAlive(entity) || IsClientObserver(entity))) return false;	
+	if(HasEntProp(entity, Prop_Data, "m_hActiveWeapon")) return true;
+	if(GetEntProp(entity, Prop_Data, "m_takedamage") == 0) return false;
+	return false; 
 }
 stock bool:IsOnDifferentTeams(entity1,entity2)
 {

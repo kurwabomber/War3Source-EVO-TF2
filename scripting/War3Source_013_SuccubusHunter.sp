@@ -66,7 +66,7 @@ public void Load_Hooks()
 	if(HooksLoaded) return;
 	HooksLoaded = true;
 
-	W3Hook(W3Hook_OnW3TakeDmgAll, OnW3TakeDmgAll);
+	W3Hook(W3Hook_OnW3TakeDmgBullet, OnW3TakeDmgBullet);
 	W3Hook(W3Hook_OnUltimateCommand, OnUltimateCommand);
 	W3Hook(W3Hook_OnWar3EventSpawn, OnWar3EventSpawn);
 }
@@ -75,7 +75,7 @@ public void UnLoad_Hooks()
 	if(!HooksLoaded) return;
 	HooksLoaded = false;
 
-	W3Unhook(W3Hook_OnW3TakeDmgAll, OnW3TakeDmgAll);
+	W3Unhook(W3Hook_OnW3TakeDmgBullet, OnW3TakeDmgBullet);
 	W3Unhook(W3Hook_OnUltimateCommand, OnUltimateCommand);
 	W3Unhook(W3Hook_OnWar3EventSpawn, OnWar3EventSpawn);
 }
@@ -311,7 +311,7 @@ public void OnWar3EventSpawn (int client)
 			skulls[client]=0;
 	}
 }
-public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
+public Action OnW3TakeDmgBullet(int victim,int attacker, float damage)
 {
 	if(RaceDisabled)
 		return Plugin_Continue;
@@ -321,7 +321,8 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 		if(GetClientTeam(victim)==GetClientTeam(attacker) || W3HasImmunity(victim,Immunity_Skills))
 			return Plugin_Continue;
 	}
-	if(IsValidEntity(victim)&&ValidPlayer(attacker,false))
+	
+	if(IsValidEntity(victim)&&ValidPlayer(attacker,false)&&War3_GetRace(attacker) == thisRaceID)
 	{
 		//DP("bullet succ vic alive %d",ValidPlayer(victim,true));
 		new skilllevelheadhunter = War3_GetSkillLevel(attacker,thisRaceID,SKILL_HEADHUNTER);
@@ -345,6 +346,9 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 }
 public OnWar3EventDeath(victim,attacker){
 	if(RaceDisabled)
+		return;
+
+	if(War3_GetRace(attacker) != thisRaceID)
 		return;
 
 	new skilllevelheadhunter=War3_GetSkillLevel(attacker,thisRaceID,SKILL_HEADHUNTER);
@@ -552,7 +556,6 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 		new skill_trans=War3_GetSkillLevel(client,race,ULT_TRANSFORM);
 		if (War3_SkillNotInCooldown(client,thisRaceID,ULT_TRANSFORM,true)&&!Silenced(client))
 		{
-
 			if (skulls[client] < 4)
 			{
 				new required = 4 - skulls[client];
@@ -700,45 +703,4 @@ stock Float:TargetRange(client,index)
 stock bool:IsInRange(client,index,Float:maxdistance)
 {
 	return (TargetRange(client,index)<maxdistance);
-}
-
-
-/**
-* Description: Function to check the entity limit.
-*              Use before spawning an entity.
-*/
-
-stock IsMYEntLimitReached(warn=20,critical=16,client=0,const String:message[]="")
-{
-	new max = GetMaxEntities();
-	new count = GetEntityCount();
-	new remaining = max - count;
-	if (remaining <= warn)
-	{
-		if (count <= critical)
-		{
-			PrintToServer("Warning: Entity limit is nearly reached! Please switch or reload the map!");
-			LogError("Entity limit is nearly reached: %i/%i (%i):%s", count, max, remaining, message);   // could be integer?
-
-			if (client > 0)
-			{
-				PrintToConsole(client,"Entity limit is nearly reached: %d/%d (%d):%s",
-				count, max, remaining, message);
-			}
-		}
-		else
-		{
-			PrintToServer("Caution: Entity count is getting high!");
-			LogMessage("Entity count is getting high: %i/%i (%i):%s", count, max, remaining, message);
-
-			if (client > 0)
-			{
-				PrintToConsole(client,"Entity count is getting high: %i/%i (%i):%s",
-				count, max, remaining, message);
-			}
-		}
-		return count;
-	}
-	else
-	return 0;
 }

@@ -165,7 +165,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		shopItem[MHEALTH]=War3_CreateShopItem("Medi Health","mhealth","healing gives health","Gives healing target extra hp",9,3000);
 		War3_TFSetItemClasses(shopItem[MHEALTH],TFClass_Medic);
 
-		shopItem[DIVINERAPIER]=War3_CreateShopItem("Divine Rapier", "rapier", "+6 additive damage", "+6 additive damage", 12, 10000);
+		shopItem[DIVINERAPIER]=War3_CreateShopItem("Divine Rapier", "rapier", "+4 additive damage", "+4 additive damage", 17, 10000);
 		shopItem[REFRESHERORB]=War3_CreateShopItem("Refresh Orb", "refreshorb", "1.4x faster ability cooldown", "1.4x faster ability cooldown", 15, 10000);
 		shopItem[REFRESHSHARD]=War3_CreateShopItem("Refresh Shard", "refreshshard", "instantly resets cooldowns", "Instantly resets cooldowns", 5, 10000);
 		War3_SetItemProperty(shopItem[REFRESHSHARD], ITEM_USED_ON_BUY,true);
@@ -541,7 +541,7 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 				return Plugin_Continue;
 			}
 		}
-		if(IsValidEntity(victim) && W3GetDamageIsBullet()&&ValidPlayer(victim)&&ValidPlayer(attacker,true))
+		if(W3GetDamageIsBullet()&&ValidPlayer(victim)&&ValidPlayer(attacker,true))
 		{
 			//DP("bullet 1 claw %d vic alive%d",War3_GetOwnsItem(attacker,shopItem[CLAW]),ValidPlayer(victim,true,true));
 			//int vteam=GetClientTeam(victim);
