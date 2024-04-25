@@ -906,7 +906,7 @@ public Action:event_player_builtobject(Handle:event, const String:name[], bool:d
 		//{
 			int skill_level=War3_GetSkillLevel(owner,thisRaceID,ULTIMATE);
 
-			if(BuildingType == TFObject_Sentry)
+			if(BuildingType == TFObject_Sentry && !GetEntProp(index, Prop_Send, "m_bDisposableBuilding"))
 			{
 				int Frog_level=War3_GetSkillLevel(owner,thisRaceID,SKILL_FROGMAGIC);
 				if(Frog_level>0)
