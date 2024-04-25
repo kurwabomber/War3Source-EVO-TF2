@@ -2,24 +2,24 @@
 
 public War3Source_002_OnW3MissionComplete_OnPluginStart()
 {
-	HookEvent("mvm_mission_complete", Event_MissionComplete, EventHookMode_Post);
+	//MVMVictory
+	HookUserMessage(view_as<UserMsg>(61), Message_MissionVictory);
+}
+public Action Message_MissionVictory(UserMsg msg_id, BfRead msg, const int[] players, int playersNum, bool reliable, bool init){
+	CreateTimer(0.5, GiveMissionRewards);
+	return Plugin_Continue;
 }
 
-public Action:Event_MissionComplete(Handle:event, const String:name[], bool:dontBroadcast)
-{
-	if(MapChanging || War3SourcePause) return Plugin_Continue;
+public Action GiveMissionRewards(Handle timer){
+	char missionName[512];
+	int ObjectiveEntity = FindEntityByClassname(-1, "tf_objective_resource");
+	if(IsValidEntity(ObjectiveEntity))
+		GetEntPropString(ObjectiveEntity, Prop_Send, "m_iszMvMPopfileName", missionName, sizeof(missionName));
 
-	char missionName[64];
-	char mapName[64];
-	GetEventString(event, "mission_name", missionName, sizeof(missionName));
-	GetCurrentMap(mapName, sizeof(mapName));
-
-	if(StrContains(mapName, "mvm_ghost_town")){
+	PrintToChatAll("---- Mission Rewards ----");
+	if(StrContains(missionName, "ghost_town")){
 		GiveAllPlayersXP_Platinum(3000, 35);
 		GiveAllPlayersXP_Gold(20000, 120);
-	}else if(StrContains(missionName, "normal")){
-		GiveAllPlayersXP_Platinum(300, 10);
-		GiveAllPlayersXP_Gold(1000, 40);
 	}else if(StrContains(missionName, "intermediate")){
 		GiveAllPlayersXP_Platinum(600, 17);
 		GiveAllPlayersXP_Gold(2000, 60);
@@ -32,9 +32,11 @@ public Action:Event_MissionComplete(Handle:event, const String:name[], bool:dont
 	}else if(StrContains(missionName, "expert")){
 		GiveAllPlayersXP_Platinum(900, 35);
 		GiveAllPlayersXP_Gold(8000, 120);
+	}else{
+		GiveAllPlayersXP_Platinum(300, 10);
+		GiveAllPlayersXP_Gold(1000, 40);
 	}
-
-	return Plugin_Continue;
+	return Plugin_Stop;
 }
 
 public GiveAllPlayersXP_Platinum(int xp, int platinum){

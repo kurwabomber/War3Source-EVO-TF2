@@ -93,6 +93,8 @@ public OnPluginStart()
 	War3Source_002_OnW3SupplyLocker_OnPluginStart();
 #endif
 
+	War3Source_002_OnW3MissionComplete_OnPluginStart();
+	
 	War3Source_002_OnW3HealthPickup_OnPluginStart();
 
 	War3Source_Engine_Casting_OnPluginStart();

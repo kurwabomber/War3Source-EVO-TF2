@@ -59,7 +59,7 @@ public War3Source_Engine_XPGold_OnPluginStart()
 	RoundWinXPCvar=CreateConVar("war3_percent_roundwinxp","100","Percent of kill XP awarded for being on the winning team");
 
 	hLevelDifferenceBounus=CreateConVar("war3_xp_level_difference_bonus","0","Bounus Xp awarded per level if victim has a higher level");
-	minplayersXP=CreateConVar("war3_min_players_xp_gain","2","minimum amount of players needed on teams for people to gain xp");
+	minplayersXP=CreateConVar("war3_min_players_xp_gain","0","minimum amount of players needed on teams for people to gain xp");
 	MaxGoldCvar=CreateConVar("war3_maxgold","100");
 
 	KillGoldCvar=CreateConVar("war3_killgold","2");
