@@ -151,11 +151,6 @@ public Action:Heal_BurningSpearTimer(Handle:h,any:data) //1 sec
 			if(War3_GetRace(i)==thisRaceID){
 				CheckSkills(i);
 			}
-		//	if(bSpearActivated[i]) // Client has Burning Spear activated
-		//	{
-		//		SelfDamage = RoundToCeil(War3_GetMaxHP(i) * 0.05);
-		//		War3_DealDamage(i,SelfDamage,i,_,"burningspear"); // damage the client for having it activated
-		//	}
 
 			if(VictimSpearTicks[i] >0)
 			{

@@ -162,6 +162,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_FEAST = War3_AddRaceSkill(thisRaceID, "Feast","Regenerates 10-16% percent of enemy's current HP chance on hit.",false,4);
 		ULT_RAGE = War3_AddRaceSkill(thisRaceID, "Rage","Naix goes into a maddened Rage, gaining 45-85% attack speed for 4-5.5 seconds", true,4);
 
+		War3_AddSkillBuff(thisRaceID, SKILL_BLOODBATH, iAdditionalMaxHealth, HPIncrease);
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }
@@ -252,33 +253,6 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 		//}
 	//}
 //}
-
-public OnRaceChanged(client,oldrace,newrace)
-{
-	if(newrace==thisRaceID)
-	{
-		InitPassiveSkills(client);
-	}
-	else //if(oldrace==thisRaceID)
-	{
-		RemovePassiveSkills(client);
-	}
-}
-
-public InitPassiveSkills(client)
-{
-	// Natural Armor Buff
-	//War3_SetBuff(client,fArmorPhysical,thisRaceID,1.0);
-	new level = War3_GetSkillLevel(client, thisRaceID, SKILL_BLOODBATH);
-	War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,HPIncrease[level]);
-}
-
-public RemovePassiveSkills(client)
-{
-	//War3_SetBuff(client,fArmorPhysical,thisRaceID,0.0);
-	War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,0);
-}
-
 
 public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon)
 {
