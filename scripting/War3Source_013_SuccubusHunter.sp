@@ -271,18 +271,6 @@ public void OnWar3EventSpawn (int client)
 
 		if(W3GetPlayerProp(client,W3PlayerProp::bStatefulSpawn)){
 			War3_SetXP(client,thisRaceID,old_XP+xp);
-		}
-
-		//if (m_iAccount>0) //game with money
-		//{
-			//new old_cash=GetEntData(client, m_iAccount);
-			//SetEntData(client, m_iAccount, old_cash + dollar);
-			//if(W3GetPlayerProp(client,bStatefulSpawn)){
-				//PrintToChat(client,"\0x04[Totem Incanation] \0x01You gained %i HP, %i dollars and %i XP",hp,dollar,xp);
-			//}
-		//}
-		else
-		{
 			new max=W3GetMaxGold(client);
 
 			new old_credits=War3_GetGold(client);
@@ -294,9 +282,7 @@ public void OnWar3EventSpawn (int client)
 			if (new_credits > max)
 			new_credits = max;
 			//PrintToChat(client,"new_credits %d",new_credits);
-			if(W3GetPlayerProp(client,W3PlayerProp::bStatefulSpawn)){
-				War3_SetGold(client,new_credits);
-			}
+			War3_SetGold(client,new_credits);
 			new_credits = War3_GetGold(client);
 
 			if (new_credits > 0){
