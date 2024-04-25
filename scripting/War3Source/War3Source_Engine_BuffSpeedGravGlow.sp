@@ -278,6 +278,8 @@ public Engine_BuffSpeedGravGlow_DeciSecondTimer()
 		return 0;
 }
 
+float fclassbasespeed;
+float fnewmaxspeed;
 
 public War3Source_Engine_BuffSpeedGravGlow_OnGameFrame()
 {
@@ -313,10 +315,14 @@ public War3Source_Engine_BuffSpeedGravGlow_OnGameFrame()
 					speedmulti=(speedmulti * GetBuffStackedFloat(client,fSlow));
 					speedmulti=(speedmulti * GetBuffStackedFloat(client,fSlow2));
 				}
-				fnewmaxspeed=(speedBefore[client] * speedmulti);
+
+				fclassbasespeed=TF2_GetClassSpeed(p_properties.Get(client, W3PlayerProp::CurrentClass));
+
+				fnewmaxspeed=(fclassbasespeed * speedmulti);
 				if(fnewmaxspeed<0.1)
 					fnewmaxspeed=0.1;
 
+				speedWeSet[client]=fnewmaxspeed;
 				SetEntDataFloat(client,m_OffsetSpeed,fnewmaxspeed,true);
 			}
 			new MoveType:currentmovetype=GetEntityMoveType(client);

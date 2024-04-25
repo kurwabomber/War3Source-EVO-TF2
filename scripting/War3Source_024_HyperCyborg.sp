@@ -107,7 +107,6 @@ public OnPluginStart()
 {
 	ownerOffset = FindSendPropInfo("CBaseObject", "m_hBuilder");
 	StartRepairTimer();
-	CreateTimer(0.3,AttackspeedCalc,_,TIMER_REPEAT);      // Berserker ASPD Buff timer
 }
 
 public Action:OnTick(Handle:timer)
@@ -196,41 +195,7 @@ public OnMapStart()
 {
 	CreateTimer(1.0, Timer_Ammo_Regen, _, TIMER_REPEAT);
 }
-public Action:AttackspeedCalc(Handle:timer,any:userid) // Check each 0.5 second if the conditions for Berserkers Blood have changed
-{
-	if(thisRaceID>0)
-	{
-		for(new i=1;i<=MaxClients;i++)
-		{
-			if(ValidPlayer(i,true))
-			{
-				if(War3_GetRace(i)==thisRaceID)
-				{
-					new client=i;
-					new AutoDispenser_level=War3_GetSkillLevel(client,thisRaceID,SKILL_AUTO_DISPENSER);
-					
-					new weapon = GetPlayerWeaponSlot(client, 2);
-					if(IsValidEntity(weapon))
-					{
-						new CWeapon = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
-						if(IsValidEntity(CWeapon))
-						{
-							if(CWeapon == weapon)
-							{
-								War3_SetBuff(client,fAttackSpeed,thisRaceID,WrenchRateOfFire[AutoDispenser_level]);
-							}
-							else
-							{
-								War3_SetBuff(client,fAttackSpeed,thisRaceID,1.0);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	return Plugin_Continue;
-}
+
 public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 {
 	if(War3_GetRace(client)!=thisRaceID)
@@ -263,8 +228,6 @@ public Action:Timer_Ammo_Regen(Handle:timer, any:user)
 			continue;	// Client isnt valid
 
 		new Nano_Production_level=War3_GetSkillLevel(i,thisRaceID,SKILL_NANO_PRODUCTION);
-		if(Nano_Production_level<=0)
-			continue;
 			
 		if(!IsUsingNano[i])
 			continue;
@@ -294,6 +257,7 @@ public OnRaceChanged(client,oldrace,newrace)
 		RemovePassiveSkills(client);
 	}
 }
+
 /* ****************************** OnSkillLevelChanged ************************** */
 
 public OnSkillLevelChanged(client,race,skill,newskilllevel)
@@ -365,6 +329,10 @@ public InitPassiveSkills(client)
 		SentryRocketRefillRateByDispenserLevel[0] = 2;
 		SentryRocketRefillRateByDispenserLevel[1] = 3;
 		SentryRocketRefillRateByDispenserLevel[2] = 4;
+
+		new weapon = GetPlayerWeaponSlot(client, 2);
+		if(IsValidEntity(weapon))
+			TF2Attrib_SetByName(weapon, "fire rate penalty HIDDEN", 1.0/WrenchRateOfFire[AutoDispenser_level]);
 	}
 }
 
@@ -372,7 +340,9 @@ public InitPassiveSkills(client)
 
 public RemovePassiveSkills(client)
 {
-	War3_SetBuff(client,fAttackSpeed,thisRaceID,1.0);
+	new weapon = GetPlayerWeaponSlot(client, 2);
+	if(IsValidEntity(weapon))
+		TF2Attrib_RemoveByName(weapon, "fire rate penalty HIDDEN");
 }
 
 public Action:OnW3TakeDmgBullet(victim,attacker,Float:damage)
@@ -420,6 +390,15 @@ public OnWar3EventSpawn(client){
 	{
 		bFrosted[client]=false;
 		War3_SetBuff(client,fSlow,thisRaceID,1.0);
+	}
+	
+	if(War3_GetRace(client)==thisRaceID)
+	{
+		InitPassiveSkills(client);
+	}
+	else
+	{
+		RemovePassiveSkills(client);
 	}
 }
 
@@ -560,7 +539,7 @@ ProcessOtherBuildings(
 {
 	int owner = -1;
 	if(HasEntProp(dispenserEntity,Prop_Send,"m_hBuilder"))
-		owner = GetEntPropEnt(owner,Prop_Send,"m_hBuilder" );
+		owner = GetEntPropEnt(dispenserEntity,Prop_Send,"m_hBuilder" );
 
 	new bool:isSentry =
 		(strcmp(otherBuildingClassname, CLASSNAME_SENTRY) == 0);

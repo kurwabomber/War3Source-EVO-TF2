@@ -228,7 +228,6 @@ public War3Source_Engine_Weapon_DeciSecondTimer()
 				TF2Attrib_SetByName(client, "fire rate bonus", 1.0/multi);
 				TF2Attrib_SetByName(client, "effect bar recharge rate increased", 1.0/multi);
 				TF2Attrib_SetByName(client, "mult_item_meter_charge_rate", 1.0/multi);
-				TF2Attrib_ClearCache(client);
 				for(new i = 0; i < 2; i++)
 				{
 					new iEnt = TF2Util_GetPlayerLoadoutEntity(client, i);

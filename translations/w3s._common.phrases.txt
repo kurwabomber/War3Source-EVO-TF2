@@ -1178,7 +1178,7 @@
 	{
 		"en"		"Your skills will be reset when you die"
 	}
-	"Your skills have been reset for your current race"
+	"Your skills have been reset for your current race."
 	{
 		"en"		"Your skills have been reset for your current race."
 	}

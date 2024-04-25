@@ -332,13 +332,14 @@ public bool IsBurningFilter(int client,int target,int SkillID)
 }
 public Action BurnLoop(Handle timer,any userid)
 {
+	PrintToServer("its triggering");
 	int victim=GetClientOfUserId(userid);
 	int attacker=GetClientOfUserId(BeingBurnedBy[victim]);
 
-	if(BurnsRemaining[victim]>0)
+	if(BurnsRemaining[victim]<=0)
 		return Plugin_Stop;
 
-	if(victim>0 && attacker>0 && IsClientInGame(victim) && IsClientInGame(attacker) && IsPlayerAlive(victim))
+	if(ValidPlayer(victim, true))
 	{
 		if (W3HasImmunity(victim,Immunity_Ultimates))
 		{
@@ -352,7 +353,7 @@ public Action BurnLoop(Handle timer,any userid)
 		BurnsRemaining[victim]--;
 		//PrintToChatAll("Burns Remaining %d (inside function)",BurnsRemaining[victim]);
 		int damage = ULT_DAMAGE_TF;
-		float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
+		float resistance = W3GetBuffStackedFloat(victim, fUltimateResistance);
 
 		if(War3_DealDamage(victim,RoundFloat(damage*resistance),attacker,DMG_BURN,"flamestrike",_,W3DMGTYPE_MAGIC))
 		{
@@ -455,7 +456,14 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 							}
 							else
 							{
-								if(War3_GetGold(victim)>0)
+								if(IsFakeClient(victim)){
+									int stolen=War3_GetLevel(attacker, War3_GetRace(attacker))/2;
+									War3_SetGold(attacker,War3_GetGold(attacker)+stolen);
+									W3MsgStoleGold(victim,attacker,stolen);
+									W3FlashScreen(attacker,RGBA_COLOR_BLUE);
+									siphonsfx(victim);
+								}
+								else if(War3_GetGold(victim)>0)
 								{
 									//int stolen=RoundFloat(float(War3_GetGold(victim))*TFCreditStealPercent);
 									int stolen=War3_GetLevel(attacker, War3_GetRace(attacker));
