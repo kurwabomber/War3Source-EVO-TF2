@@ -279,7 +279,10 @@ public Engine_BuffSpeedGravGlow_DeciSecondTimer()
 }
 
 float fclassbasespeed;
+float fBeforeSpeedDifferenceMULTI;
 float fnewmaxspeed;
+float fWarCraftBonus_AND_TF2Bonus;
+const float fWar3_MaxSpeedLimit = 9999.0;
 
 public War3Source_Engine_BuffSpeedGravGlow_OnGameFrame()
 {
@@ -316,13 +319,61 @@ public War3Source_Engine_BuffSpeedGravGlow_OnGameFrame()
 					speedmulti=(speedmulti * GetBuffStackedFloat(client,fSlow2));
 				}
 
-				fclassbasespeed=TF2_GetClassSpeed(p_properties.Get(client, W3PlayerProp::CurrentClass));
+				if(fWar3_MaxSpeedLimit>0.0)
+				{
+					//Create Speed Limit
+					//This is our Max Speed Limit
+					fclassbasespeed=TF2_GetClassSpeed(p_properties.Get(client, W3PlayerProp::CurrentClass));
 
-				fnewmaxspeed=(fclassbasespeed * speedmulti);
-				if(fnewmaxspeed<0.1)
-					fnewmaxspeed=0.1;
+					fBeforeSpeedDifferenceMULTI = (speedBefore[client] / fclassbasespeed);
 
-				speedWeSet[client]=fnewmaxspeed;
+					if(fBeforeSpeedDifferenceMULTI>=fWar3_MaxSpeedLimit)
+					{
+						// apply no bonuses and don't change speed
+						speedmulti=fBeforeSpeedDifferenceMULTI;
+
+						currentmaxspeed=fclassbasespeed;
+					}
+					else
+					{
+						fWarCraftBonus_AND_TF2Bonus = (fBeforeSpeedDifferenceMULTI + speedmulti)-1.0;
+						if(fWarCraftBonus_AND_TF2Bonus>=fWar3_MaxSpeedLimit)
+						{
+
+							speedmulti = fWar3_MaxSpeedLimit;
+							if(fBeforeSpeedDifferenceMULTI!=0.0)
+							{
+								speedBefore[client]=(fclassbasespeed * fBeforeSpeedDifferenceMULTI);
+							}
+							else
+							{
+								speedBefore[client]=currentmaxspeed;
+							}
+						}
+						else
+						{
+							speedmulti=fWarCraftBonus_AND_TF2Bonus;
+						}
+					}
+
+					gspeedmulti[client]=speedmulti;
+					fnewmaxspeed=(fclassbasespeed * speedmulti);
+					if(fnewmaxspeed<0.1)
+					{
+						fnewmaxspeed=0.1;
+					}
+					speedWeSet[client]=fnewmaxspeed;
+				}
+				else
+				{
+					gspeedmulti[client]=speedmulti;
+					fnewmaxspeed=(speedBefore[client] * speedmulti);
+					if(fnewmaxspeed<0.1)
+					{
+						fnewmaxspeed=0.1;
+					}
+					speedWeSet[client]=fnewmaxspeed;
+				}
 				SetEntDataFloat(client,m_OffsetSpeed,fnewmaxspeed,true);
 			}
 			new MoveType:currentmovetype=GetEntityMoveType(client);
@@ -366,5 +417,4 @@ stock GetWeaponAlpha(client)
 	}
 	return 255;
 }
-
 
