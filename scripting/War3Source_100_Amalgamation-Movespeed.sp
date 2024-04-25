@@ -113,7 +113,7 @@ public Action:Timer_CheckWindWalker(Handle:timer)
 				{
 					WindWalkerActivated[i] = true;
 					War3_SetBuff(i,fInvisibilitySkill,thisRaceID,1.0-WindWalkerInvis[skilllvl]);
-					War3_SetBuff(i,fMaxSpeed,thisRaceID,1.0+WindWalkerMoveSpeed[skilllvl]);
+					War3_SetBuff(i,fMaxSpeed2,thisRaceID, WindWalkerMoveSpeed[skilllvl]);
 				}
 			}
 		}
@@ -122,7 +122,7 @@ public Action:Timer_CheckWindWalker(Handle:timer)
 StopWindWalker(client)
 {	
 	WindWalkerActivated[client] = false;
-	War3_SetBuff(client,fMaxSpeed,thisRaceID, 1.0, client);
+	War3_SetBuff(client,fMaxSpeed2,thisRaceID, 0.0, client);
 	War3_SetBuff(client,fInvisibilitySkill,thisRaceID, 1.0, client);
 	WindWalkerTimer[client] = WindWalkerStart;
 }

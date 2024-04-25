@@ -544,18 +544,20 @@ public Action OnW3TakeDmgAllPre(int victim, int attacker, float damage)
 	}
 //	if(ValidPlayer(attacker)&&bTrapped[attacker]){ //trapped people can only use knife
 //	}
-	if(ValidPlayer(attacker,true)&&IsInOwnSphere(victim)&&!bTrapped[attacker]){ //cant shoot to inside the sphere
-		if(!W3HasImmunity(attacker,Immunity_Ultimates))
-		{
+	if(ValidPlayer(attacker,true) && ValidPlayer(victim, true)){ //cant shoot to inside the sphere
+		if(IsInOwnSphere(victim) && !bTrapped[attacker]){
+			if(!W3HasImmunity(attacker,Immunity_Ultimates))
+			{
+				War3_DamageModPercent(0.0);
+			}
+			else
+			{
+				War3_NotifyPlayerImmuneFromSkill(victim, attacker, ULT_SPHERE);
+			}
+		}
+		else if (IsInOwnSphere(attacker)&&!bTrapped[victim]){
 			War3_DamageModPercent(0.0);
 		}
-		else
-		{
-			War3_NotifyPlayerImmuneFromSkill(victim, attacker, ULT_SPHERE);
-		}
-	}
-	if(ValidPlayer(attacker,true)&&IsInOwnSphere(attacker)&&!bTrapped[victim]){	//cant shoot outside of your sphere
-		War3_DamageModPercent(0.0);
 	}
 	//OnW3TakeDmgAllPre_func(victim,attacker,Float:damage);
 	return Plugin_Changed;

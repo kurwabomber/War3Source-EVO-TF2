@@ -10,14 +10,6 @@ War3Source_InitCVars()
 
 	gh_AllowDeveloperPowers = CreateConVar("war3_allow_developer_powers", "0", "0 disabled / 1 enabled\nallows developer to bypass race restrictions, etc.");
 
-#if GGAMETYPE == GGAME_TF2
-	gh_MaxSpeedLimitConvar = CreateConVar("war3_maxspeed_limit", "9999.0", "9999.0 to disable speed limit. Must be a float.\nControls the overall speed limit of Warcraft, and allows TF2 speed bonuses to exceed it.");
-
-	gh_MaxSpeedDebugConvar = CreateConVar("war3_maxspeed_debug", "0", "0 disabled / 1 enabled\nallows maxspeed debug messages.");
-
-	HookConVarChange(gh_MaxSpeedDebugConvar, War3ConVarChanged);
-	HookConVarChange(gh_MaxSpeedLimitConvar, War3ConVarChanged);
-#endif
 	HookConVarChange(gh_CVAR_War3Source_Pause, War3ConVarChanged);
 
 	/*
@@ -67,39 +59,5 @@ public War3ConVarChanged(Handle:cvar, const String:oldVal[], const String:newVal
 			War3_ChatMessage(0,"{yellow}War3Source:EVO has now resumed.");
 		}
 	}
-#if GGAMETYPE == GGAME_TF2
-	else if(cvar == gh_MaxSpeedLimitConvar)
-	{
-		fWar3_MaxSpeedLimit = StringToFloat(newVal);
-
-		War3_ChatMessage(0,"{yellow}Max Warcraft Speed limits:");
-		float fScout = (fWar3_MaxSpeedLimit * TF2_GetClassSpeed(TFClass_Scout));
-		float fSoldier = (fWar3_MaxSpeedLimit * TF2_GetClassSpeed(TFClass_Soldier));
-		float fDemo = (fWar3_MaxSpeedLimit * TF2_GetClassSpeed(TFClass_DemoMan));
-		float fMedic = (fWar3_MaxSpeedLimit * TF2_GetClassSpeed(TFClass_Medic));
-		float fPyro = (fWar3_MaxSpeedLimit * TF2_GetClassSpeed(TFClass_Pyro));
-		float fSpy = (fWar3_MaxSpeedLimit * TF2_GetClassSpeed(TFClass_Spy));
-		float fEngineer = (fWar3_MaxSpeedLimit * TF2_GetClassSpeed(TFClass_Engineer));
-		float fSniper = (fWar3_MaxSpeedLimit * TF2_GetClassSpeed(TFClass_Sniper));
-		float fHeavy = (fWar3_MaxSpeedLimit * TF2_GetClassSpeed(TFClass_Heavy));
-
-		War3_ChatMessage(0,"{yellow}Scout %.2f | Soldier %.2f | Demo %.2f",fScout,fSoldier,fDemo);
-		War3_ChatMessage(0,"{yellow}Medic %.2f | Pyro %.2f | Spy %.2f",fMedic,fPyro,fSpy);
-		War3_ChatMessage(0,"{yellow}Engineer %.2f | Sniper %.2f | Heavy %.2f",fEngineer,fSniper,fHeavy);
-
-		// force speed update on all alive clients
-		for(int client=1;client<=MaxClients;client++)
-		{
-			if(ValidPlayer(client,true))
-			{
-				reapplyspeed[client]++;
-			}
-		}
-	}
-	else if(cvar == gh_MaxSpeedDebugConvar)
-	{
-		bMaxSpeedDebugMessages = view_as<bool>(StringToInt(newVal));
-	}
-#endif
 }
 

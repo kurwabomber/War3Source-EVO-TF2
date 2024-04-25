@@ -1220,12 +1220,12 @@ stock bool:CanSelectRace(client,race,bool:silence=false) {
 	W3SetVar(EventArg2,silence);
 	new bool:value=W3Denyable(DN_CanSelectRace,client);
 	//DP("dp %d",value);
-	if(value==false && W3IsDeveloper(client)) {
+	/*if(value==false && W3IsDeveloper(client)) {
 		//DP("dp2 %d",value);
 		War3_ChatMessage(client,"You are normally not allowed to select this race, but since you are developer we will allow you to select this race");
 
 		return true;
-	}
+	}*/
 	return value;
 }
 

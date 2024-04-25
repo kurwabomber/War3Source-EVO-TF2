@@ -231,33 +231,24 @@ public OnUltimateCommand(client,race,bool:pressed)
 	if(race==thisRaceID && pressed && userid>1 && IsPlayerAlive(client) && !Silenced(client))
 	{
 		new ult_level=War3_GetSkillLevel(client,race,ULT_LASTSTAND);
-		if(ult_level>0)
+		if(War3_SkillNotInCooldown(client,thisRaceID,ULT_LASTSTAND,true)) //not in the 0.2 second delay when we check stuck via moving
 		{
-			
-			if(War3_SkillNotInCooldown(client,thisRaceID,ULT_LASTSTAND,true)) //not in the 0.2 second delay when we check stuck via moving
+			// LAST STAND
+			// Gives Uber and 25% more Attack power to self for 2/4/6/8 seconds
+			// Must be in siege mode
+			if(ARMOR_ENABLED[client])
 			{
-	// LAST STAND
-	// Gives Uber and 25% more Attack power to self for 2/4/6/8 seconds
-	// Must be in siege mode
-	if(ARMOR_ENABLED[client])
-	{
-		// is in siege mode
-		TF2_AddCondition(client,TFCond_Ubercharged,fLastStandUber[ult_level]);
-		War3_SetBuff(client,fAttackSpeed,thisRaceID,1.25);
-		CreateTimer(fLastStandUber[ult_level],Timer_Disable_Ultimate,GetClientUserId(client));
-		//new Float:cooldown=GetConVarFloat(ultCooldownCvar);
-		War3_CooldownMGR(client,GetConVarFloat(ultCooldownCvar),thisRaceID,ULT_LASTSTAND,_,_);
-	}
-	else
-	{
-		W3Hint(client,HINT_SKILL_STATUS,4.0,"Must be Siege Mode");
-	}
+				// is in siege mode
+				TF2_AddCondition(client,TFCond_Ubercharged,fLastStandUber[ult_level]);
+				War3_SetBuff(client,fAttackSpeed,thisRaceID,1.25);
+				CreateTimer(fLastStandUber[ult_level],Timer_Disable_Ultimate,GetClientUserId(client));
+				//new Float:cooldown=GetConVarFloat(ultCooldownCvar);
+				War3_CooldownMGR(client,GetConVarFloat(ultCooldownCvar),thisRaceID,ULT_LASTSTAND,_,_);
 			}
-		}
-		else
-		{
-			W3MsgUltNotLeveled(client);
-			
+			else
+			{
+				W3Hint(client,HINT_SKILL_STATUS,4.0,"Must be Siege Mode");
+			}
 		}
 	}
 }

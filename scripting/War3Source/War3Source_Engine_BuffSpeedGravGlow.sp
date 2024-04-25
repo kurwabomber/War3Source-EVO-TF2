@@ -278,10 +278,6 @@ public Engine_BuffSpeedGravGlow_DeciSecondTimer()
 		return 0;
 }
 
-float fclassbasespeed;
-float fBeforeSpeedDifferenceMULTI;
-float fnewmaxspeed;
-float fWarCraftBonus_AND_TF2Bonus;
 
 public War3Source_Engine_BuffSpeedGravGlow_OnGameFrame()
 {
@@ -317,150 +313,9 @@ public War3Source_Engine_BuffSpeedGravGlow_OnGameFrame()
 					speedmulti=(speedmulti * GetBuffStackedFloat(client,fSlow));
 					speedmulti=(speedmulti * GetBuffStackedFloat(client,fSlow2));
 				}
-
-#if GGAMETYPE == GGAME_TF2
-				if(fWar3_MaxSpeedLimit>0.0)
-				{
-					if(bMaxSpeedDebugMessages==true)
-					{
-						PrintToConsole(client,"------------------------------------------------------------");
-						PrintToConsole(client,"speedmulti = %.2f",speedmulti);
-						PrintToConsole(client,"speedWeSet[client] = %.2f",speedWeSet[client]);
-						PrintToConsole(client,"speedBefore[client] = %.2f",speedBefore[client]);
-					}
-
-					//Create Speed Limit
-					//This is our Max Speed Limit
-					fclassbasespeed=TF2_GetClassSpeed(p_properties.Get(client, W3PlayerProp::CurrentClass));
-
-					if(bMaxSpeedDebugMessages==true)
-					{
-						PrintToConsole(client,"fclassbasespeed is %.2f",fclassbasespeed);
-					}
-
-					fBeforeSpeedDifferenceMULTI = (speedBefore[client] / fclassbasespeed);
-
-					if(bMaxSpeedDebugMessages==true)
-					{
-						PrintToConsole(client,"fBeforeSpeedDifferenceMULTI is %.2f",fBeforeSpeedDifferenceMULTI);
-					}
-
-					if(fBeforeSpeedDifferenceMULTI>=fWar3_MaxSpeedLimit)
-					{
-						if(bMaxSpeedDebugMessages==true)
-						{
-							PrintToConsole(client,"if(fBeforeSpeedDifferenceMULTI>=fWar3_MaxSpeedLimit)");
-						}
-						// apply no bonuses and don't change speed
-						speedmulti=fBeforeSpeedDifferenceMULTI;
-						if(bMaxSpeedDebugMessages==true)
-						{
-							PrintToConsole(client,"apply no bonuses and don't change speed");
-						}
-
-						currentmaxspeed=fclassbasespeed;
-						if(bMaxSpeedDebugMessages==true)
-						{
-							PrintToConsole(client,"currentmaxspeed=fclassbasespeed %.2f",currentmaxspeed);
-						}
-					}
-					else
-					{
-						if(bMaxSpeedDebugMessages==true)
-						{
-							PrintToConsole(client,"if(fBeforeSpeedDifferenceMULTI>=fWar3_MaxSpeedLimit) ELSE");
-						}
-
-						fWarCraftBonus_AND_TF2Bonus = (fBeforeSpeedDifferenceMULTI + speedmulti)-1.0;
-						if(bMaxSpeedDebugMessages==true)
-						{
-							PrintToConsole(client,"fWarCraftBonus_AND_TF2Bonus is %.2f",fWarCraftBonus_AND_TF2Bonus);
-						}
-
-						if(bMaxSpeedDebugMessages==true)
-						{
-							PrintToConsole(client,"if(fWar3_MaxSpeedLimit>0.0)");
-						}
-						if(fWarCraftBonus_AND_TF2Bonus>=fWar3_MaxSpeedLimit)
-						{
-							if(bMaxSpeedDebugMessages==true)
-							{
-								PrintToConsole(client,"if(War3Source_MaxSpeedLimit>0.0)");
-							}
-
-							speedmulti = fWar3_MaxSpeedLimit;
-							if(bMaxSpeedDebugMessages==true)
-							{
-								PrintToConsole(client,"speedmulti = fWar3_MaxSpeedLimit = %.2f",speedmulti);
-							}
-							if(fBeforeSpeedDifferenceMULTI!=0.0)
-							{
-								speedBefore[client]=(fclassbasespeed * fBeforeSpeedDifferenceMULTI);
-								if(bMaxSpeedDebugMessages==true)
-								{
-									PrintToConsole(client,"speedBefore[client]=(fclassbasespeed * fBeforeSpeedDifferenceMULTI) is %.2f",speedBefore[client]);
-								}
-							}
-							else
-							{
-								speedBefore[client]=currentmaxspeed;
-								if(bMaxSpeedDebugMessages==true)
-								{
-									PrintToConsole(client,"speedBefore[client]=currentmaxspeed is %.2f",speedBefore[client]);
-								}
-							}
-						}
-						else
-						{
-							speedmulti=fWarCraftBonus_AND_TF2Bonus;
-						}
-					}
-
-					gspeedmulti[client]=speedmulti;
-					if(bMaxSpeedDebugMessages==true)
-					{
-						PrintToConsole(client,"gspeedmulti[client]=speedmulti = %.2f",gspeedmulti[client]);
-						PrintToConsole(client,"fclassbasespeed = %.2f",fclassbasespeed);
-					}
-					fnewmaxspeed=(fclassbasespeed * speedmulti);
-					if(fnewmaxspeed<0.1)
-					{
-						fnewmaxspeed=0.1;
-					}
-					speedWeSet[client]=fnewmaxspeed;
-					if(bMaxSpeedDebugMessages==true)
-					{
-						PrintToConsole(client,"speedWeSet[client]=fnewmaxspeed = %.2f",fnewmaxspeed);
-					}
-				}
-				else
-				{
-					gspeedmulti[client]=speedmulti;
-					if(bMaxSpeedDebugMessages==true)
-					{
-						PrintToConsole(client,"gspeedmulti[client]=speedmulti = %.2f",gspeedmulti[client]);
-						PrintToConsole(client,"speedBefore[client] = %.2f",speedBefore[client]);
-					}
-					fnewmaxspeed=(speedBefore[client] * speedmulti);
-					if(fnewmaxspeed<0.1)
-					{
-						fnewmaxspeed=0.1;
-					}
-					speedWeSet[client]=fnewmaxspeed;
-					if(bMaxSpeedDebugMessages==true)
-					{
-						PrintToConsole(client,"speedWeSet[client]=fnewmaxspeed = %.2f",fnewmaxspeed);
-					}
-				}
-#else
-				gspeedmulti[client]=speedmulti;
-				fnewmaxspeed=FloatMul(speedBefore[client],speedmulti);
+				fnewmaxspeed=(speedBefore[client] * speedmulti);
 				if(fnewmaxspeed<0.1)
-				{
 					fnewmaxspeed=0.1;
-				}
-				speedWeSet[client]=fnewmaxspeed;
-#endif
 
 				SetEntDataFloat(client,m_OffsetSpeed,fnewmaxspeed,true);
 			}
