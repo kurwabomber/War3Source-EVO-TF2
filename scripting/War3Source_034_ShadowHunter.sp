@@ -150,6 +150,8 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 	}
 	if(ValidPlayer(victim,true)&&ValidPlayer(attacker,false))
 	{
+		if(War3_GetRace(attacker) != thisRaceID)
+			return Plugin_Continue;
 		//Hidden Attacks
 		new skill_level = War3_GetSkillLevel(attacker,thisRaceID,SKILL_HIDDENATTACKS);
 		new Float:VictimAngle[3];
