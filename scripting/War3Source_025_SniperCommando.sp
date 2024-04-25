@@ -206,7 +206,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 		{
 			if(!War3_IsInSpawn(client))
 			{
-				War3_CastSpell(client, 0, SpellEffectsLight, SPELLCOLOR_GOLD, thisRaceID, ULT_SCAN, 3.0);
+				War3_CastSpell(client, 0, SpellEffectsLight, SPELLCOLOR_GOLD, thisRaceID, ULT_SCAN, 1.0);
 				War3_CooldownMGR(client,UAVCooldown[skill_level],thisRaceID,ULT_SCAN,false,true);
 			}
 			else

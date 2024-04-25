@@ -168,6 +168,7 @@
 #include "War3Source/War3Source_Engine_WCX_Engine_Dodge.sp"
 #include "War3Source/War3Source_Engine_WCX_Engine_Skills.sp"
 #include "War3Source/War3Source_Engine_WCX_Engine_Teleport.sp"
+#include "War3Source/War3Source_Engine_WCX_Engine_Reflect.sp"
 
 #if GGAMETYPE != GGAME_CSGO
 #include "War3Source/War3Source_Engine_SteamTools.sp"
@@ -447,7 +448,6 @@ public OnMapStart()
 	War3Source_Engine_BotControl_OnMapStart();
 #endif
 	//War3Source_Engine_PlayerDeathWeapons_OnMapStart();
-	War3Source_Engine_Weapon_OnMapStart();
 
 	War3Source_003_RegisterPrivateForwards_OnMapStart();
 

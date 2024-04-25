@@ -3,23 +3,14 @@
 //#assert GGAMEMODE == MODE_WAR3SOURCE
 #include <tf2attributes>
 
-new m_OffsetActiveWeapon;
-new m_OffsetNextPrimaryAttack;
-
 new String:weaponsAllowed[MAXPLAYERSCUSTOM][MAXRACES][300];
 new restrictionPriority[MAXPLAYERSCUSTOM][MAXRACES];
 new highestPriority[MAXPLAYERSCUSTOM];
 new bool:restrictionEnabled[MAXPLAYERSCUSTOM][MAXRACES]; ///if restriction has length, then this should be true (caching allows quick skipping)
 new bool:hasAnyRestriction[MAXPLAYERSCUSTOM]; //if any of the races said client has restriction, this is true (caching allows quick skipping)
 
-
-
-new g_iWeaponRateQueue[MAXPLAYERSCUSTOM][2]; //ent, client
-new g_iWeaponRateQueueLength;
-
 new timerskip;
 
-new Handle:hweaponFiredFwd;
 /*
 public Plugin:myinfo=
 {
@@ -30,20 +21,6 @@ public Plugin:myinfo=
 	url="http://war3source.com/"
 };
 */
-public War3Source_Engine_Weapon_OnMapStart()
-{
-	m_OffsetActiveWeapon=FindSendPropInfo("CBasePlayer","m_hActiveWeapon");
-	if(m_OffsetActiveWeapon==-1)
-	{
-		LogError("[War3Source:EVO] Error finding active weapon offset.");
-	}
-	m_OffsetNextPrimaryAttack= FindSendPropInfo("CBaseCombatWeapon","m_flNextPrimaryAttack");
-	if(m_OffsetNextPrimaryAttack==-1)
-	{
-		LogError("[War3Source:EVO] Error finding active weapon offset.");
-	}
-	//RegConsoleCmd("w3dropweapon",cmddroptest);
-}
 
 /*
 public Action:cmddroptest(client,args){
@@ -63,27 +40,9 @@ public bool:War3Source_Engine_Weapon_InitNatives()
 	return true;
 }
 
-public bool:War3Source_Engine_Weapon_InitNativesForwards()
-{
-	hweaponFiredFwd=CreateGlobalForward("OnWeaponFired",ET_Ignore,Param_Cell);
-	return true;
-}
-
 public NW3GetCurrentWeaponEnt(Handle:plugin,numParams)
 {
-	return GetCurrentWeaponEnt(GetNativeCell(1));
-}
-GetCurrentWeaponEnt(client)
-{
-	if(client)
-	{
-		int wep = GetEntDataEnt2(client,m_OffsetActiveWeapon);
-		return wep;
-	}
-	else
-	{
-		return -1;
-	}
+	return GetEntPropEnt(GetNativeCell(1), Prop_Send, "m_hActiveWeapon");
 }
 
 public NW3DropWeapon(Handle:plugin,numParams)
@@ -228,7 +187,7 @@ public War3Source_Engine_Weapon_DeciSecondTimer()
 					GetClientName(client,name,sizeof(name));
 					//PrintToChatAll("ValidPlayer %d",client);
 
-					new wpnent = GetCurrentWeaponEnt(client);
+					new wpnent = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
 					//PrintIfDebug(client,"   weapon ent %d %d",client,wpnent);
 					//new String:WeaponName[32];
 
@@ -266,96 +225,18 @@ public War3Source_Engine_Weapon_DeciSecondTimer()
 					//	}
 				}
 				new Float:multi = W3GetBuffStackedFloat(client,fAttackSpeed);
+				TF2Attrib_SetByName(client, "fire rate bonus", 1.0/multi);
 				TF2Attrib_SetByName(client, "effect bar recharge rate increased", 1.0/multi);
 				TF2Attrib_SetByName(client, "mult_item_meter_charge_rate", 1.0/multi);
 				TF2Attrib_ClearCache(client);
 				for(new i = 0; i < 2; i++)
 				{
-					new iEnt = GetPlayerWeaponSlot(client, i);
+					new iEnt = TF2Util_GetPlayerLoadoutEntity(client, i);
 					if(IsValidEntity(iEnt))
-					{
 						TF2Attrib_ClearCache(iEnt);
-					}
 				}
 			}
 		}
 	}
 	return 1;
-}
-
-//=============================
-// War3Source_Engine_Weapon >>> OnPlayerRunCmd
-//=============================
-
-
-public WeaponFireEvent(Handle:event,const String:name[],bool:dontBroadcast)
-{
-
-	new client = GetClientOfUserId(GetEventInt(event,"userid"));
-
-	///PrintToServer("3");
-	//SetEntPropVector(client, Prop_Send, "m_vecPunchAngle", Float:{0.0,0.0,0.0});
-
-	//if(!IsRace(client))
-	//  return;
-	// if( (g_fDuration[client] < Getgametime()) || ( g_fMulti[client] < 1.0 ) ) //g_fDuratioin is for "in the fast attack speed mode"
-	//    return;
-	new ent = GetCurrentWeaponEnt(client);
-	if(ent != -1)
-	{
-		//fill the stack for next frame
-		g_iWeaponRateQueue[g_iWeaponRateQueueLength][0] = ent;
-		g_iWeaponRateQueue[g_iWeaponRateQueueLength++][1] = client;
-	}
-	new Handle:oldevent=internal_W3GetVar(SmEvent);
-	internal_W3SetVar(SmEvent,event);
-	Call_StartForward(hweaponFiredFwd);
-	Call_PushCell(client);
-	Call_Finish(dummy);
-	internal_W3SetVar(SmEvent,oldevent);
-}
-
-public Action:TF2_CalcIsAttackCritical(client, weapon, String:weaponname[], &bool:result)
-{
-	// new client = GetClientOfUserId(GetEventInt(event,"userid"));
-	//if(!IsRace(client))
-	//  return;
-	// if( (g_fDuration[client] < Getgametime()) || ( g_fMulti[client] < 1.0 ) ) //g_fDuratioin is for "in the fast attack speed mode"
-	//    return;
-	new ent = GetEntDataEnt2(client,m_OffsetActiveWeapon);
-	if(ent != -1)
-	{
-		//fill the stack for next frame
-		g_iWeaponRateQueue[g_iWeaponRateQueueLength][0] = ent;
-		g_iWeaponRateQueue[g_iWeaponRateQueueLength][1] = client;
-		g_iWeaponRateQueueLength++;
-	}
-
-	Call_StartForward(hweaponFiredFwd);
-	Call_PushCell(client);
-	Call_Finish(dummy);
-
-	return Plugin_Continue;
-}
-
-public War3Source_Engine_Weapon_OnGameFrame()
-{
-	if(g_iWeaponRateQueueLength>0)       //see events
-	{
-		decl ent, client, Float:time;
-		new Float:gametime = GetGameTime();
-		for(new i = 0; i < g_iWeaponRateQueueLength; i++) {
-			ent = g_iWeaponRateQueue[i][0];
-			if(IsValidEntity(ent)) {   //weapon ent is valid
-
-				client = g_iWeaponRateQueue[i][1];
-				new Float:multi = W3GetBuffStackedFloat(client,fAttackSpeed);
-				if(multi!=1.0){        //do we need to change it?
-					time = (GetEntDataFloat(ent,m_OffsetNextPrimaryAttack) - gametime) / multi;
-					SetEntDataFloat(ent,m_OffsetNextPrimaryAttack,time + gametime,true);
-				}
-			}
-		}
-		g_iWeaponRateQueueLength = 0;
-	}
 }

@@ -16,7 +16,7 @@
 
 public Plugin:myinfo =
 {
-	name = "Race - Amalgamation - Attackspeed",
+	name = "Race - Amalgamation - Speed",
 	author = "Razor",
 	description = "Amalgamation race for War3Source.",
 	version = "1.0",

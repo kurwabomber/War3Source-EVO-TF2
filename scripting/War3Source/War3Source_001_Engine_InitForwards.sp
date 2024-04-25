@@ -72,8 +72,6 @@ public bool War3Source_InitForwards()
 
 	Return_InitForwards = War3Source_Engine_Wards_Engine_InitNativesForwards();
 
-	Return_InitForwards = War3Source_Engine_Weapon_InitNativesForwards();
-
 	Return_InitForwards = War3Source_Engine_WCX_Engine_Dodge_InitNativesForwards();
 
 	Return_InitForwards = War3Source_Engine_WCX_Engine_Teleport_InitNativesForwards();

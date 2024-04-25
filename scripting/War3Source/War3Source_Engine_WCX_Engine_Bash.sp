@@ -27,11 +27,10 @@ public OnW3TakeDmgAll(victim,attacker,Float:damage){
 	//new dmg=RoundToCeil(damage);
 	if(IS_PLAYER(victim)&&IS_PLAYER(attacker)&&victim>0&&attacker>0&&attacker!=victim)
 	{
-		// Not sure why prevent these weapons?
-		//decl String:weapon[64];
-		//GetEventString(internal_W3GetVar(SmEvent),"weapon",weapon,63);
-		//if(StrEqual(weapon, "crit",false) || StrEqual(weapon, "bash", false) || StrEqual(weapon, "weapon_crit",false) || StrEqual(weapon, "weapon_bash", false))
-			//return;
+		decl String:weapon[64];
+		GetEventString(internal_W3GetVar(SmEvent),"weapon",weapon,63);
+		if(StrEqual(weapon, "weapon_additionaldamage") || StrEqual(weapon, "crit") || StrEqual(weapon, "bash") || StrEqual(weapon, "weapon_crit") || StrEqual(weapon, "weapon_bash"))
+			return;
 
 		new vteam=GetClientTeam(victim);
 		new ateam=GetClientTeam(attacker);

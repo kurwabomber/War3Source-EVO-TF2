@@ -13,6 +13,7 @@
 #include <sourcemod>
 #include <war3source>
 #include <clientprefs>
+#include <tf2utils>
 #pragma semicolon 1
 #pragma tabsize 0
 
@@ -273,7 +274,8 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                         itemalpha=Pow(itemalpha,0.75);
                     }
                     falpha = falpha * itemalpha;
-                    
+                    float totalHealthRegen = (W3GetBuffSumFloat(client, fHPRegen) + TF2Util_GetEntityMaxHealth(client)*W3GetBuffSumFloat(client, fMaxHealthRegen)) * 1+W3GetBuffSumFloat(client, fSustainEfficiency);
+                    float totalLifesteal = W3GetBuffSumFloat(client, fVampirePercent) * 1+W3GetBuffSumFloat(client, fSustainEfficiency);
                     if(falpha != 1.0  )
                     {
                         Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nInvis: x%.2f",MiniHUD_Text, falpha);
@@ -291,21 +293,25 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                     {
                         Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Damage: x%.2f",MiniHUD_Text, W3GetBuffSumFloat(client, fDamageModifier)+1.0);
                     }
+                    if(W3GetBuffSumFloat(client, fArmorPenetration) != 0.0)
+                    {
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nArmor Penetration: %.2f",MiniHUD_Text, W3GetBuffSumFloat(client, fArmorPenetration));
+                    }
                     if(W3GetBuffSumInt(client, iAdditionalMaxHealth) != 0.0)
                     {
                         Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nAdditive Health: +%i hp",MiniHUD_Text, W3GetBuffSumInt(client, iAdditionalMaxHealth));
                     }
-                    if(W3GetBuffSumFloat(client, fHPRegen) != 0.0)
+                    if(totalHealthRegen != 0.0)
                     {
-                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nRegen: +%.2f hp/s",MiniHUD_Text, W3GetBuffSumFloat(client, fHPRegen));
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nRegen: +%.2f hp/s",MiniHUD_Text, totalHealthRegen);
                     }
                     if(W3GetBuffSumFloat(client, fHPDecay) != 0.0)
                     {
                         Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nHealth Decay: -%.2f hp/s",MiniHUD_Text, W3GetBuffSumFloat(client, fHPDecay));
                     }
-                    if(W3GetBuffSumFloat(client, fVampirePercent) != 0.0)
+                    if(totalLifesteal != 0.0)
                     {
-                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nLifesteal: x%.2f",MiniHUD_Text, W3GetBuffSumFloat(client, fVampirePercent));
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nLifesteal: x%.2f",MiniHUD_Text, totalLifesteal);
                     }
                     if(W3GetBuffSumFloat(client, fBashChance) != 0.0)
                     {
@@ -406,51 +412,44 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
 							Format(HUD_Text,sizeof(HUD_Text), "%s\n%s: %is",HUD_Text,skillname,cooldown);
 						}
 					}
-                    if(!IsPlayerAlive(display) && observed == -1)
+                    if(g_bShowHUD[display] != 1)
                     {
+                        StrCat(HUD_Text, sizeof(HUD_Text), HUD_Text_Add[display]);
+                        //Client_PrintKeyHintText(display, "%s",HUD_Text);
+
                         
-                    }
-                    else
-                    {
-                        if(g_bShowHUD[display] != 1)
+                        decl String:sCookieValue[11];
+                        GetClientCookie(display, g_hMyCookie, sCookieValue, sizeof(sCookieValue));
+                        new cookieValue = StringToInt(sCookieValue);
+                        switch(cookieValue)
                         {
-                            StrCat(HUD_Text, sizeof(HUD_Text), HUD_Text_Add[display]);
-                            //Client_PrintKeyHintText(display, "%s",HUD_Text);
-
-                            
-                            decl String:sCookieValue[11];
-                            GetClientCookie(display, g_hMyCookie, sCookieValue, sizeof(sCookieValue));
-                            new cookieValue = StringToInt(sCookieValue);
-                            switch(cookieValue)
+                            case 0:
                             {
-                                case 0:
-                                {
-									Client_PrintKeyHintText(client, "%s",MiniHUD_Text);
-									SetHudTextParams(0.01, 0.01, g_fHUDDisplayTime, 255, 255, 255, 255, 0);
-									ShowHudText(client, 10, HUD_Text);
-                                }
-                                case 2:
-                                {
-                                    new Handle:gH_HUD = INVALID_HANDLE;
-
-                                    gH_HUD = CreateHudSynchronizer();                       
-                                    SetHudTextParams(0.01, 0.25, g_fHUDDisplayTime, 255, 255, 255, 255, 0);
-                                    ShowSyncHudText(display, gH_HUD, HUD_Text);
-                                    CloseHandle(gH_HUD);
-                                }
-                                case 3:
-                                {
-                                    new Handle:gH_HUD = INVALID_HANDLE;
-
-                                    gH_HUD = CreateHudSynchronizer();                       
-                                    SetHudTextParams(0.7, 0.2, g_fHUDDisplayTime, 255, 255, 255, 255, 0);
-                                    ShowSyncHudText(display, gH_HUD, HUD_Text);
-                                    CloseHandle(gH_HUD);
-                                }
-                            
+                                Client_PrintKeyHintText(client, "%s",MiniHUD_Text);
+                                SetHudTextParams(0.01, 0.01, g_fHUDDisplayTime, 255, 255, 255, 255, 0);
+                                ShowHudText(client, 10, HUD_Text);
                             }
-                        }   
-                    }
+                            case 2:
+                            {
+                                new Handle:gH_HUD = INVALID_HANDLE;
+
+                                gH_HUD = CreateHudSynchronizer();                       
+                                SetHudTextParams(0.01, 0.25, g_fHUDDisplayTime, 255, 255, 255, 255, 0);
+                                ShowSyncHudText(display, gH_HUD, HUD_Text);
+                                CloseHandle(gH_HUD);
+                            }
+                            case 3:
+                            {
+                                new Handle:gH_HUD = INVALID_HANDLE;
+
+                                gH_HUD = CreateHudSynchronizer();                       
+                                SetHudTextParams(0.7, 0.2, g_fHUDDisplayTime, 255, 255, 255, 255, 0);
+                                ShowSyncHudText(display, gH_HUD, HUD_Text);
+                                CloseHandle(gH_HUD);
+                            }
+                        
+                        }
+                    }   
                 }
             }
             else

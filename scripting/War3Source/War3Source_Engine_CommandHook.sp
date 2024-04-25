@@ -943,51 +943,51 @@ public Action Listener_Voice(int client, const char[] command, int argc) {
 		int ability = Press_Ability(client, 0);
 		if(ability==1)
 		{
-			PrintToChat(client,"Your pressed +ability, but the map is changing");
+			PrintToChat(client,"You pressed +ability, but the map is changing");
 			return Plugin_Handled;
 		}
 		else if(ability==2)
 		{
-			PrintToChat(client,"Your pressed +ability, but war3 is paused");
+			PrintToChat(client,"You pressed +ability, but war3 is paused");
 			return Plugin_Handled;
 		}
 		else if(ability==0)
 		{
-			PrintToChat(client,"Your pressed +ability");
+			PrintToChat(client,"You pressed +ability");
 			return Plugin_Handled;
 		}
 	} else if (StrEqual(arguments, "2 1")) {
 		int ability = Press_Ability(client, 2);
 		if(ability==1)
 		{
-			PrintToChat(client,"Your pressed +ability2, but the map is changing");
+			PrintToChat(client,"You pressed +ability2, but the map is changing");
 			return Plugin_Handled;
 		}
 		else if(ability==2)
 		{
-			PrintToChat(client,"Your pressed +ability2, but war3 is paused");
+			PrintToChat(client,"You pressed +ability2, but war3 is paused");
 			return Plugin_Handled;
 		}
 		else if(ability==0)
 		{
-			PrintToChat(client,"Your pressed +ability2");
+			PrintToChat(client,"You pressed +ability2");
 			return Plugin_Handled;
 		}
 	} else if (StrEqual(arguments, "2 3")) {
 		int ultimate = Press_Ultimate(client);
 		if(ultimate==1)
 		{
-			PrintToChat(client,"Your pressed +ultimate, but the map is changing");
+			PrintToChat(client,"You pressed +ultimate, but the map is changing");
 			return Plugin_Handled;
 		}
 		else if(ultimate==2)
 		{
-			PrintToChat(client,"Your pressed +ultimate, but war3 is paused");
+			PrintToChat(client,"You pressed +ultimate, but war3 is paused");
 			return Plugin_Handled;
 		}
 		else if(ultimate==0)
 		{
-			PrintToChat(client,"Your pressed +ultimate");
+			PrintToChat(client,"You pressed +ultimate");
 			return Plugin_Handled;
 		}
 	}

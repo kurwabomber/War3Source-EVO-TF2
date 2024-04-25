@@ -39,7 +39,7 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 		static bool:wasdisarmed[MAXPLAYERSCUSTOM];
 		if(GetBuffHasOneTrue(client,bStunned)||GetBuffHasOneTrue(client,bDisarm)){
 			wasdisarmed[client]=true;
-			new ent = GetCurrentWeaponEnt(client);
+			new ent = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
 			if(ent != -1)
 			{
 				 SetEntPropFloat(ent, Prop_Send, "m_flNextPrimaryAttack", GetGameTime()+0.2);
@@ -48,7 +48,7 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 		else if(	wasdisarmed[client]){
 			wasdisarmed[client]=false;
 
-			new ent = GetCurrentWeaponEnt(client);
+			new ent = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
 			if(ent != -1)
 			{
 				 SetEntPropFloat(ent, Prop_Send, "m_flNextPrimaryAttack", GetGameTime());

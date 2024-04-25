@@ -281,7 +281,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		GetRaceID=War3_GetRaceIDByShortname("hyperC");
 		if(GetRaceID>0)
 		{
-			War3_SetRaceDependency(thisRaceID, GetRaceID, 16);
+			War3_SetRaceDependency(thisRaceID, GetRaceID, 12);
 		}
 //hyperC
 	}
@@ -292,7 +292,7 @@ public OnWar3PluginReady()
 	new GetRaceID=War3_GetRaceIDByShortname("sailfish");
 	if(GetRaceID>0)
 	{
-		War3_SetRaceDependency(thisRaceID, GetRaceID, 29);
+		War3_SetRaceDependency(thisRaceID, GetRaceID, 16);
 	}
 	else
 	{
@@ -301,7 +301,7 @@ public OnWar3PluginReady()
 	GetRaceID=War3_GetRaceIDByShortname("hyperC");
 	if(GetRaceID>0)
 	{
-		War3_SetRaceDependency(thisRaceID, GetRaceID, 30);
+		War3_SetRaceDependency(thisRaceID, GetRaceID, 12);
 	}
 	else
 	{

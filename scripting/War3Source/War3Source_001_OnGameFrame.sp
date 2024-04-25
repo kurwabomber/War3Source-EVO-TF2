@@ -20,6 +20,4 @@ public OnGameFrame()
 	//War3Source_Engine_StatSockets2_OnGameFrame();
 
 	War3Source_Engine_Wards_Engine_OnGameFrame();
-
-	War3Source_Engine_Weapon_OnGameFrame();
 }

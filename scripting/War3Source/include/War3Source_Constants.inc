@@ -601,7 +601,6 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 	buffpropertiesarray[ fMaxSpeed2 ].DefaultValue=0.0;
 	buffpropertiesarray[ fMaxSpeed2 ].BuffStackType=fAbsolute;
 
-
 	buffpropertiesarray[ fSlow ].DefaultValue=1.0;
 	buffpropertiesarray[ fSlow ].BuffStackType=fStacked;
 

@@ -21,7 +21,6 @@ new ULT_MULTIPLEROCKET, ABILITY_HEATSEEKING,STABILIZERS_SKILL,T_SKILL2;
 
 // heat seeker
 new HeatSeeker_Target[MAXPLAYERS+1];
-new HeatSeeker_Target_Rocket[MAXPLAYERS+1];
 new bool:HeatSeeker_Target_Multiple[MAXPLAYERS+1];
 new bool:shoot[MAXPLAYERS+1];
 new Float:HeatSeeker_MaxDistance[]={1400.0,1500.0,1700.0,1900.0,2000.0};
@@ -187,32 +186,23 @@ SetHomingProjectile(entity)
 	new owner = GetEntPropEnt(entity, Prop_Data, "m_hOwnerEntity");
 	if(IsValidEntity(owner))
 	{
-		if(!IsValidEntity(HeatSeeker_Target_Rocket[owner])&&HeatSeeker_Target[owner]>0)
-		{
-			HeatSeeker_Target_Rocket[owner]=0;
-			HeatSeeker_Target[owner]=0;
-		}
 		new Target = HeatSeeker_Target[owner];
 		if(Target)
 		{
-			if(owner == owner)
-			{
-				HeatSeeker_Target_Rocket[owner]=entity;
-				new Float:ProjLocation[3], Float:ProjVector[3], Float:ProjSpeed, Float:ProjAngle[3], Float:TargetLocation[3], Float:AimVector[3];
-				GetEntPropVector(entity, Prop_Data, "m_vecAbsOrigin", ProjLocation);
-				GetClientAbsOrigin(Target, TargetLocation);
-				TargetLocation[2] += 40.0;
-				MakeVectorFromPoints(ProjLocation, TargetLocation , AimVector);
-				GetEntPropVector(entity, Prop_Data, "m_vecAbsVelocity", ProjVector);
-				ProjSpeed = GetVectorLength(ProjVector);
-				AddVectors(ProjVector, AimVector, ProjVector);
-				NormalizeVector(ProjVector, ProjVector);
-				GetEntPropVector(entity, Prop_Data, "m_angRotation", ProjAngle);
-				GetVectorAngles(ProjVector, ProjAngle);
-				SetEntPropVector(entity, Prop_Data, "m_angRotation", ProjAngle);
-				ScaleVector(ProjVector, ProjSpeed);
-				SetEntPropVector(entity, Prop_Data, "m_vecAbsVelocity", ProjVector);
-			}
+			new Float:ProjLocation[3], Float:ProjVector[3], Float:ProjSpeed, Float:ProjAngle[3], Float:TargetLocation[3], Float:AimVector[3];
+			GetEntPropVector(entity, Prop_Data, "m_vecAbsOrigin", ProjLocation);
+			GetClientAbsOrigin(Target, TargetLocation);
+			TargetLocation[2] += 40.0;
+			MakeVectorFromPoints(ProjLocation, TargetLocation , AimVector);
+			GetEntPropVector(entity, Prop_Data, "m_vecAbsVelocity", ProjVector);
+			ProjSpeed = GetVectorLength(ProjVector);
+			AddVectors(ProjVector, AimVector, ProjVector);
+			NormalizeVector(ProjVector, ProjVector);
+			GetEntPropVector(entity, Prop_Data, "m_angRotation", ProjAngle);
+			GetVectorAngles(ProjVector, ProjAngle);
+			SetEntPropVector(entity, Prop_Data, "m_angRotation", ProjAngle);
+			ScaleVector(ProjVector, ProjSpeed);
+			SetEntPropVector(entity, Prop_Data, "m_vecAbsVelocity", ProjVector);
 		}
 	}
 }
@@ -227,19 +217,27 @@ public OnAbilityCommand(client,ability,bool:pressed)
 			HeatSeeker_Target[client]= War3_GetTargetInViewCone(client,HeatSeeker_MaxDistance[skill_level],false,23.0);
 			if(!Silenced(client)&&ValidPlayer(HeatSeeker_Target[client]))
 			{
-				new String:player_name[64];
-				GetClientName(HeatSeeker_Target[client],player_name,64);
 				if(!War3_IsUbered(HeatSeeker_Target[client]) && !W3HasImmunity(HeatSeeker_Target[client],Immunity_Skills))
 				{
-					PrintHintText(client, "Homing Rocket Locked on Target [%s]!",player_name);
-					PrintHintText(HeatSeeker_Target[client], "RUN! Your a target of a Heat Seeking Rocket!\nBuy Shield to protect yourself next time.");
+					PrintHintText(client, "Homing Rocket Locked on Target [%N]!",HeatSeeker_Target[client]);
+					PrintHintText(HeatSeeker_Target[client], "RUN! You're a target of a heat seeking rocket!");
+					War3_CooldownMGR(client, 5.0, thisRaceID, ABILITY_HEATSEEKING);
 				}
 				else
 				{
-					PrintHintText(client, "Target [%s] is Immune!",player_name);
+					PrintHintText(client, "Target [%N] is Immune!",HeatSeeker_Target[client]);
 					HeatSeeker_Target[client]=0;
 				}
 			}
+		}
+	}
+}
+
+public OnCooldownExpired(client,raceID,skillNum,bool:expiredByTime){
+	if(raceID == thisRaceID){
+		if(skillNum == ABILITY_HEATSEEKING){
+			PrintHintText(client, "No longer targeting [%N].",HeatSeeker_Target[client]);
+			HeatSeeker_Target[client] = 0;
 		}
 	}
 }
@@ -250,7 +248,6 @@ public OnUltimateCommand(client,race,bool:pressed)
 	{
 		if(War3_SkillNotInCooldown(client,thisRaceID,ULT_MULTIPLEROCKET,true))
 		{
-			HeatSeeker_Target[client]=0;
 			if(!Silenced(client))
 			{
 				if(!blockingUlt(client,400.0))
@@ -340,7 +337,6 @@ public OnWar3EventDeath(victim,attacker)
 	if(HeatSeeker_Target[attacker]==victim)
 	{
 		HeatSeeker_Target[attacker]=0;
-		HeatSeeker_Target_Rocket[attacker]=-1;
 	}
 }
 public Action:TF2_CalcIsAttackCritical(client, weapon, String:weaponname[], &bool:result)

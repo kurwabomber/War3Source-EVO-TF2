@@ -109,7 +109,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_BOLT=War3_AddRaceSkill(thisRaceID,"Storm Bolt","(+Ability) Stuns enemies in 225 to 325 radius\nfor 0.4 seconds, deals 40 to 60 damage",false,4);
 		SKILL_CLEAVE=War3_AddRaceSkill(thisRaceID,"Great Cleave","Your attacks splash 20 to 28 percent\ndamage to enemys within 200 units",false,4);
 		SKILL_WARCRY=War3_AddRaceSkill(thisRaceID,"Warcry","Gain 1.8 to 2.2 physical armor,\nincreases your speed by 15 to 25 percent",false,4);
-		ULT_STRENGTH=War3_AddRaceSkill(thisRaceID,"Gods Strength","Greatly enhance your damage by 50 to 70 percent for a short amount of time.\nChannels for 2.5 seconds before usage.",true,4);
+		ULT_STRENGTH=War3_AddRaceSkill(thisRaceID,"Gods Strength","Greatly enhance your damage by 50 to 70 percent for a short amount of time.\nChannels for 0.75 seconds before usage.",true,4);
 		War3_CreateRaceEnd(thisRaceID);
 
 		War3_AddSkillBuff(thisRaceID, SKILL_WARCRY, fMaxSpeed, WarcrySpeed);
@@ -324,7 +324,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 		{
 			if(!War3_IsInSpawn(client))
 			{
-				War3_CastSpell(client, 0, SpellEffectsLight, SPELLCOLOR_RED, thisRaceID, ULT_STRENGTH, 2.5);
+				War3_CastSpell(client, 0, SpellEffectsLight, SPELLCOLOR_RED, thisRaceID, ULT_STRENGTH, 0.75);
 				War3_CooldownMGR(client,20.0,thisRaceID,ULT_STRENGTH,false,true);
 			}
 			else

@@ -774,9 +774,9 @@ stock Float:CalcBuffStackedFloat(client,W3Buff:buffindex)
 	{
 		float value=buffdebuff[client][buffindex][0];
 		int loop = ItemsPlusRacesPlusSkillsLoaded();
-		for(int i=1;i<=loop;i++)
+		for(int i=1;i<=loop;++i)
 		{
-			value = FloatMul(value,buffdebuff[client][buffindex][i]);//This one's special for some reason. You cannot use * operator instead of FloatMul???
+			value = FloatMul(value, buffdebuff[client][buffindex][i]);
 		}
 		return value;
 	}

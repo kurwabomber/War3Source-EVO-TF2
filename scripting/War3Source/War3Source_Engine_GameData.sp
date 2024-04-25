@@ -91,7 +91,7 @@ public any Native_War3_IsUsingMeleeWeapon(Handle:plugin, numParams)
 	int client = GetNativeCell(1);
 	if(client)
 	{
-		int ent = GetEntDataEnt2(client,m_OffsetActiveWeapon);
+		int ent = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
 		if(IsValidEntity(ent))
 		{
 			//char sWeaponName[64];

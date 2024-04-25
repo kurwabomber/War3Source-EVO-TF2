@@ -286,7 +286,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 	{
 		if(!Silenced(client)&&War3_SkillNotInCooldown(client,thisRaceID,ULT,true ))
 		{
-			War3_CastSpell(client, 0, SpellEffectsLight, SPELLCOLOR_GREEN, thisRaceID, ULT, 2.5);
+			War3_CastSpell(client, 0, SpellEffectsLight, SPELLCOLOR_GREEN, thisRaceID, ULT, 1.25);
 			War3_CooldownMGR(client,45.0,thisRaceID,ULT,_,_);
 			
 			War3_EmitSoundToAll(explSound,client);

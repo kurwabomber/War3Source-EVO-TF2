@@ -164,7 +164,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_EVADE=War3_AddRaceSkill(thisRaceID,"Evasion","Up to 14 percent chance of evading a shot",false,4);
 		SKILL_THORNS=War3_AddRaceSkill(thisRaceID,"Thorns Aura","You deal up to 30% percent of damage recieved to your attacker. ",false,4);
 		SKILL_TRUESHOT=War3_AddRaceSkill(thisRaceID,"Trueshot Aura","Your attacks deal up to 30% percent more damage",false,4);
-		ULT_ENTANGLE=War3_AddRaceSkill(thisRaceID,"Entangling Roots","Bind enemies to the ground,\nrendering them immobile for up to 6 seconds. Up to 4000HU range.\nHas 3 second casting time.",true,4);
+		ULT_ENTANGLE=War3_AddRaceSkill(thisRaceID,"Entangling Roots","Bind enemies to the ground,\nrendering them immobile for up to 6 seconds. Up to 4000HU range.\nHas 2 second casting time.",true,4);
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }
@@ -260,7 +260,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 						{
 #endif
 							//War3_CastSpell(client, target, SpellEffectsLight, SPELLCOLOR_YELLOW, thisRaceID, ULT_ENTANGLE, 3.0);
-							player.castspell(iTarget.index, SpellEffectsLight, SPELLCOLOR_YELLOW, ULT_ENTANGLE, 3.0);
+							player.castspell(iTarget.index, SpellEffectsLight, SPELLCOLOR_YELLOW, ULT_ENTANGLE, 2.0);
 
 							//War3_CooldownMGR(client,15.0,thisRaceID,ULT_ENTANGLE,false,true);
 							player.setcooldown(15.0,thisRaceID,ULT_ENTANGLE,false,true);

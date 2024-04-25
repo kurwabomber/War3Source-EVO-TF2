@@ -692,15 +692,17 @@ GiveKillXPCreds(client,playerkilled,bool:headshot,bool:melee,bool:IsFake)
 		TryToGiveXPGold(client,XPAwardByKill,addxp,W3GetKillGold(),killaward,IsFake);
 	}
 	if(IsMvM()){
-		if(GetEntProp(playerkilled, Prop_Send, "m_bIsMiniBoss")){	
+		if(GetEntProp(playerkilled, Prop_Send, "m_bIsMiniBoss")){
 			int killxp=W3GetKillXP(client);
 			int gold=W3GetKillGold();
+			char killText[32] = "killing a giant";
 			gold *= 4;
 			killxp *= 4;
 
 			if(GetEntProp(playerkilled, Prop_Send, "m_bUseBossHealthBar")){
 				gold *= 7;
 				killxp *= 7;
+				killText = "killing a boss";
 			}
 			
 			for(int i=1;i<=MaxClients;++i){
@@ -711,7 +713,7 @@ GiveKillXPCreds(client,playerkilled,bool:headshot,bool:melee,bool:IsFake)
 				if(!ValidRace(playerrace))
 					continue;
 
-				TryToGiveXPGold(i,XPAwardByKill,killxp,gold,"killing a boss.",IsFake);
+				TryToGiveXPGold(i,XPAwardByKill,killxp,gold,killText,IsFake);
 			}
 		}
 	}

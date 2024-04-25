@@ -96,7 +96,7 @@ public War3Source_Engine_NewPlayers_OnWar3EventDeath(victim, attacker, deathrace
 	if(victim!=attacker && ValidPlayer(victim) && ValidPlayer(attacker)
 	&& IsNewPlayer[victim] && IsEnabled && !IsFakeClient(victim) )
 	{
-		CreateTimer(4.5,quickerspawn,victim);
+		CreateTimer(2.5,quickerspawn,victim);
 	}
 }
 public Action:quickerspawn(Handle:timer, any:client)
@@ -105,7 +105,7 @@ public Action:quickerspawn(Handle:timer, any:client)
 
 	if(ValidPlayer(client) && !IsPlayerAlive(client) && IsNewPlayer[client])
 	{
-		War3_ChatMessage(client, "{green}[New Player Fast Respawn]{lightgreen}Because your new on our servers, you get a slightly faster respawn.");
+		War3_ChatMessage(client, "{green}[New Player Fast Respawn]{lightgreen}Because you're new on our servers, you get a faster respawn.");
 #if GGAMETYPE == GGAME_TF2
 		TF2_RespawnPlayer(client);
 #else

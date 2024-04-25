@@ -43,7 +43,7 @@ new StaticHealRadius=800;
 new OverloadDuration=75; //HIT TIMES, DURATION DEPENDS ON TIMER
 new OverloadRadius=500;
 new OverloadDamagePerHit[]={4,4,5,5,6};
-new Float:OverloadDamageIncrease[]={1.01,1.012,1.0124,1.0124,1.0126};
+new Float:OverloadDamageIncrease[]={0.01,0.012,0.0124,0.0124,0.0126};
 ////
 
 
@@ -358,17 +358,19 @@ public Action:UltimateLoop(Handle:timer,any:userid)
 	new attacker=GetClientOfUserId(userid);
 	if(ValidPlayer(attacker,true) && UltimateZapsRemaining[attacker]>0)
 	{
+		SetHudTextParams(0.4, 0.7, 0.1, 138, 66, 245, 255);
+		ShowHudText(attacker, -1, "Overload Damage Bonus: %.2fx", PlayerDamageIncrease[attacker]);
 		UltimateZapsRemaining[attacker]--;
 		new Float:pos[3];
 		new Float:otherpos[3];
 		GetClientEyePosition(attacker,pos);
 		new team = GetClientTeam(attacker);
-		new lowesthp=99999;
+		new lowesthp=2147483647;
 		new besttarget=0;
 
 		for(new i=1;i<=MaxClients;i++)
 		{
-			if(ValidPlayer(i,true) && ValidPlayer(attacker,true))
+			if(ValidPlayer(i,true))
 			{
 #if GGAMETYPE == GGAME_TF2
 				if(Spying(attacker))
@@ -406,10 +408,6 @@ public Action:UltimateLoop(Handle:timer,any:userid)
 					{
 						if(!W3HasImmunity(i,Immunity_Ultimates))
 						{
-
-							//TE_SetupBeamPoints(pos,otherpos,BeamSprite,HaloSprite,0,35,0.15,6.0,5.0,0,1.0,{255,255,255,100},20);
-							//TE_SendToAll();
-
 							new Float:distanceVec[3];
 							SubtractVectors(otherpos,pos,distanceVec);
 							new Float:angles[3];
@@ -448,7 +446,7 @@ public Action:UltimateLoop(Handle:timer,any:userid)
 			{
 				War3_NotifyPlayerTookDamageFromSkill(besttarget, attacker, War3_GetWar3DamageDealt(), ULT_OVERLOAD);
 			}
-			PlayerDamageIncrease[attacker]*=OverloadDamageIncrease[War3_GetSkillLevel(attacker,thisRaceID,ULT_OVERLOAD)];
+			PlayerDamageIncrease[attacker]+=OverloadDamageIncrease[War3_GetSkillLevel(attacker,thisRaceID,ULT_OVERLOAD)];
 
 			War3_EmitSoundToAll(overloadzap,attacker);
 			War3_EmitSoundToAll(overloadzap,attacker);

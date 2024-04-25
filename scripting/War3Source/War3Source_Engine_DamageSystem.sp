@@ -459,7 +459,8 @@ public OnTakeDamagePostHook(victim, attacker, inflictor, Float:damage, damagetyp
 
 		War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
 		Engine_WCX_Engine_Vampire_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
-
+		War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
+		
 		//damage += newdamage;
 
 		Call_StartForward(p_OnWar3EventPostHurt);
