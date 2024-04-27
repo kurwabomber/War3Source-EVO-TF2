@@ -21,7 +21,6 @@
 
 public W3ONLY(){} //unload this?
 new thisRaceID;
-new Handle:ultCooldownCvar;
 
 new SKILL_JUDGE, SKILL_PRESENCE,SKILL_INHUMAN, ULT_EXECUTE;
 
@@ -38,7 +37,7 @@ new InhumanAmount[]={0,5,10,15,20,22,25,27,30};
 new Float:InhumanRange=800.0;
 
 new Float:ultRange=400.0;
-new Float:ultiDamageMulti[]={0.6,0.7,0.8,0.9,1.0};
+new Float:ultCooldown[]={25.0,23.0,21.0,19.0,17.0};
 
 new String:judgesnd[]="war3source/sr/judgement.mp3";
 new String:ultsnd[]="war3source/sr/ult.mp3";
@@ -107,8 +106,6 @@ public OnPluginStart()
 {
 	HookEvent("player_death",PlayerDeathEvent);
 
-	ultCooldownCvar=CreateConVar("war3_sr_ult_cooldown","30","Cooldown time for CD ult overload.");
-
 	//LoadTranslations("w3s.race.sr.phrases");
 }
 public OnAllPluginsLoaded()
@@ -130,7 +127,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_JUDGE=War3_AddRaceSkill(thisRaceID,"Judgement","[+ability] Heals teammates around you, damages enemies around you.\nDamage/heals for 40-60, Cooldown is 10s and radius is 600HU.",false,4);
 		SKILL_PRESENCE=War3_AddRaceSkill(thisRaceID,"Withering Presence","Enemies take non-lethal damage just by being within 200 to 380 HU of you.\nDeals 4 to 5.8 DPS.",false,4);
 		SKILL_INHUMAN=War3_AddRaceSkill(thisRaceID,"Inhuman Nature","Heals for 20-30hp from anyone dying in a 800HU radius.",false,4);
-		ULT_EXECUTE=War3_AddRaceSkill(thisRaceID,"Demonic Execution","(+ultimate) Deals a large amount of damage based on how much of the enemy's health is missing.\nDeals 60% to 100% of enemies missing health.",true,4);
+		ULT_EXECUTE=War3_AddRaceSkill(thisRaceID,"Demonic Execution","(+ultimate) Deals a large amount of damage based on how much of the enemy's health is missing.\nCooldown is 25s. Each level red. CD by -2s.",true,4);
 		War3_CreateRaceEnd(thisRaceID);
 
 		AuraID=W3RegisterChangingDistanceAura("witheringpresense",true);
@@ -226,13 +223,13 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 				{
 					new hpmissing=War3_GetMaxHP(target)-GetClientHealth(target);
 
-					new dmg=RoundFloat(float(hpmissing) * ultiDamageMulti[skill] * W3GetBuffStackedFloat(target, fUltimateResistance));
+					new dmg=RoundFloat(100.0 * (1.5 - (float(War3_GetMaxHP(target))/GetClientHealth(target)) ) * W3GetBuffStackedFloat(target, fUltimateResistance));
 
 					if(War3_DealDamage(target,dmg,client,_,"demonicexecution"))
 					{
-						//PrintToConsole(client,"Executed for %d damage",War3_GetWar3DamageDealt());
+						PrintHintText(client,"Dealt %i damage with demonic execution!", War3_GetWar3DamageDealt());
 						War3_NotifyPlayerTookDamageFromSkill(target, client, War3_GetWar3DamageDealt(), ULT_EXECUTE);
-						War3_CooldownMGR(client,GetConVarFloat(ultCooldownCvar),thisRaceID,ULT_EXECUTE,true,true);
+						War3_CooldownMGR(client,ultCooldown[skill],thisRaceID,ULT_EXECUTE,true,true);
 
 						War3_EmitSoundToAll(ultsnd,client);
 

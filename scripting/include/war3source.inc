@@ -1799,6 +1799,56 @@ stock void RemoveCosmetics(iClient)
 	}
 }
 
+bool DOTStacked[MAXPLAYERS+1];
+stock void DOTStock(int victim,int attacker,float damage,int weapon = -1,int damagetype = 1,int repeats = 1,float initialDelay = 0.0,float tickspeed = 1.0)
+{
+	if(ValidPlayer(victim,true) && DOTStacked[victim] == false && ValidPlayer(attacker,true))
+	{
+		new Handle:hPack = CreateDataPack();
+		WritePackCell(hPack, victim);
+		WritePackCell(hPack, attacker);
+		WritePackFloat(hPack, damage);
+		WritePackCell(hPack, weapon);
+		WritePackCell(hPack, damagetype);
+		WritePackCell(hPack, repeats);
+		WritePackFloat(hPack, tickspeed);
+		CreateTimer(initialDelay,DOTDamage,hPack);
+		DOTStacked[victim] = true;
+	}
+}
+public Action:DOTDamage(Handle:timer,any:data)
+{
+	ResetPack(data);
+	new victim = ReadPackCell(data);
+	new attacker = ReadPackCell(data);
+	new Float:damage = ReadPackFloat(data);
+	new weapon = ReadPackCell(data);
+	new damagetype = ReadPackCell(data);
+	new repeats = ReadPackCell(data);
+	new Float:tickspeed = ReadPackFloat(data);
+	if(repeats >= 1)
+	{
+		if(ValidPlayer(victim,true) && ValidPlayer(attacker,true))
+		{
+			SDKHooks_TakeDamage(victim,attacker,attacker,damage,damagetype,weapon,NULL_VECTOR,NULL_VECTOR);
+			repeats--;
+			new Handle:hPack = CreateDataPack();
+			WritePackCell(hPack, victim);
+			WritePackCell(hPack, attacker);
+			WritePackFloat(hPack, damage);
+			WritePackCell(hPack, weapon);
+			WritePackCell(hPack, damagetype);
+			WritePackCell(hPack, repeats);
+			WritePackFloat(hPack, tickspeed);
+			CreateTimer(tickspeed,DOTDamage,hPack);
+		}
+	}
+	else
+	{
+		DOTStacked[victim] = false;
+	}
+	CloseHandle(data);
+}
 
 //stock CreateTimer_DEBUG(any:f=0,any:ff=0,any:fff=0,any:ffff=0) {}
 

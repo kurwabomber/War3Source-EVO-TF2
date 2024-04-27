@@ -167,8 +167,6 @@ public OnWar3LoadRaceOrItemOrdered(num)
 
 		shopItem[DIVINERAPIER]=War3_CreateShopItem("Divine Rapier", "rapier", "+4 additive damage", "+4 additive damage", 17, 10000);
 		shopItem[REFRESHERORB]=War3_CreateShopItem("Refresh Orb", "refreshorb", "1.4x faster ability cooldown", "1.4x faster ability cooldown", 15, 10000);
-		shopItem[REFRESHSHARD]=War3_CreateShopItem("Refresh Shard", "refreshshard", "instantly resets cooldowns", "Instantly resets cooldowns", 5, 10000);
-		War3_SetItemProperty(shopItem[REFRESHSHARD], ITEM_USED_ON_BUY,true);
 		
 		shopItem[GLIMMERCAPE]=War3_CreateShopItem("Glimmer Cape", "cape", "+7 magic dmg reduction", "+7 magic dmg reduction", 15, 10000);
 		shopItem[AGHANIMSCEPTRE]=War3_CreateShopItem("Aghanim's Sceptre", "sceptre", "WIP:NOT WORKING upgrades all ultimates", "WIP:NOT WORKING upgrades all ultimates", 25, 10000);
@@ -452,16 +450,6 @@ public OnItemPurchase(client,item)
 		War3_ChatMessage(client,"+%i XP",add_xp);
 		War3_ShowXP(client);
 	}
-	if(shopItem[REFRESHSHARD]==item){
-		int race=War3_GetRace(client);
-
-		for(new skillNum=0;skillNum<MAXSKILLCOUNT;++skillNum){
-			War3_CooldownReset(client, race, skillNum);
-		}
-
-		War3_SetOwnsItem(client,item,false);
-		War3_ChatMessage(client,"Refreshed all cooldowns!");
-	}
 	
 	if(!War3_GetItemProperty(item, ITEM_USED_ON_BUY)){
 		War3_NotifyPlayerItemActivated(client,item,true);
@@ -565,6 +553,9 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 
 							CreateTimer(1.0,Unfrost,victim);
 						}	
+					}
+					if(War3_GetOwnsItem(attacker,shopItem[ORBOFVENOM])){
+						DOTStock(victim,attacker,4.0,-1,DMG_GENERIC,4,0.5,1.0);
 					}
 					if(War3_GetOwnsItem(victim,shopItem[PANICNECKLACE])){
 						TF2_AddCondition(victim, TFCond_SpeedBuffAlly, 2.0);

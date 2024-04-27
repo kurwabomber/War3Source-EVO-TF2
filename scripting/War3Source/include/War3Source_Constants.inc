@@ -56,7 +56,6 @@ enum SHOPITEMS1{
 	MHEALTH,
 	DIVINERAPIER, //+10 additive damage, is completely lost on death to person who killed you
 	REFRESHERORB, //-30% ability cooldown
-	REFRESHSHARD, //Instant recharge skills
 	GLIMMERCAPE, // Magic Defense
 	BUCKLER, // Defense
 	AGHANIMSCEPTRE, //Upgrades Ultimates
