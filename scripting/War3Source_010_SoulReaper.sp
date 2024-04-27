@@ -221,8 +221,6 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 			{
 				if(!W3HasImmunity(target,Immunity_Ultimates))
 				{
-					new hpmissing=War3_GetMaxHP(target)-GetClientHealth(target);
-
 					new dmg=RoundFloat(100.0 * (1.5 - (float(War3_GetMaxHP(target))/GetClientHealth(target)) ) * W3GetBuffStackedFloat(target, fUltimateResistance));
 
 					if(War3_DealDamage(target,dmg,client,_,"demonicexecution"))

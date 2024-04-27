@@ -6,7 +6,6 @@
 #pragma semicolon 1
 
 int ItemID[MAXITEMS3];
-new bool:DOTStacked[MAXPLAYERS + 1] = {false,...};
 public Plugin:myinfo =
 {
 	name = "War3Evo:Shop items 3",
