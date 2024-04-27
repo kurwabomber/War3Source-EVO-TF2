@@ -1613,7 +1613,8 @@ native W3IsBuffInvised(client); //returns true if client alpha is <50
 //invisible or cloaked?
 #if GGAMETYPE == GGAME_TF2
 stock IsInvis(client) {
-	return (TF2_IsPlayerInCondition(client, TFCond_Cloaked)
+	return (TF2_IsPlayerInCondition(client, TFCond_Cloaked) 
+			|| TF2_IsPlayerInCondiiton(client, TFCond_Stealthed)
 			|| W3IsBuffInvised(client));
 }
 #endif
