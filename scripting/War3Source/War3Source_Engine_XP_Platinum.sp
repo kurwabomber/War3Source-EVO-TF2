@@ -70,16 +70,16 @@ public bool:War3Source_Engine_XP_Platinum_InitNatives()
 	//CreateNative("W3GetKillPlatinum",NW3GetKillGold);
 	//CreateNative("W3GetAssistPlatinum",NW3GetAssistGold);
 	CreateNative("W3GiveXP_Platinum",NW3GiveXP_Platinum);
-	//RegAdminCmd("war3_giveplatinum", Command_GivePlatinum, ADMFLAG_ROOT, "Gives platinum to a player.");
+	RegAdminCmd("war3_giveplatinum", Command_GivePlatinum, ADMFLAG_ROOT, "Gives platinum to a player.");
 	RegAdminCmd("war3_givegemxp", Command_GiveGemXP, ADMFLAG_ROOT, "Gives xp to all of your gems.");
 
 	return true;
 }
-/*public Action:Command_GivePlatinum(client, args)
+public Action:Command_GivePlatinum(client, args)
 {
 	if(args != 2)
 	{
-		ReplyToCommand(client, "[SM] Usage: sm_giveplatinum \"target\" \"amount\"");
+		ReplyToCommand(client, "[SM] Usage: war3_giveplatinum \"target\" \"amount\"");
 		return Plugin_Handled;
 	}
 
@@ -102,12 +102,12 @@ public bool:War3Source_Engine_XP_Platinum_InitNatives()
 		}
 	}
 	return Plugin_Handled;
-}*/
+}
 public Action:Command_GiveGemXP(client, args)
 {
 	if(args != 2)
 	{
-		ReplyToCommand(client, "[SM] Usage: sm_levelgems \"target\" \"amount\"");
+		ReplyToCommand(client, "[SM] Usage: war3_givegemxp \"target\" \"amount\"");
 		return Plugin_Handled;
 	}
 

@@ -167,6 +167,11 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	}
 }
 
+public OnRaceChanged(client,oldrace,newrace)
+{
+	if(newrace != thisRaceID)
+		War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,0);
+}
 
 public OnW3Denyable(W3DENY:event,client)
 {
