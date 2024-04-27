@@ -274,8 +274,8 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                         itemalpha=Pow(itemalpha,0.75);
                     }
                     falpha = falpha * itemalpha;
-                    float totalHealthRegen = (W3GetBuffSumFloat(client, fHPRegen) + TF2Util_GetEntityMaxHealth(client)*W3GetBuffSumFloat(client, fMaxHealthRegen)) * 1+W3GetBuffSumFloat(client, fSustainEfficiency);
-                    float totalLifesteal = W3GetBuffSumFloat(client, fVampirePercent) * 1+W3GetBuffSumFloat(client, fSustainEfficiency);
+                    float totalHealthRegen = (W3GetBuffSumFloat(client, fHPRegen) + TF2Util_GetEntityMaxHealth(client)*W3GetBuffSumFloat(client, fMaxHealthRegen)) * (1+W3GetBuffSumFloat(client, fSustainEfficiency));
+                    float totalLifesteal = W3GetBuffSumFloat(client, fVampirePercent) * (1+W3GetBuffSumFloat(client, fSustainEfficiency));
                     if(falpha != 1.0  )
                     {
                         Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nInvis: x%.2f",MiniHUD_Text, falpha);

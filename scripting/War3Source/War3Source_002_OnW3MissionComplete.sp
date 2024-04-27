@@ -17,23 +17,23 @@ public Action GiveMissionRewards(Handle timer){
 		GetEntPropString(ObjectiveEntity, Prop_Send, "m_iszMvMPopfileName", missionName, sizeof(missionName));
 
 	PrintToChatAll("---- Mission Rewards ----");
-	if(StrContains(missionName, "ghost_town")){
-		GiveAllPlayersXP_Platinum(3000, 35);
+	if(StrContains(missionName, "ghost_town") != -1){
+		GiveAllPlayersXP_Platinum(3000, 120);
 		GiveAllPlayersXP_Gold(20000, 120);
-	}else if(StrContains(missionName, "intermediate")){
-		GiveAllPlayersXP_Platinum(600, 17);
+	}else if(StrContains(missionName, "intermediate")  != -1){
+		GiveAllPlayersXP_Platinum(600, 65);
 		GiveAllPlayersXP_Gold(2000, 60);
-	}else if(StrContains(missionName, "ironman")){
-		GiveAllPlayersXP_Platinum(600, 20);
+	}else if(StrContains(missionName, "ironman") != -1){
+		GiveAllPlayersXP_Platinum(600, 65);
 		GiveAllPlayersXP_Gold(2000, 70);
-	}else if(StrContains(missionName, "advanced")){
-		GiveAllPlayersXP_Platinum(600, 25);
+	}else if(StrContains(missionName, "advanced") != -1){
+		GiveAllPlayersXP_Platinum(600, 90);
 		GiveAllPlayersXP_Gold(4000, 80);
-	}else if(StrContains(missionName, "expert")){
-		GiveAllPlayersXP_Platinum(900, 35);
+	}else if(StrContains(missionName, "expert") != -1){
+		GiveAllPlayersXP_Platinum(900, 120);
 		GiveAllPlayersXP_Gold(8000, 120);
 	}else{
-		GiveAllPlayersXP_Platinum(300, 10);
+		GiveAllPlayersXP_Platinum(300, 35);
 		GiveAllPlayersXP_Gold(1000, 40);
 	}
 	return Plugin_Stop;
