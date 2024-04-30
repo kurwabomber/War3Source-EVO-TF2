@@ -177,7 +177,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		shopItem[ASSAULTCUIRASS]=War3_CreateShopItem("Assault Cuirass", "cuirass", "+5 dmg reduction & +10% attack speed", "+5 dmg reduction & +10% attack speed", 35, 10000);
 		shopItem[HEARTOFTARRASQUE]=War3_CreateShopItem("Heart of Tarrasque", "heart", "+4% maxHPR", "+4% maxHPR", 15, 10000);
 		shopItem[NULLTALISMAN]=War3_CreateShopItem("Null Talisman", "talisman", "+1 hpr, phys & magic dmg reduction, +5% ms and dmg.", "+1 hpr, phys & magic dmg reduction, +5% ms and dmg.", 2, 10000);
-		shopItem[DAEDALUS]=War3_CreateShopItem("Daedalus", "daedalus", "+20% crit chance. crit dmg default to 1.5x if none", "+20% crit chance. crit dmg default to 1.5x if none", 15, 10000);
+		shopItem[DAEDALUS]=War3_CreateShopItem("Daedalus", "daedalus", "+20% crit chance.", "+20% crit chance.", 15, 10000);
 		shopItem[DESOLATOR]=War3_CreateShopItem("Desolator", "desolator", "+3 armor penetration", "+3 armor penetration", 15, 10000);
 		shopItem[PANICNECKLACE]=War3_CreateShopItem("Panic Necklade", "panic", "+2s speed boost when hit", "+2s speed boost when hit", 2, 10000);
 		shopItem[BLOODBOUNDGEM]=War3_CreateShopItem("Bloodbound Gem", "bloodbound", "+40% sustain boost", "+40% sustain boost", 12, 10000);
@@ -230,7 +230,6 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fMaxSpeed2,0.05);
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fDamageModifier,0.05);
 		War3_AddItemBuff(shopItem[DAEDALUS],fCritChance,0.2);
-		War3_AddItemBuff(shopItem[DAEDALUS],fCritModifier,1.5);
 		War3_AddItemBuff(shopItem[BLOODBOUNDGEM],fSustainEfficiency,0.4);
 		War3_AddItemBuff(shopItem[MANTLEOFINTEL],fMagicDamageModifier,0.25);
 		War3_AddItemBuff(shopItem[OIL],fArmorPenetration,2.0);

@@ -100,7 +100,7 @@ public Action:Timer_QuickTimer(Handle:timer)
 			if(War3_GetOwnsItem3(client,race,ItemID[SPRINGGEM]))
 			{
 				new level = War3_GetItemLevel(client,race,ItemID[SPRINGGEM])+1;
-				new Float:RegenPerTick = (1.0 + (level * 0.1));
+				new Float:RegenPerTick = 2.0 + level * 0.1;
 				
 				new clientHealth = GetEntProp(client, Prop_Data, "m_iHealth");
 				new clientMaxHealth = War3_GetMaxHP(client);

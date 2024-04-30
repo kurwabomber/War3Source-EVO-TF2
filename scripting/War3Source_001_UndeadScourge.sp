@@ -17,8 +17,6 @@
 
 int thisRaceID;
 
-float CritDamageIncrease = 0.5;
-
 #if GGAMETYPE == GGAME_TF2
 float Reincarnation[]={45.0, 44.0, 43.0, 42.0, 40.0};
 float UnholySpeed[]={1.24, 1.26, 1.28, 1.3, 1.32};
@@ -29,6 +27,7 @@ bool RESwarn[MAXPLAYERSCUSTOM];
 Handle ClientInfoMessage;
 #endif
 
+float CurrentCritChance[MAXPLAYERS+1];
 // Team switch checker
 bool Can_Player_Revive[MAXPLAYERSCUSTOM+1];
 
@@ -145,7 +144,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace(RACE_LONGNAME,RACE_SHORTNAME,reloadrace_id,"Lifesteal, crits & speed.");
 		SKILL_LEECH=War3_AddRaceSkill(thisRaceID,"Vampiric Aura","Leech Health\nYou recieve up to 40% of your damage dealt as Health\nCan not buy item mask any level",false,4);
 		SKILL_SPEED=War3_AddRaceSkill(thisRaceID,"Unholy Aura","You run up to 32% faster",false,4);
-		SKILL_LOWGRAV=War3_AddRaceSkill(thisRaceID,"Blood Lust","When you gain health from Vampiric Aura, your crit chance by +2%.\nCrit Chance resets on death and is capped to 40%.\nCrits count as 50% damage increase.",false,4);
+		SKILL_LOWGRAV=War3_AddRaceSkill(thisRaceID,"Blood Lust","When you gain health from Vampiric Aura, your crit chance by +1%.\nCrit Chance resets on death and is capped to 20%.\nCrits count as 100% damage increase.",false,4);
 		SKILL_SUICIDE=War3_AddRaceSkill(thisRaceID,"Reincarnation","When you die, you revive on the spot.\nHas a base 60 second cooldown.\nDecreases cooldown by -5s each upgrade. After 4 upgrades, reduces to -1s.",true,4, "READY");
 		War3_CreateRaceEnd(thisRaceID);
 
@@ -186,18 +185,16 @@ public RemovePassiveSkills(client)
 {
 	ThisRacePlayer player = ThisRacePlayer(client);
 	player.setbuff(fCritChance, thisRaceID, 0.0,client);
-	player.setbuff(iCritMode, thisRaceID, 0,client);
-	player.setbuff(fCritModifier, thisRaceID, 1.0,client);
 	player.setbuff(fVampirePercent, thisRaceID, 0.0,client);
 	player.setbuff(fMaxSpeed,thisRaceID,1.0,client);
 	player.RESwarn = false;
+	CurrentCritChance[client] = 0.0;
 }
 public ResetCrit(client)
 {
 	ThisRacePlayer player = ThisRacePlayer(client);
 	player.setbuff(fCritChance, thisRaceID, 0.0,client);
-	player.setbuff(iCritMode, thisRaceID, 0,client);
-	player.setbuff(fCritModifier, thisRaceID, 1.0,client);
+	CurrentCritChance[client] = 0.0;
 	player.RESwarn = false;
 }
 
@@ -213,9 +210,7 @@ public PlayerTeamEvent(Handle:event,const String:name[],bool:dontBroadcast)
 	ThisRacePlayer player = ThisRacePlayer(client);
 	if(player)
 	{
-		player.setbuff(fCritChance, thisRaceID, 0.0);
-		player.setbuff(iCritMode, thisRaceID, 0,client);
-		player.setbuff(fCritModifier, thisRaceID, 1.0,client);
+		ResetCrit(client);
 
 		player.canrevive = false;
 		player.RESwarn = false;
@@ -276,22 +271,17 @@ public void OnWar3Event(W3EVENT event,int client)
 			if(player.raceid==thisRaceID)
 			{
 				int skill_level=player.getskilllevel( thisRaceID, SKILL_LOWGRAV );
-				float CurrentCritChance = player.getbuff(fCritChance,thisRaceID);
-				//DP("Crit before %f",CurrentCritChance);
-				if(CurrentCritChance<0.4)
+				PrintToServer("before| %.2f", CurrentCritChance[client]);
+				if(CurrentCritChance[client]<0.2)
 				{
-					CurrentCritChance+=0.02 + 0.003*skill_level;
-					player.setbuff(fCritChance,thisRaceID,CurrentCritChance,client);
-					player.setbuff(iCritMode,thisRaceID,1,client);
-					player.setbuff(fCritModifier,thisRaceID,CritDamageIncrease,client);
-					//player.message("{blue}BloodLust increases crit chance by %f",CurrentCritChance);
+					CurrentCritChance[client] += 0.01 + 0.002*skill_level;
+					PrintToServer("after| %.2f", CurrentCritChance[client]);
+					War3_SetBuff(client, fCritChance,thisRaceID,CurrentCritChance[client]);
 				}
-				else if(CurrentCritChance>0.4)
+				else if(CurrentCritChance[client]>0.2)
 				{
-					CurrentCritChance=0.4;
-					player.setbuff(fCritChance,thisRaceID,CurrentCritChance,client);
-					player.setbuff(iCritMode,thisRaceID,1,client);
-					player.setbuff(fCritModifier,thisRaceID,CritDamageIncrease,client);
+					CurrentCritChance[client]=0.2;
+					War3_SetBuff(client, fCritChance,thisRaceID,CurrentCritChance[client]);
 				}
 				//DP("Crit after %f",CurrentCritChance);
 			}
@@ -318,10 +308,8 @@ public OnWar3EventDeath(victim, attacker)
 
 	ThisRacePlayer pVictim = ThisRacePlayer(victim);
 
-	pVictim.setbuff(fCritChance, thisRaceID, 0.0);
-	pVictim.setbuff(iCritMode, thisRaceID, 0);
-	pVictim.setbuff(fCritModifier, thisRaceID, 1.0);
-
+	ResetCrit(victim);
+	
 	if(victim==attacker)
 		return;
 
