@@ -147,6 +147,7 @@ bool ignoreRaceEnd; ///dont do anything on CreateRaceEnd cuz this its already do
 //zeroth skill is NOT  used
 int raceSkillCount[MAXRACES];
 char raceSkillName[MAXRACES][MAXSKILLCOUNT][32];
+char raceSkillReadyDescription[MAXRACES][MAXSKILLCOUNT][512];
 char raceSkillDescription[MAXRACES][MAXSKILLCOUNT][512];
 int raceSkillDescReplaceNum[MAXRACES][MAXSKILLCOUNT];
 char raceSkillDescReplace[MAXRACES][MAXSKILLCOUNT][5][64]; ///MAX 5 params for replacement //64 string length

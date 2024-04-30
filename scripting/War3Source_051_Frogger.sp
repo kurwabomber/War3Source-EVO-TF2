@@ -261,13 +261,13 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID = War3_CreateNewRace( "Frogger", "frogger",reloadrace_id,"no teleporters");
 		
-		SKILL_BUGZAP_WARD = War3_AddRaceSkill( thisRaceID, "Bug Zapper", "(+ability) Zaps enemies.\nMaximum of 6 wards 170 HU radius.\n4 to 8 dmg per quarter second.", false, 4 );
+		SKILL_BUGZAP_WARD = War3_AddRaceSkill( thisRaceID, "Bug Zapper", "(+ability) Zaps enemies.\nMaximum of 6 wards 170 HU radius.\n4 to 8 dmg per quarter second.", false, 4, "(voice Help!)");
 
 		SKILL_JUMP = War3_AddRaceSkill( thisRaceID, "Super Jump", "Take half fall damage\nEvery level gives you increased jump range\n and increased boost out of water.\nActivated by jumping while mid-air. Leap forward.\nLeaps with 200HU to 700HU.", false, 4 );
 		
 		SKILL_SWIMFAST = War3_AddRaceSkill( thisRaceID, "Swim Fast", "Every level gives you increases your swim speed while in water.\nBoosts speed by 1.2x to 1.7x", false, 4 );
 
-		SKILL_FROGMAGIC = War3_AddRaceSkill( thisRaceID, "Frog Magic", "You can build 3-way Mini Sentries.\nBuildings get cheaper. Buildings cost 90/80/70/60 percent of normal cost.\nDuring the 20 second cooldown, you can not build sentries.", false, 4 );
+		SKILL_FROGMAGIC = War3_AddRaceSkill( thisRaceID, "Frog Magic", "You can build 3-way Mini Sentries.\nBuildings get cheaper. Buildings cost 90/80/70/60 percent of normal cost.\nDuring the 20 second cooldown, you can not build sentries.", false, 4, "READY");
 
 		ULTIMATE =  War3_AddRaceSkill( thisRaceID, "Lily Pads", "[Lvl 1]Can use any teleporter (blue/red) [Lvl 2]Teleporters instant recharge when you walk thru them\n[Lvl 3]Mini-Instant level 3 teleporter [Lvl 4]Build Double Dispensers", true, 4 );
 

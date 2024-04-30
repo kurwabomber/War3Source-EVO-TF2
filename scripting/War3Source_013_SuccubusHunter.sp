@@ -131,8 +131,8 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 
 		SKILL_HEADHUNTER = War3_AddRaceSkill(thisRaceID, "Head Hunter","Deal extra +1-1.5% dmg per skull. Max skulls is 20.\nYou gain your victim's skulls on kill", false, 4);
 		SKILL_TOTEM = War3_AddRaceSkill(thisRaceID, "Totem Incantation","You gain 3-4 HP, 3-4 gold and 5-8XP on spawn for each skull you collected. You lose 10 skulls on spawn.", false, 4);
-		SKILL_ASSAULT = War3_AddRaceSkill(thisRaceID, "Assault Tackle","Gives you a boost of speed when you jump.", false, 4);
-		ULT_TRANSFORM = War3_AddRaceSkill(thisRaceID, "Demonic Transformation","Buffs yourself with increased health, speed & attackspeed. Costs 4 skulls\nGives +60 - 80HP, +25% - +32.5% attack speed, and +35% - +45% speed.", true, 4);
+		SKILL_ASSAULT = War3_AddRaceSkill(thisRaceID, "Assault Tackle","Gives you a boost of speed when you jump.", false, 4,"READY");
+		ULT_TRANSFORM = War3_AddRaceSkill(thisRaceID, "Demonic Transformation","Buffs yourself with increased health, speed & attackspeed. Costs 4 skulls\nGives +60 - 80HP, +25% - +32.5% attack speed, and +35% - +45% speed.", true, 4, "(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 
 	}

@@ -110,8 +110,8 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID = War3_CreateNewRace("Soul Medic", "soulmedic",reloadrace_id,"Medic Race");
 		SKILL_SHARED_PAIN = War3_AddRaceSkill(thisRaceID, "Shared Pain", "The person you're healing takes 40% to 52% of your damage (unless its more than 200 damage)", false, 4);
 		SKILL_BOOST_BEAM = War3_AddRaceSkill(thisRaceID, "Boost Beam", "The person you're healing deals 10% to 18% more damage", false, 4);
-		SKILL_SOUL_BOUND = War3_AddRaceSkill(thisRaceID, "Soul Bound", "If the person you're healing takes lethal damage, you will uber him for 5 to 6.4 seconds costing you 30% to 20% HP CD: 50s", false, 4);
-		ULT_SOUL_SWAP = War3_AddRaceSkill(thisRaceID, "Soul Swap", "You swap HP with your partner. You become ubered for 5 to 6.4 seconds. CD: 60s", false, 4);
+		SKILL_SOUL_BOUND = War3_AddRaceSkill(thisRaceID, "Soul Bound", "If the person you're healing takes lethal damage, you will uber him for 5 to 6.4 seconds costing you 30% to 20% HP CD: 50s", false, 4, "(voice Help!)");
+		ULT_SOUL_SWAP = War3_AddRaceSkill(thisRaceID, "Soul Swap", "You swap HP with your partner. You become ubered for 5 to 6.4 seconds. CD: 60s", false, 4, "(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }
@@ -139,7 +139,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 	if(W3GetDamageIsBullet() && ValidPlayer(victim, true))
 	{
 		new skill = War3_GetSkillLevel(victim, thisRaceID, SKILL_SHARED_PAIN);
-		if(damage > 0.0)
+		if(damage > 0.0 && GetClientTeam(attacker) != GetClientTeam(victim))
 		{
 			if (TF2_GetPlayerClass(victim) == TFClass_Medic)
 			{
@@ -243,25 +243,19 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 						new HealerMaxHP = War3_GetMaxHP(healer);
 						new PriceToPay = RoundToCeil(HealerMaxHP * fPriceMedicPays[skill]);
 
-						new String:buddyname[64];
-						GetClientName(victim, buddyname, sizeof(buddyname));
-
-						new String:healername[64];
-						GetClientName(healer, healername, sizeof(healername));
-
 						new HealerCurHP = GetClientHealth(healer);
 						if (HealerCurHP < PriceToPay || !War3_SkillNotInCooldown(healer, thisRaceID, SKILL_SOUL_BOUND, true))
 						{
-							War3_ChatMessage(victim, "{green}%s{default} couldn't pay the price to save you.", healername);
-							War3_ChatMessage(healer, "You couldn't pay the price to save {green}%s{default}", buddyname);
+							War3_ChatMessage(victim, "{green}%N{default} couldn't pay the price to save you.", healer);
+							War3_ChatMessage(healer, "You couldn't pay the price to save {green}%N{default}", victim);
 						}
 						else
 						{
 							War3_DamageModPercent(0.0);
 							TF2_AddCondition(victim, TFCond_Ubercharged, fUberTime[skill]);
 
-							War3_ChatMessage(victim, "{green}%s{default} paid some HP to save you", healername);
-							War3_ChatMessage(healer, "You paid some HP to save {green}%s{default}'s life!", buddyname);
+							War3_ChatMessage(victim, "{green}%N{default} paid some HP to save you", healer);
+							War3_ChatMessage(healer, "You paid some HP to save {green}%N{default}'s life!", victim);
 
 							SetEntityHealth(healer, HealerCurHP - PriceToPay);
 

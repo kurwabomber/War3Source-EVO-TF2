@@ -48,7 +48,7 @@ public GiveAllPlayersXP_Platinum(int xp, int platinum){
 		if(!ValidRace(race))
 			continue;
 
-		TryToGiveXP_Platinum(i, race, -99, skill1, XPAwardByWin, xp, platinum, "for completing a mission.");
+		TryToGiveXP_Platinum(i, race, -1, skill1, XPAwardByWin, xp, platinum, "for completing a mission.");
 	}
 }
 public GiveAllPlayersXP_Gold(int xp, int gold){
@@ -60,6 +60,6 @@ public GiveAllPlayersXP_Gold(int xp, int gold){
 		if(!ValidRace(race))
 			continue;
 
-		TryToGiveXPGold(i, XPAwardByWin, xp, gold, "for completing a mission.", false);
+		TryToGiveXPGold(i, XPAwardByWin, xp, gold, "for completing a mission", false);
 	}
 }

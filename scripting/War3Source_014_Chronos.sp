@@ -218,10 +218,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("chronos",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Chronos","chronos",reloadrace_id,"Chronosphere forces melee.");
-		SKILL_LEAP=War3_AddRaceSkill(thisRaceID,"Time Leap","Leap in the direction you are moving (auto on jump.)\n650 to 750 HU boost.",false,4);
+		SKILL_LEAP=War3_AddRaceSkill(thisRaceID,"Time Leap","Leap in the direction you are moving (auto on jump.)\n650 to 750 HU boost.",false,4,"READY");
 		SKILL_REWIND=War3_AddRaceSkill(thisRaceID,"Rewind","Chance to regain the damage you took.\nHas a 25 to 35% chance to proc.",false,4);
 		SKILL_TIMELOCK=War3_AddRaceSkill(thisRaceID,"Time Lock","Chance to stun your enemy.\nHas a 25 to 35% chance to proc.",false,4);
-		ULT_SPHERE=War3_AddRaceSkill(thisRaceID,"Chronosphere","Rip space and time to trap enemy.\nTrapped victims cannot move and can only deal/receive melee damage,\nSphere protects chronos from outside damage.\nIt lasts 4.5 to 5.5 seconds. Radius is 200 HU.",true,4);
+		ULT_SPHERE=War3_AddRaceSkill(thisRaceID,"Chronosphere","Rip space and time to trap enemy.\nTrapped victims cannot move and can only deal/receive melee damage,\nSphere protects chronos from outside damage.\nIt lasts 4.5 to 5.5 seconds. Radius is 200 HU.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }

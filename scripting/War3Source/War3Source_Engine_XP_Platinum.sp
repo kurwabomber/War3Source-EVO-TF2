@@ -213,55 +213,12 @@ public War3Source_Engine_XP_Platinum_OnWar3Event(W3EVENT:event,client)
 		//new itemid1,itemid2,itemid3;
 		new race=GetRace(client);
 
-		//new item2;
-		//new item3;
-
-		//War3_GetCurrentItems(client,race,itemid1,itemid2,itemid3);
-		new itemid1=War3_GetItemId1(client,race);
-		new itemid2=War3_GetItemId2(client,race);
-		new itemid3=War3_GetItemId3(client,race);
-
 		if(!IsMvM() && GetRandomFloat(0.0,1.0)<=GetConVarFloat(PlatinumChanceCvar))
 		{
 			new randomPlat=GetRandomInt(RoundToNearest(GetConVarInt(PlatinumOnKillCvar)*0.65),GetConVarInt(PlatinumOnKillCvar));
 			TryToGiveXP_Platinum(client,race,-99,skill1,awardevent,0,randomPlat,"");
 		}
-		//War3_ChatMessage(0,"client %d race %d item1 %d item2 %d item3 %d",client,race,itemid1,itemid2,itemid3);
-		new randomnum=GetRandomInt(1,3);
-		//War3_ChatMessage(0,"randomnum %d GetClientItems3Owned %d",randomnum,GetClientItems3Owned(client));
-
-		//new W3ItemSkills:skillX=skill1;
-		//new W3ItemSkills:skillXX=skill2;
-		switch(randomnum)
-		{
-			case 1:
-			{
-				if(War3_GetOwnsItem3(client,race,itemid1) && W3GetItem3maxlevel1(itemid1)>0)
-					TryToGiveXP_Platinum(client,race,itemid1,skill1,awardevent,xp,0,"");
-				else if(War3_GetOwnsItem3(client,race,itemid2) && W3GetItem3maxlevel1(itemid2)>0)
-					TryToGiveXP_Platinum(client,race,itemid2,skill1,awardevent,xp,0,"");
-				else if(War3_GetOwnsItem3(client,race,itemid3) && W3GetItem3maxlevel1(itemid3)>0)
-					TryToGiveXP_Platinum(client,race,itemid3,skill1,awardevent,xp,0,"");
-			}
-			case 2:
-			{
-				if(War3_GetOwnsItem3(client,race,itemid2) && W3GetItem3maxlevel1(itemid2)>0)
-					TryToGiveXP_Platinum(client,race,itemid2,skill1,awardevent,xp,0,"");
-				else if(War3_GetOwnsItem3(client,race,itemid3) && W3GetItem3maxlevel1(itemid3)>0)
-					TryToGiveXP_Platinum(client,race,itemid3,skill1,awardevent,xp,0,"");
-				else if(War3_GetOwnsItem3(client,race,itemid1) && W3GetItem3maxlevel1(itemid1)>0)
-					TryToGiveXP_Platinum(client,race,itemid1,skill1,awardevent,xp,0,"");
-			}
-			case 3:
-			{
-				if(War3_GetOwnsItem3(client,race,itemid3) && W3GetItem3maxlevel1(itemid3)>0)
-					TryToGiveXP_Platinum(client,race,itemid3,skill1,awardevent,xp,0,"");
-				else if(War3_GetOwnsItem3(client,race,itemid1) && W3GetItem3maxlevel1(itemid1)>0)
-					TryToGiveXP_Platinum(client,race,itemid1,skill1,awardevent,xp,0,"");
-				else if(War3_GetOwnsItem3(client,race,itemid2) && W3GetItem3maxlevel1(itemid2)>0)
-					TryToGiveXP_Platinum(client,race,itemid2,skill1,awardevent,xp,0,"");
-			}
-		}
+		TryToGiveXP_Platinum(client,race,-1,skill1,awardevent,xp,0,"");
 	}
 }
 
@@ -388,99 +345,177 @@ bool:TryToGiveXP_Platinum(client,race,item,W3ItemSkills:itemskill,W3XPAwardedBy:
 
 		//OnPreGiveXP_Platinum, //client, arg1,2,3=W3XPAwardedBy , xp, gold
 		//OnPostGiveXP_Platinum, ///xp gold already given, same args as pre
-
-		if(item!=-99 && ((itemskill==skill1 && W3GetItem3maxlevel1(item)<=0) || (itemskill==skill2 && W3GetItem3maxlevel2(item)<=0)))
-			return false;
-
-		internal_W3SetVar(EventArg1,awardedfromevent); //set event vars
-		internal_W3SetVar(EventArg2,xp);
-		internal_W3SetVar(EventArg3,platinum);
-		DoFwd_War3_Event(OnPreGiveXP_Platinum,client); //fire event
+		if(item == -1){
+			internal_W3SetVar(EventArg1,awardedfromevent); //set event vars
+			internal_W3SetVar(EventArg2,xp);
+			internal_W3SetVar(EventArg3,platinum);
+			DoFwd_War3_Event(OnPreGiveXP_Platinum,client); //fire event
 
 
-		new addxp=internal_W3GetVar(EventArg2); //retrieve possibly modified vars
-		new addplatinum=internal_W3GetVar(EventArg3);
+			new addxp=internal_W3GetVar(EventArg2); //retrieve possibly modified vars
+			new addplatinum=internal_W3GetVar(EventArg3);
 
-		//War3_ChatMessage(0,"TryToGiveXP_Platinum itemskill %d",itemskill);
-		//War3_SetItemXP(client,race,item,War3_GetItemXP(client,race,item)+1);
-		//War3_SetItemXP2(client,race,item,War3_GetItemXP2(client,race,item)+10);
-		new bool:DidXpSet=false;
-		new String:ItemmName[32];
-		strcopy(ItemmName,31,"");
-		if(item!=-99)
-		{
-			if(itemskill==skill1)
+			new itemid1=War3_GetItemId1(client,race);
+			new itemid2=War3_GetItemId2(client,race);
+			new itemid3=War3_GetItemId3(client,race);
+
+			bool successAdd;
+			
+			if(War3_GetOwnsItem3(client, race, itemid1)){
+				new ItemXPstuff=War3_GetItemXP(client,race,itemid1);
+				if(addxp<0&&ItemXPstuff+addxp<0){
+					addxp=-1*ItemXPstuff;
+				}
+				ItemXPstuff=ItemXPstuff+addxp;
+				War3_SetItemXP(client,race,itemid1,ItemXPstuff);
+				successAdd = true;
+			}
+			if(War3_GetOwnsItem3(client, race, itemid2)){
+				new ItemXPstuff=War3_GetItemXP(client,race,itemid2);
+				if(addxp<0&&ItemXPstuff+addxp<0){
+					addxp=-1*ItemXPstuff;
+				}
+				ItemXPstuff=ItemXPstuff+addxp;
+				War3_SetItemXP(client,race,itemid2,ItemXPstuff);
+				successAdd = true;
+			}
+			if(War3_GetOwnsItem3(client, race, itemid3)){
+				new ItemXPstuff=War3_GetItemXP(client,race,itemid3);
+				if(addxp<0&&ItemXPstuff+addxp<0){
+					addxp=-1*ItemXPstuff;
+				}
+				ItemXPstuff=ItemXPstuff+addxp;
+				War3_SetItemXP(client,race,itemid3,ItemXPstuff);
+				successAdd = true;
+			}
+
+
+			new oldplatinum=War3_GetPlatinum(client);
+			new newplatinum=oldplatinum+addplatinum;
+			new maxplatinum=GetConVarInt(MaxPlatinumCvar);
+			if(newplatinum>maxplatinum)
 			{
-					if(W3GetItem3maxlevel1(item)==War3_GetItemLevel(client,race,item))
-					{
-						War3_SetItemXP(client,race,item,0);
-					}
-					else
-					{
-						new ItemXPstuff=War3_GetItemXP(client,race,item);
-						if(addxp<0&&ItemXPstuff+addxp<0){ //negative xp?
+				newplatinum=maxplatinum;
+				addplatinum=newplatinum-oldplatinum;
+			}
+
+			War3_SetPlatinum(client,oldplatinum+addplatinum);
+			
+			if(addxp>0&&addplatinum>0&&successAdd)
+				War3_ChatMessage(client,"All gems gained %d XP and %d platinum %s",addxp,addplatinum,awardedprintstring);
+			else if(addxp>0&&successAdd)
+				War3_ChatMessage(client,"All gems gained %d XP %s",addxp,awardedprintstring);
+			else if(addplatinum>0){
+				War3_ChatMessage(client,"Gained %d platinum %s",addplatinum,awardedprintstring);
+			}
+
+			else if(addxp<0&&addplatinum<0&&successAdd)
+				War3_ChatMessage(client,"All gems lost %d XP and %d platinum %s",addxp,addplatinum,awardedprintstring);
+			else if(addxp<0&&successAdd)
+				War3_ChatMessage(client,"All gems lost %d XP %s",addxp,awardedprintstring);
+			else if(addplatinum<0){
+				War3_ChatMessage(client,"You lost %d platinum %s",addplatinum,awardedprintstring);
+			}
+
+			W3DoLevelCheck(client);
+			DoFwd_War3_Event(OnPostGiveXP_Platinum,client);
+		}
+		else
+		{
+				
+			if(item!=-99 && ((itemskill==skill1 && W3GetItem3maxlevel1(item)<=0) || (itemskill==skill2 && W3GetItem3maxlevel2(item)<=0)))
+				return false;
+
+			internal_W3SetVar(EventArg1,awardedfromevent); //set event vars
+			internal_W3SetVar(EventArg2,xp);
+			internal_W3SetVar(EventArg3,platinum);
+			DoFwd_War3_Event(OnPreGiveXP_Platinum,client); //fire event
+
+
+			new addxp=internal_W3GetVar(EventArg2); //retrieve possibly modified vars
+			new addplatinum=internal_W3GetVar(EventArg3);
+
+			//War3_ChatMessage(0,"TryToGiveXP_Platinum itemskill %d",itemskill);
+			//War3_SetItemXP(client,race,item,War3_GetItemXP(client,race,item)+1);
+			//War3_SetItemXP2(client,race,item,War3_GetItemXP2(client,race,item)+10);
+			new bool:DidXpSet=false;
+			new String:ItemmName[32];
+			strcopy(ItemmName,31,"");
+			if(item!=-99)
+			{
+				if(itemskill==skill1)
+				{
+						if(W3GetItem3maxlevel1(item)==War3_GetItemLevel(client,race,item))
+						{
+							War3_SetItemXP(client,race,item,0);
+						}
+						else
+						{
+							new ItemXPstuff=War3_GetItemXP(client,race,item);
+							if(addxp<0&&ItemXPstuff+addxp<0){ //negative xp?
+								addxp=-1*ItemXPstuff;
+							}
+							ItemXPstuff=ItemXPstuff+addxp;
+							DidXpSet=War3_SetItemXP(client,race,item,ItemXPstuff);
+						}
+				}
+				else if(itemskill==skill2)
+				{
+						if(W3GetItem3maxlevel2(item)==War3_GetItemLevel2(client,race,item))
+						{
+							War3_SetItemXP2(client,race,item,0);
+						}
+						else
+						{
+							new ItemXPstuff=War3_GetItemXP2(client,race,item);
+							if(addxp<0&&ItemXPstuff+addxp<0){  //negative xp?
 							addxp=-1*ItemXPstuff;
+							}
+							ItemXPstuff=ItemXPstuff+addxp;
+							DidXpSet=War3_SetItemXP2(client,race,item,ItemXPstuff);
 						}
-						ItemXPstuff=ItemXPstuff+addxp;
-						DidXpSet=War3_SetItemXP(client,race,item,ItemXPstuff);
-					}
+				}
+				W3GetItem3Name(item,ItemmName,31);
 			}
-			else if(itemskill==skill2)
+
+			new oldplatinum=War3_GetPlatinum(client);
+			new newplatinum=oldplatinum+addplatinum;
+			new maxplatinum=GetConVarInt(MaxPlatinumCvar);
+			if(newplatinum>maxplatinum)
 			{
-					if(W3GetItem3maxlevel2(item)==War3_GetItemLevel2(client,race,item))
-					{
-						War3_SetItemXP2(client,race,item,0);
-					}
-					else
-					{
-						new ItemXPstuff=War3_GetItemXP2(client,race,item);
-						if(addxp<0&&ItemXPstuff+addxp<0){  //negative xp?
-						addxp=-1*ItemXPstuff;
-						}
-						ItemXPstuff=ItemXPstuff+addxp;
-						DidXpSet=War3_SetItemXP2(client,race,item,ItemXPstuff);
-					}
+				newplatinum=maxplatinum;
+				addplatinum=newplatinum-oldplatinum;
 			}
-			W3GetItem3Name(item,ItemmName,31);
-		}
+			War3_SetPlatinum(client,oldplatinum+addplatinum);
+			if(addxp>0&&addplatinum>0&&DidXpSet)
+				War3_ChatMessage(client,"[%s] gained %d XP and %d platinum %s",ItemmName,addxp,addplatinum,awardedprintstring);
+			else if(addxp>0&&DidXpSet)
+				War3_ChatMessage(client,"[%s] gained %d XP %s",ItemmName,addxp,awardedprintstring);
+			else if(addplatinum>0&&DidXpSet){
+				War3_ChatMessage(client,"[%s] gained %d platinum %s",ItemmName,addplatinum,awardedprintstring);
+			}
+			else if(addplatinum>0&&!DidXpSet){
+				War3_ChatMessage(client,"You gained %d platinum %s",addplatinum,awardedprintstring);
+			}
 
-		new oldplatinum=War3_GetPlatinum(client);
-		new newplatinum=oldplatinum+addplatinum;
-		new maxplatinum=GetConVarInt(MaxPlatinumCvar);
-		if(newplatinum>maxplatinum)
-		{
-			newplatinum=maxplatinum;
-			addplatinum=newplatinum-oldplatinum;
-		}
-		War3_SetPlatinum(client,oldplatinum+addplatinum);
-		if(addxp>0&&addplatinum>0&&DidXpSet)
-			War3_ChatMessage(client,"[%s] gained %d XP and %d platinum %s",ItemmName,addxp,addplatinum,awardedprintstring);
-		else if(addxp>0&&DidXpSet)
-			War3_ChatMessage(client,"[%s] gained %d XP %s",ItemmName,addxp,awardedprintstring);
-		else if(addplatinum>0&&DidXpSet){
-			War3_ChatMessage(client,"[%s] gained %d platinum %s",ItemmName,addplatinum,awardedprintstring);
-		}
-		else if(addplatinum>0&&!DidXpSet){
-			War3_ChatMessage(client,"You gained %d platinum %s",addplatinum,awardedprintstring);
-		}
+			else if(addxp<0&&addplatinum<0&&DidXpSet)
+				War3_ChatMessage(client,"[%s] lost %d XP and %d platinum %s",ItemmName,addxp,addplatinum,awardedprintstring);
+			else if(addxp<0&&DidXpSet)
+				War3_ChatMessage(client,"[%s] lost %d XP %s",ItemmName,addxp,awardedprintstring);
+			else if(addplatinum<0&&DidXpSet){
+				War3_ChatMessage(client,"[%s] lost %d platinum %s",ItemmName,addplatinum,awardedprintstring);
+			}
+			else if(addplatinum<0&&!DidXpSet){
+				War3_ChatMessage(client,"You lost %d platinum %s",addplatinum,awardedprintstring);
+			}
 
-		else if(addxp<0&&addplatinum<0&&DidXpSet)
-			War3_ChatMessage(client,"[%s] lost %d XP and %d platinum %s",ItemmName,addxp,addplatinum,awardedprintstring);
-		else if(addxp<0&&DidXpSet)
-			War3_ChatMessage(client,"[%s] lost %d XP %s",ItemmName,addxp,awardedprintstring);
-		else if(addplatinum<0&&DidXpSet){
-			War3_ChatMessage(client,"[%s] lost %d platinum %s",ItemmName,addplatinum,awardedprintstring);
+			//if(War3_GetLevel(client,race)!=W3GetRaceMaxLevel(race))
+			W3DoLevelCheck(client); //in case they didnt level any skills
+
+			DoFwd_War3_Event(OnPostGiveXP_Platinum,client);
+
+			return true;
 		}
-		else if(addplatinum<0&&!DidXpSet){
-			War3_ChatMessage(client,"You lost %d platinum %s",addplatinum,awardedprintstring);
-		}
-
-		//if(War3_GetLevel(client,race)!=W3GetRaceMaxLevel(race))
-		W3DoLevelCheck(client); //in case they didnt level any skills
-
-		DoFwd_War3_Event(OnPostGiveXP_Platinum,client);
-
-		return true;
 	}
 	return false;
 }

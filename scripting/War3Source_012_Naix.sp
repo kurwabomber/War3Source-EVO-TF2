@@ -157,10 +157,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID=War3_CreateNewRace("Naix - Lifestealer","naix",reloadrace_id,"Lifesteal, tank, rage.");
 
-		SKILL_INFEST = War3_AddRaceSkill(thisRaceID, "Infest","Regains 15-20% health upon killing an enemy.\nYou teleport to victim location if you are ducking\n(only once every 10 seconds, heavy only)", false,4);
+		SKILL_INFEST = War3_AddRaceSkill(thisRaceID, "Infest","Regains 15-20% health upon killing an enemy.\nYou teleport to victim location if you are ducking\n(only once per 10s if heavy)", false,4);
 		SKILL_BLOODBATH = War3_AddRaceSkill(thisRaceID, "Blood Bath","Increases health of the Naix by 35-55.",false,4);
 		SKILL_FEAST = War3_AddRaceSkill(thisRaceID, "Feast","Regenerates 10-16% percent of enemy's current HP chance on hit.",false,4);
-		ULT_RAGE = War3_AddRaceSkill(thisRaceID, "Rage","Naix goes into a maddened Rage, gaining 45-85% attack speed for 4-5.5 seconds", true,4);
+		ULT_RAGE = War3_AddRaceSkill(thisRaceID, "Rage","Naix goes into a maddened Rage, gaining 45-85% attack speed for 4-5.5 seconds", true,4,"(voice Jeers)");
 
 		War3_AddSkillBuff(thisRaceID, SKILL_BLOODBATH, iAdditionalMaxHealth, HPIncrease);
 		War3_CreateRaceEnd(thisRaceID);

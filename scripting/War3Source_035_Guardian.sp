@@ -82,9 +82,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID=War3_CreateNewRace(racelongname,raceshortname,reloadrace_id,racedescription);
 		SKILL_FIRST=War3_AddRaceSkill(thisRaceID,"Juggernaut","+8 armor. Deal 15% more damage.\n+6 to 8 HPR, +50-70 MaxHP. -40% movespeed. (passive)",false,4);
-		SKILL_SECOND=War3_AddRaceSkill(thisRaceID,"Cleansing Flame","Within a 500HU radius, deal 80 to 85 damage.\n25s to 18.5s cooldown. Using this also adds cooldown to other abilities. (+ability)",false,4);
-		SKILL_THIRD=War3_AddRaceSkill(thisRaceID,"Chokeslam","Grab a nearby enemy, dealing 75 -> 95 dmg. Stuns for 1.5s.\n30s cooldown.  Using this also adds cooldown to other abilities. (+ability2)",false,4);
-		ULT=War3_AddRaceSkill(thisRaceID,"Steadfast Corruption","Creates a shockwave arc with 550HU length.\nCast time is 2.5s. Deals 130 -> 160 dmg.\n45s cooldown. (+ultimate)",true,4);
+		SKILL_SECOND=War3_AddRaceSkill(thisRaceID,"Cleansing Flame","Within a 500HU radius, deal 80 to 85 damage.\n25s to 18.5s cooldown. Using this also adds cooldown to other abilities. (+ability)",false,4,"(voice Help!)");
+		SKILL_THIRD=War3_AddRaceSkill(thisRaceID,"Chokeslam","Grab a nearby enemy, dealing 75 -> 95 dmg. Stuns for 1.5s.\n30s cooldown.  Using this also adds cooldown to other abilities. (+ability2)",false,4,"(voice Battle Cry)");
+		ULT=War3_AddRaceSkill(thisRaceID,"Steadfast Corruption","Creates a shockwave arc with 550HU length.\nCast time is 2.5s. Deals 130 -> 160 dmg.\n45s cooldown. (+ultimate)",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_FIRST, fHPRegen, JuggernautHPR);
 		War3_AddSkillBuff(thisRaceID, SKILL_FIRST, iAdditionalMaxHealth, JuggernautHP);

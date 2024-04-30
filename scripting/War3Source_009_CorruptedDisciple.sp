@@ -150,10 +150,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("cd",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Corrupted Disciple","cd",reloadrace_id,"Electricity & support");
-		SKILL_TIDE=War3_AddRaceSkill(thisRaceID,"Electric Tide","Expands electric rings around you, deals the most damage at the edge.\nMaximum damage is 140-180. Has a 7.5 second cooldown.",false,4);
+		SKILL_TIDE=War3_AddRaceSkill(thisRaceID,"Electric Tide","Expands electric rings around you, deals the most damage at the edge.\nMaximum damage is 140-180. Has a 7.5 second cooldown.",false,4,"(voice Help!)");
 		SKILL_CONDUIT=War3_AddRaceSkill(thisRaceID,"Corrupted Conduit","Your victim will lose damage per attack for a duration.\nAuto activate when not on cooldown. On activation: Heals 2-4 health when you're hit.\nLasts 10 seconds, has a 12 second cooldown.",false,4);
 		SKILL_STATIC=War3_AddRaceSkill(thisRaceID,"Static Discharge","Chance to heal you and your teammates around you when you are damaged.\n50% chance of proc, heals for 60-72% of damage taken. 800HU radius.",false,4);
-		ULT_OVERLOAD=War3_AddRaceSkill(thisRaceID,"Overload","(+ultimate) Shocks the lowest hp enemy around you per second while you gain damage per hit\nHits for 4-6 dmg, has 75 damage ticks. Your damage increases by 1% -> 1.26% per zap. Ticks every 0.1 seconds.",true,4);
+		ULT_OVERLOAD=War3_AddRaceSkill(thisRaceID,"Overload","(+ultimate) Shocks the lowest hp enemy around you per second while you gain damage per hit\nHits for 4-6 dmg, has 75 damage ticks. Your damage increases by 1% -> 1.26% per zap. Ticks every 0.1 seconds.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 
 		W3SkillCooldownOnSpawn(thisRaceID,ULT_OVERLOAD,10.0,_); //translated doesnt use this "Chain Lightning"

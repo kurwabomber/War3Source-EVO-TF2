@@ -70,8 +70,8 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace("Phoenix","phoenix",reloadrace_id,"Pyro Race");
 		SKILL_SPELLIMMUNITY=War3_AddRaceSkill(thisRaceID,"Spell Immunity","Grants partial immunity to all effects.\nEach level increases rate. 50% to 75%.",false,4);
 		SKILL_RESISTANT=War3_AddRaceSkill(thisRaceID,"Resistant Skin","Gives a boost to defense. Gives 2.0 to 3 physical armor.",false,4);
-		SKILL_REVIVE=War3_AddRaceSkill(thisRaceID,"Revival","Self-revives with a cooldown. Cooldown is 45 to 40 seconds.",false,4);
-		ULT_FIRE=War3_AddRaceSkill(thisRaceID,"Phoenix Fire","Ignites everyone in a 600 HU radius. Deals 20 to 28 damage. Cooldown is 1.5 seconds.",true,4);
+		SKILL_REVIVE=War3_AddRaceSkill(thisRaceID,"Revival","Self-revives with a cooldown. Cooldown is 45 to 40 seconds.",false,4,"READY");
+		ULT_FIRE=War3_AddRaceSkill(thisRaceID,"Phoenix Fire","Ignites everyone in a 600 HU radius. Deals 20 to 28 damage. Cooldown is 1.5 seconds.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_RESISTANT, fArmorPhysical, DefenseBonus);
 		W3SkillCooldownOnSpawn(thisRaceID,SKILL_REVIVE,40.0,true);

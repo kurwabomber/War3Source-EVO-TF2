@@ -164,7 +164,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_EVADE=War3_AddRaceSkill(thisRaceID,"Evasion","Up to 14 percent chance of evading a shot",false,4);
 		SKILL_THORNS=War3_AddRaceSkill(thisRaceID,"Thorns Aura","You deal up to 30% percent of damage recieved to your attacker. ",false,4);
 		SKILL_TRUESHOT=War3_AddRaceSkill(thisRaceID,"Trueshot Aura","Your attacks deal up to 30% percent more damage",false,4);
-		ULT_ENTANGLE=War3_AddRaceSkill(thisRaceID,"Entangling Roots","Bind enemies to the ground,\nrendering them immobile for up to 6 seconds. Up to 4000HU range.\nHas 2 second casting time.",true,4);
+		ULT_ENTANGLE=War3_AddRaceSkill(thisRaceID,"Entangling Roots","Bind enemies to the ground,\nrendering them immobile for up to 6 seconds. Up to 4000HU range.\nHas 2 second casting time.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }

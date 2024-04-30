@@ -83,7 +83,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_COMBAT=War3_AddRaceSkill(thisRaceID,"Combat Experience","All headshots (hits to the head) deal 24% to 34% more damage.",false,4);
 		SKILL_MOVE=War3_AddRaceSkill(thisRaceID,"On The Move","Increases movepseed by 20% to 30% and scope speed by 16% to 26%.",false,4);
 		SKILL_ADRENALINE=War3_AddRaceSkill(thisRaceID,"Adrenaline","You regenerate health & increase attackspeed.\nRegenerates 3 to 4 HP per second and increases attackspeed by 10% to 15%.",false,4);
-		ULT_SCAN=War3_AddRaceSkill(thisRaceID,"UAV Scan","You and teammates gain the ability to see targets anywhere. Lasts 7 seconds.\nCooldown is 38 to 30 seconds.",true,4);
+		ULT_SCAN=War3_AddRaceSkill(thisRaceID,"UAV Scan","You and teammates gain the ability to see targets anywhere. Lasts 7 seconds.\nCooldown is 38 to 30 seconds.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 
 		War3_AddSkillBuff(thisRaceID, SKILL_MOVE, fMaxSpeed, MoveMultiplier);

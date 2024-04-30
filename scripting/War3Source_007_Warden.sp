@@ -104,9 +104,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID=War3_CreateNewRace(RACE_LONGNAME,RACE_SHORTNAME,reloadrace_id,"Ult Immunity, healing.");
 		SKILL_FANOFKNIVES=War3_AddRaceSkill(thisRaceID,"Fan Of Knives","Deals 50 damage to attacker. 8-12% chance to proc.",false,4);
-		SKILL_BLINK=War3_AddRaceSkill(thisRaceID,"Immunity","25% Immunity chance per level.",false,4);
+		SKILL_BLINK=War3_AddRaceSkill(thisRaceID,"Immunity","50% to 65% immunity vs ultimates.",false,4);
 		SKILL_SHADOWSTRIKE=War3_AddRaceSkill(thisRaceID,"Shadow Strike","Chance to deal initial 20 damage and 5 aftertime damage.\nDOT attacks 5-7 times and has a 20-35% chance to proc.",false,4);
-		ULT_VENGENCE=War3_AddRaceSkill(thisRaceID,"Vengence","When used: Heals for 100% to 150% of your max health. Cooldown is 20 seconds.",true,4);
+		ULT_VENGENCE=War3_AddRaceSkill(thisRaceID,"Vengence","When used: Heals for 100% to 150% of your max health. Cooldown is 20 seconds.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	
 	}

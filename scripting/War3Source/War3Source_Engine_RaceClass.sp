@@ -240,6 +240,7 @@ public bool War3Source_Engine_RaceClass_InitNatives()
 	CreateNative("War3_IsSkillUltimate",NWar3_IsSkillUltimate);
 	CreateNative("W3GetRaceSkillName",NW3GetRaceSkillName);
 	CreateNative("W3GetRaceSkillDesc",NW3GetRaceSkillDesc);
+	CreateNative("W3GetRaceSkillReadyDesc", NW3GetRaceSkillReadyDesc);
 
 	CreateNative("W3GetRaceOrder",NW3GetRaceOrder);
 	CreateNative("W3RaceHasFlag",NW3RaceHasFlag);
@@ -329,6 +330,7 @@ public NWar3_RaceOnPluginEnd(Handle:plugin,numParams){
 		for(new i=0;i<MAXSKILLCOUNT;i++){
 			//PrintToServer("STARTED:NWar3_RaceOnPluginEnd i= %i",i);
 			strcopy(raceSkillName[RaceOnPluginEndID][i], 32, "");
+			strcopy(raceSkillReadyDescription[RaceOnPluginEndID][i], 512, "");
 			strcopy(raceSkillDescription[RaceOnPluginEndID][i], 512, "");
 			skillIsUltimate[RaceOnPluginEndID][i]=false;
 			skillMaxLevel[RaceOnPluginEndID][i]=0;
@@ -471,14 +473,16 @@ public NWar3_AddRaceSkill(Handle:plugin,numParams){
 	if(raceid>0){
 		new String:skillname[32];
 		new String:skilldesc[2001];
+		new String:skillreadydesc[2001];
 		GetNativeString(2,skillname,sizeof(skillname));
 		GetNativeString(3,skilldesc,sizeof(skilldesc));
 		new bool:isult=GetNativeCell(4);
 		new tmaxskilllevel=GetNativeCell(5);
+		GetNativeString(6,skillreadydesc,sizeof(skillreadydesc));
 
 		//W3Log("add skill %s %s",skillname,skilldesc);
 
-		return AddRaceSkill(raceid,skillname,skilldesc,isult,tmaxskilllevel);
+		return AddRaceSkill(raceid,skillname,skilldesc,isult,tmaxskilllevel, skillreadydesc);
 	}
 	return 0;
 }
@@ -663,6 +667,16 @@ public NW3GetRaceSkillDesc(Handle:plugin,numParams)
 
 	new String:longbuf[1000];
 	GetRaceSkillDesc(race,skill,longbuf,sizeof(longbuf));
+	SetNativeString(3,longbuf,maxlen);
+}
+public NW3GetRaceSkillReadyDesc(Handle:plugin, numParams)
+{
+	new race=GetNativeCell(1);
+	new skill=GetNativeCell(2);
+	new maxlen=GetNativeCell(4);
+
+	new String:longbuf[64];
+	GetRaceSkillReadyDesc(race,skill,longbuf,sizeof(longbuf));
 	SetNativeString(3,longbuf,maxlen);
 }
 public NWar3_GetRaceIDByShortname(Handle:plugin,numParams)
@@ -1124,7 +1138,7 @@ CreateNewRace(String:tracename[],String:traceshortname[],String:traceshortdesc[]
 
 
 ////we add skill or ultimate here, but we have to define if its a skill or ultimate we are adding
-AddRaceSkill(raceid,String:skillname[],String:skilldescription[],bool:isUltimate,tmaxskilllevel){
+AddRaceSkill(raceid,String:skillname[],String:skilldescription[],bool:isUltimate,tmaxskilllevel,char[] readyDescription = ""){
 	if(raceid>0){
 		//ok is it an existing skill?
 		//new String:existingskillname[64];
@@ -1167,7 +1181,7 @@ AddRaceSkill(raceid,String:skillname[],String:skilldescription[],bool:isUltimate
 			}
 		}
 
-
+		strcopy(raceSkillReadyDescription[raceid][raceSkillCount[raceid]], 2000, readyDescription);
 		strcopy(raceSkillDescription[raceid][raceSkillCount[raceid]], 2000, skilldescription);
 		skillIsUltimate[raceid][raceSkillCount[raceid]]=isUltimate;
 
@@ -1415,6 +1429,11 @@ stock GetRaceSkillDesc(raceid,skillindex,String:retstr[],maxlen){
 	}
 
 	new num=strcopy(retstr, maxlen, raceSkillDescription[raceid][skillindex]);
+	return num;
+}
+
+stock GetRaceSkillReadyDesc(raceid,skillindex,String:retstr[],maxlen){
+	new num=strcopy(retstr, maxlen, raceSkillReadyDescription[raceid][skillindex]);
 	return num;
 }
 

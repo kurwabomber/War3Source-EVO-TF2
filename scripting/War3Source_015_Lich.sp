@@ -117,10 +117,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("lich_o",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Lich","lich_o",reloadrace_id,"Tank support.");
-		SKILL_FROSTNOVA=War3_AddRaceSkill(thisRaceID,"Frost Nova","(+ability) Reduces your enemies' movespeed and attack speed \nSlows by 20-45% and reduces attack speed by 20-45%.\n550HU range and 10s cooldown.",false,4);
+		SKILL_FROSTNOVA=War3_AddRaceSkill(thisRaceID,"Frost Nova","(+ability) Reduces your enemies' movespeed and attack speed \nSlows by 20-45% and reduces attack speed by 20-45%.\n550HU range and 10s cooldown.",false,4,"(voice Help!)");
 		SKILL_FROSTARMOR=War3_AddRaceSkill(thisRaceID,"Frost Armor","Increases your physical and magic armor by 4-6",false,4);
 		SKILL_DARKRITUAL=War3_AddRaceSkill(thisRaceID,"Dark Ritual","You gain 10 to 14 max health from the sacrifice of teammates",false,4);
-		ULT_DEATHDECAY=War3_AddRaceSkill(thisRaceID,"Death And Decay","Deals 100 to 140 magic damage spread around to all enemies.",true,4);
+		ULT_DEATHDECAY=War3_AddRaceSkill(thisRaceID,"Death And Decay","Deals 100 to 140 magic damage spread around to all enemies.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 
 		War3_AddSkillBuff(thisRaceID, SKILL_FROSTARMOR, fArmorPhysical, FrostArmorAmount);

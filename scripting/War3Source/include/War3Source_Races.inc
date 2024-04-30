@@ -86,7 +86,7 @@ native int War3_CreateNewRaceT(String:shortname[],reload_race_id=0,String:shortd
 
 //adds a skill or a ultimate
 //native War3_AddRaceSkill(raceid,String:tskillorultname[],String:tskillorultdescription[],bool:isult=false,maxskilllevel=DEF_MAX_SKILL_LEVEL);
-native int War3_AddRaceSkill(int raceid,char[] tskillorultname,char[] tskillorultdescription,bool isult=false,int maxskilllevel=DEF_MAX_SKILL_LEVEL);
+native int War3_AddRaceSkill(int raceid,char[] tskillorultname,char[] tskillorultdescription,bool isult=false,int maxskilllevel=DEF_MAX_SKILL_LEVEL, char[] readyDescription = "");
 
 //translated
 //adds a skill or a ultimate
@@ -153,6 +153,7 @@ native bool War3_IsSkillUltimate(int raceid, int skillnum);
 native int War3_GetRaceSkillCount(raceid);
 native void W3GetRaceSkillName(int raceid,int skillindex,char[] retstr,int maxlen);
 native void W3GetRaceSkillDesc(int raceid,int skillindex,char[] retstr,int maxlen);
+native void W3GetRaceSkillReadyDesc(int raceid,int skillindex,char[] retstr,int maxlen);
 native int W3GetRaceSkillMaxLevel(int raceid, int skillnum);
 native int W3GetRaceOrder(int raceid);
 

@@ -2337,6 +2337,7 @@ public __pl_War3Source_SetNTVOptional()
 	MarkNativeAsOptional("War3_GetRaceSkillCount");
 	MarkNativeAsOptional("W3GetRaceSkillName");
 	MarkNativeAsOptional("W3GetRaceSkillDesc");
+	MarkNativeAsOptional("W3GetRaceSkillReadyDesc");
 	MarkNativeAsOptional("W3GetRaceSkillMaxLevel");
 	MarkNativeAsOptional("W3GetRaceOrder");
 	MarkNativeAsOptional("W3RaceHasFlag");

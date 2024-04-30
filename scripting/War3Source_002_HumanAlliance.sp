@@ -129,7 +129,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_SPEED=War3_AddRaceSkill(thisRaceID,"Whisk","Increases movement speed by 16->20%.",false,4);
 		SKILL_HEALTH=War3_AddRaceSkill(thisRaceID,"Devotion Aura","Gives you additional 40->50 health.",false,4);
 		SKILL_BASH=War3_AddRaceSkill(thisRaceID,"Bash","7/13/19/25% chance to bash the enemy.\nRenders the enemy immobile for 0.2->0.3 seconds.",false,4);
-		ULT_TELEPORT=War3_AddRaceSkill(thisRaceID,"Teleport","Teleport toward where you aim.\nUp to 1200 HU range. Ultimate Immunity has 350 blocking radius.",true,4);
+		ULT_TELEPORT=War3_AddRaceSkill(thisRaceID,"Teleport","Teleport toward where you aim.\nUp to 1200 HU range. Ultimate Immunity has 350 blocking radius.",true,4, "(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_SPEED, fMaxSpeed, WhiskSpeed);
 	}

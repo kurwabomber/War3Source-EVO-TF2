@@ -49,16 +49,17 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		//Red - Offensive
 		ItemID[REDTEARSTONE]=War3_CreateShopItem3("Red Tearstone","red_tearstone","Gain a 15%% damage boost while at 25%% or below.\nLeveling up increases threshold. Adds 2%% per level.",40,"Red","Red Tearstone",10,"Red Tearstone",0);
 		if(ItemID[REDTEARSTONE]==0){
-			DP("ERR ITEM ID RETURNED IS ZERO | SH3");
+			DP("Shopitems 3 | Something went wrong while generating IDs for items.");
 		}
-		ItemID[STORMHEART]=War3_CreateShopItem3("Heart of the Storm","stormheart","Adds +2 damage to all hits.\nLeveling up increases additive damage. Adds 0.2 damage per level.",60,"Red","Heart of the Storm",10,"Heart of the Storm",0);
+
+		ItemID[STORMHEART]=War3_CreateShopItem3("Heart of the Storm","stormheart","Adds +2 damage to all hits.\nLeveling up increases additive damage. Adds 0.1 damage per level.",80,"Red","Heart of the Storm",10,"Heart of the Storm",0);
 		
 		//Yellow - Modifiers
 		ItemID[WINDPEARL]=War3_CreateShopItem3("Cloudy Pearl","windpearl","Gives +6%% movespeed.\nLeveling increases movespeed. 1%% increase per level.",30,"Yellow","Cloudy Pearl",10,"Cloudy Pearl",0);
 		ItemID[FREEZE]=War3_CreateShopItem3("Frozen Fists","freeze","Hits have a 10% chance to stop enemy movement for 0.2 seconds.\nCannot level up.",60,"Yellow","Frozen Fists",0,"Frozen Fists",0);
 		
 		//Blue - Survivability
-		ItemID[BLUETEARSTONE]=War3_CreateShopItem3("Blue Tearstone","blue_tearstone","Gain a 15%% defense boost while at 25%% or below.\nLeveling up increases threshold. Adds 2%% per level.",30,"Blue","Blue Tearstone",10,"Blue Tearstone",0);
+		ItemID[BLUETEARSTONE]=War3_CreateShopItem3("Blue Tearstone","blue_tearstone","Gain a 20%% defense boost while at 25%% or below.\nLeveling up increases threshold. Adds 2%% per level.",30,"Blue","Blue Tearstone",10,"Blue Tearstone",0);
 		ItemID[UBERHEART]=War3_CreateShopItem3("Ubered Heart","uberheart","Gives +2.5%% max health.\nLeveling up increases max health. +0.2%% max health per level.",50,"Blue","Ubered Heart",10,"Ubered Heart",0);
 		
 		//Orange - Red & Yellow
@@ -66,14 +67,26 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		ItemID[POISONGEM]=War3_CreateShopItem3("Poison Gem","poisongem","10%% chance to apply 4 ticks of 2 dmg poison on hit.\nLeveling up decreases tickspeed and increases damage.\n -0.05s per tick per level, +0.25 dmg per level.",50,"Orange","Poison Gem",10,"Poison Gem",0);
 		
 		//Green - Blue & Yellow
-		ItemID[SPRINGGEM]=War3_CreateShopItem3("Spring Gem","spring","Gives +1/s combat regen.\nWhile your health is below or equal to 40%%, regen is boosted by 2x.\nUpgrading increases regen. 0.2 regen per level.",60,"Green","Spring Gem",10,"Spring Gem",0);
+		ItemID[SPRINGGEM]=War3_CreateShopItem3("Spring Gem","spring","Gives +2/s regen.\nWhile your health is below or equal to 40%%, regen is boosted by 2x.\nUpgrading increases regen. 0.1 regen per level.",60,"Green","Spring Gem",10,"Spring Gem",0);
 		ItemID[HEATINGPLATES]=War3_CreateShopItem3("Heating Coils","heat","Gives immunity to slowdowns.\nCannot be leveled up.",50,"Green","Heating Coils",0,"Heating Coils",0);
 		
 		//Purple - Red & Blue
-		ItemID[MARKSMAN]=War3_CreateShopItem3("Marksman's Sign","marksman","Shots to the head deal 10%% more damage and have 10%% lifesteal.\nLeveling up increases lifesteal. +1%% lifesteal per level.",50,"Purple","Marksman's Sign",10,"Marksman's Sign",0);
-		ItemID[RAGE]=War3_CreateShopItem3("Rage Gem","rage","You gain 0.1%% attackspeed per 1% health missing.\nLeveling up increases attackspeed. +0.005%% attackspeed per level.",55,"Purple","Rage Gem",10,"Rage Gem",0);
+		ItemID[MARKSMAN]=War3_CreateShopItem3("Marksman's Sign","marksman","Shots to the head deal 15%% more damage and have 15%% lifesteal.\nLeveling up increases lifesteal. +1%% lifesteal per level.",50,"Purple","Marksman's Sign",10,"Marksman's Sign",0);
+		ItemID[RAGE]=War3_CreateShopItem3("Rage Gem","rage","You gain 0.2%% attackspeed per 1%% health missing.\nLeveling up increases attackspeed. +0.005%% attackspeed per level.",55,"Purple","Rage Gem",10,"Rage Gem",0);
 	}
 }
+
+public OnRaceChanged(client,oldrace,newrace)
+{
+	War3_SetBuffItem3(client,fDamageModifier,ItemID[REDTEARSTONE],0.0);
+	War3_SetBuffItem3(client,fAttackSpeed,ItemID[RAGE],1.0);
+	War3_SetBuffItem3(client,fHPRegen,ItemID[SPRINGGEM],0.0);
+	War3_SetBuffItem3(client,fBashChance,ItemID[FREEZE],0.0);
+	War3_SetBuffItem3(client,fBashDuration,ItemID[FREEZE],0.0);
+	War3_SetBuffItem3(client,fMaxHealth,ItemID[UBERHEART],1.0);
+	War3_SetBuffItem3(client,bSlowImmunity,ItemID[HEATINGPLATES],false);
+}
+
 public Action:Timer_QuickTimer(Handle:timer)
 {
 	for(new client = 1; client <= MaxClients; ++client)
@@ -87,22 +100,15 @@ public Action:Timer_QuickTimer(Handle:timer)
 			if(War3_GetOwnsItem3(client,race,ItemID[SPRINGGEM]))
 			{
 				new level = War3_GetItemLevel(client,race,ItemID[SPRINGGEM])+1;
-				if(level > 0)
+				new Float:RegenPerTick = (1.0 + (level * 0.1));
+				
+				new clientHealth = GetEntProp(client, Prop_Data, "m_iHealth");
+				new clientMaxHealth = War3_GetMaxHP(client);
+				if(clientHealth <= RoundToNearest(clientMaxHealth * 0.4))
 				{
-					new Float:RegenPerTick = (4.0 + (level * 0.2));
-					
-					new clientHealth = GetEntProp(client, Prop_Data, "m_iHealth");
-					new clientMaxHealth = TF2_GetMaxHealth(client);
-					if(clientHealth <= RoundToNearest(clientMaxHealth * 0.4))
-					{
-						RegenPerTick *= 2.0;
-					}
-					TF2Attrib_SetByName(client,"SET BONUS: health regen set bonus", RegenPerTick);
+					RegenPerTick *= 2.0;
 				}
-			}
-			else
-			{
-				TF2Attrib_RemoveByName(client,"SET BONUS: health regen set bonus");
+				War3_SetBuffItem3(client,fHPRegen,ItemID[SPRINGGEM],RegenPerTick);
 			}
 		
 			if(War3_GetOwnsItem3(client,race,ItemID[REDTEARSTONE]))
@@ -110,19 +116,15 @@ public Action:Timer_QuickTimer(Handle:timer)
 				new level = War3_GetItemLevel(client,race,ItemID[REDTEARSTONE])+1;
 				if(level > 0)
 				{
-					if(RoundToNearest(TF2_GetMaxHealth(client) * (0.25 + (level * 0.02))) >= GetClientHealth(client))
+					if(RoundToNearest(War3_GetMaxHP(client) * (0.25 + (level * 0.02))) >= GetClientHealth(client))
 					{
-						War3_SetBuff(client,fDamageModifier,ItemID[REDTEARSTONE],0.151);
+						War3_SetBuffItem3(client,fDamageModifier,ItemID[REDTEARSTONE],0.15);
 					}
 					else
 					{
-						War3_SetBuff(client,fDamageModifier,ItemID[REDTEARSTONE],0.0);
+						War3_SetBuffItem3(client,fDamageModifier,ItemID[REDTEARSTONE],0.0);
 					}
 				}
-			}
-			else
-			{
-				War3_SetBuff(client,fDamageModifier,ItemID[REDTEARSTONE],0.0);
 			}
 
 			if(War3_GetOwnsItem3(client,race,ItemID[RAGE]))
@@ -139,14 +141,14 @@ public Action:Timer_QuickTimer(Handle:timer)
 					else{
 						new missing=MaxHP-VictimCurHP;
 						new Float:percentmissing=float(missing)/float(MaxHP);
-						ASPD=1.0+(0.001 + (level * 0.00005))*(percentmissing/0.01);
+						ASPD=1.0+(0.002 + (level * 0.00005))*(percentmissing*100.0);
 					}
-					War3_SetBuff(client,fAttackSpeed,ItemID[RAGE] + 9,1.0/(1.0/ASPD));
+					War3_SetBuffItem3(client,fAttackSpeed,ItemID[RAGE],1.0/(1.0/ASPD));
 				}
 			}
 			else
 			{
-				War3_SetBuff(client,fAttackSpeed,ItemID[RAGE] + 9,1.0);
+				War3_SetBuffItem3(client,fAttackSpeed,ItemID[RAGE],1.0);
 			}
 		}
 	}
@@ -155,58 +157,30 @@ public Action:Timer_SlowTimer(Handle:timer)
 {
 	for(new client = 1; client <= MaxClients; ++client)
 	{
-		if(ValidPlayer(client, true))
-		{
-			new race = War3_GetRace(client);
-			if(!ValidRace(race))
-				continue;
+		if(!ValidPlayer(client, true))
+			continue;
 
-			GiveWindPearlPerks(client,race);
-			
-			if(War3_GetOwnsItem3(client,race,ItemID[FREEZE]))
-			{
-				War3_SetBuff(client,fBashChance,ItemID[FREEZE],0.1);
-				War3_SetBuff(client,fBashDuration,ItemID[FREEZE],0.2);
-			}
-			else
-			{
-				War3_SetBuff(client,fBashChance,ItemID[FREEZE],0.0);
-				War3_SetBuff(client,fBashDuration,ItemID[FREEZE],0.0);
-			}
-			if(War3_GetOwnsItem3(client,race,ItemID[UBERHEART]))
-			{
-				new level = War3_GetItemLevel(client,race,ItemID[UBERHEART])+1;
-				War3_SetBuff(client,fMaxHealth,ItemID[UBERHEART],1.025 + (0.002 * level));
-			}
-			else
-			{
-				War3_SetBuff(client,fMaxHealth,ItemID[UBERHEART],1.0);
-			}
-			
-			if(War3_GetOwnsItem3(client,race,ItemID[HEATINGPLATES]))
-			{
-				War3_SetBuff(client,bSlowImmunity,ItemID[HEATINGPLATES],true);
-			}
-			else
-			{
-				War3_SetBuff(client,bSlowImmunity,ItemID[HEATINGPLATES],false);
-			}
+		new race = War3_GetRace(client);
+		if(!ValidRace(race))
+			continue;
+		
+		if(War3_GetOwnsItem3(client,race,ItemID[WINDPEARL])){
+			new level = War3_GetItemLevel(client,race,ItemID[WINDPEARL])+1;
+			War3_SetBuffItem3(client, fMaxSpeed2, ItemID[WINDPEARL], 0.06 + level*0.01);
 		}
-	}
-}
-GiveWindPearlPerks(client,race)
-{
-	if(War3_GetOwnsItem3(client,race,ItemID[WINDPEARL]))
-	{
-		new level = War3_GetItemLevel(client,race,ItemID[WINDPEARL])+1;
-		if(level > 0)
-		{
-			TF2Attrib_SetByName(client,"SET BONUS: move speed set bonus", 1.06 + (level * 0.01));
-			TF2_AddCondition(client, TFCond_SpeedBuffAlly, 0.001);
+
+		if(War3_GetOwnsItem3(client,race,ItemID[FREEZE])){
+			War3_SetBuffItem3(client,fBashChance,ItemID[FREEZE],0.1);
+			War3_SetBuffItem3(client,fBashDuration,ItemID[FREEZE],0.2);
 		}
-		else
-		{
-			TF2Attrib_RemoveByName(client,"SET BONUS: move speed set bonus");
+
+		if(War3_GetOwnsItem3(client,race,ItemID[UBERHEART])){
+			new level = War3_GetItemLevel(client,race,ItemID[UBERHEART])+1;
+			War3_SetBuffItem3(client,fMaxHealth,ItemID[UBERHEART],1.025 + (0.002 * level));
+		}
+		
+		if(War3_GetOwnsItem3(client,race,ItemID[HEATINGPLATES])){
+			War3_SetBuffItem3(client,bSlowImmunity,ItemID[HEATINGPLATES],true);
 		}
 	}
 }
@@ -230,9 +204,9 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 				if(War3_GetOwnsItem3(victim,victimrace,ItemID[BLUETEARSTONE]))
 				{
 					new level = War3_GetItemLevel(victim,victimrace,ItemID[BLUETEARSTONE])+1;
-					if(level > 0 && RoundToNearest(TF2_GetMaxHealth(attacker) * (0.25 + (level * 0.02))) >= GetClientHealth(victim))
+					if(level > 0 && RoundToNearest(War3_GetMaxHP(attacker) * (0.25 + (level * 0.02))) >= GetClientHealth(victim))
 					{
-						War3_DamageModPercent(0.9);
+						War3_DamageModPercent(0.8);
 					}
 				}
 			}
@@ -291,7 +265,7 @@ public Action OnWar3EventPostHurt(int victim, int attacker, float dmgamount, cha
 public Action:SDK_Forwarded_TraceAttack(victim, &attacker, &inflictor, &Float:damage, &damagetype, &ammotype, hitbox, hitgroup)
 {
 	new bool:changed = false;
-	if(hitgroup == 1 && ValidPlayer(attacker,false) && ValidPlayer(victim,false))
+	if(ValidPlayer(attacker,false) && ValidPlayer(victim,false))
 	{
 		if(!Perplexed(attacker,false))
 		{
@@ -304,23 +278,25 @@ public Action:SDK_Forwarded_TraceAttack(victim, &attacker, &inflictor, &Float:da
 				new level = War3_GetItemLevel(attacker,attackerrace,ItemID[STORMHEART])+1;
 				if(level > 0)
 				{
-					damage += RoundFloat(2+(level*0.2));
+					damage += RoundFloat(2+(level*0.1));
 					changed = true;
 				}
 			}
 			//PURPLE
-			if(War3_GetOwnsItem3(attacker,attackerrace,ItemID[MARKSMAN]))
+			if(hitgroup == 1)
 			{
-				new level = War3_GetItemLevel(attacker,attackerrace,ItemID[MARKSMAN])+1;
-				if(level > 0)
-				{
-					War3_DealDamage(victim,RoundFloat(damage * 0.1),attacker,_,"MARKSMAN",W3DMGORIGIN_ITEM,W3DMGTYPE_PHYSICAL,_,_,true);
-					changed = true;
-					
-					float hp_percent=0.1 + (level * 0.01);
-					int add_hp=RoundFloat(damage * hp_percent);
-					if(add_hp>40)	add_hp=40;
-					War3_HealToBuffHP(attacker,add_hp);
+				if(War3_GetOwnsItem3(attacker,attackerrace,ItemID[MARKSMAN])){
+					new level = War3_GetItemLevel(attacker,attackerrace,ItemID[MARKSMAN])+1;
+					if(level > 0)
+					{
+						War3_DealDamage(victim,RoundFloat(damage * 0.15),attacker,_,"MARKSMAN",W3DMGORIGIN_ITEM,W3DMGTYPE_PHYSICAL,_,_,true);
+						changed = true;
+						
+						float hp_percent=0.15 + (level * 0.01);
+						int add_hp=RoundFloat(damage * hp_percent);
+						if(add_hp>40)	add_hp=40;
+						War3_HealToBuffHP(attacker,add_hp);
+					}
 				}
 			}
 		}
@@ -330,10 +306,4 @@ public Action:SDK_Forwarded_TraceAttack(victim, &attacker, &inflictor, &Float:da
 		return Plugin_Changed;
 	}
 	return Plugin_Continue;
-}
-//Stocks
-stock TF2_GetMaxHealth(client)
-{
-    new maxhealth = GetEntProp(GetPlayerResourceEntity(), Prop_Send, "m_iMaxHealth", _, client);
-    return ((maxhealth == -1 || maxhealth == 80896) ? GetEntProp(client, Prop_Data, "m_iMaxHealth") : maxhealth);
 }

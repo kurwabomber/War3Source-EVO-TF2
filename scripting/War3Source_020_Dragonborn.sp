@@ -84,10 +84,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 
 		thisRaceID=War3_CreateNewRace("Dragonborn","dragonborn_o",reloadrace_id,"Stun, armor, immunities.");
-		SKILL_ROAR=War3_AddRaceSkill(thisRaceID,"Roar","(+Ability) Puts all those around you in a 400 radius in a fear state for 0.7-0.9 second.",false,4);
+		SKILL_ROAR=War3_AddRaceSkill(thisRaceID,"Roar","(+Ability) Puts all those around you in a 400 radius in a fear state for 0.7-0.9 second.",false,4,"(voice Help!)");
 		SKILL_SCALES=War3_AddRaceSkill(thisRaceID,"Scales","3-4.33 physical armor",false,4);
-		SKILL_DRAGONBORN=War3_AddRaceSkill(thisRaceID,"Dragonborn","Being dragonborn gives immunities to certain magics.\nGives 33% to 66% ultimate and ability resistance.",false,4);
-		ULTIMATE_DRAGONBREATH=War3_AddRaceSkill(thisRaceID,"Dragons Breath","Applies jarate effect for 5 seconds. 400-650 range.",true,4);
+		SKILL_DRAGONBORN=War3_AddRaceSkill(thisRaceID,"Dragonborn","Being dragonborn gives immunities to certain magics.\nGives 33% to 66% ultimate and ability resistance.\nImmune to slow and wards.",false,4);
+		ULTIMATE_DRAGONBREATH=War3_AddRaceSkill(thisRaceID,"Dragons Breath","Applies jarate effect for 5 seconds. 400-650 range.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }
@@ -334,14 +334,17 @@ public InitPassiveSkills(client)
 
 		//dragonborn
 		new skilllvl = War3_GetSkillLevel(client,thisRaceID,SKILL_DRAGONBORN);
-
-		War3_SetBuff(client,bImmunityWards,thisRaceID,DragonResistance[skilllvl]);
-		War3_SetBuff(client,bSlowImmunity,thisRaceID,DragonResistance[skilllvl]);
+		War3_SetBuff(client,fAbilityResistance,thisRaceID,DragonResistance[skilllvl]);
+		War3_SetBuff(client,fUltimateResistance,thisRaceID,DragonResistance[skilllvl]);
+		War3_SetBuff(client,bImmunityWards,thisRaceID,true);
+		War3_SetBuff(client,bSlowImmunity,thisRaceID,true);
 	}
 }
 RemoveImmunity(client){
 	War3_SetBuff(client,fAbilityResistance,thisRaceID,1.0);
 	War3_SetBuff(client,fUltimateResistance,thisRaceID,1.0);
+	War3_SetBuff(client,bImmunityWards,thisRaceID,false);
+	War3_SetBuff(client,bSlowImmunity,thisRaceID,false);
 }
 public OnRaceChanged(client,oldrace,newrace)
 {

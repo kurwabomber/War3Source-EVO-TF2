@@ -117,8 +117,8 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace("Orcish Horde","orcish",reloadrace_id,"Speed, crits, cleave");
 		SKILL_WINDWALKER=War3_AddRaceSkill(thisRaceID,"Windwalker","While not in combat for 2 seconds, you gain movespeed and invisibility.\nUp to 60% invis and 45% movespeed.",false,4);
 		SKILL_CRITS=War3_AddRaceSkill(thisRaceID,"Critical Strike","You have a 10% chance to deal up to 2.5 times damage.",false,4);
-		SKILL_ORB=War3_AddRaceSkill(thisRaceID,"Orb of Lightning","Gain attackspeed and cleave within 150 HU for 6 seconds, Can give to teammates if looking nearby them.\nup to +30% attack speed and 25% cleave.",false,4);
-		ULT_LIGHTNING=War3_AddRaceSkill(thisRaceID,"Lightning Strike","Strike nearby enemies, will chain to other enemies if nearby.\nCooldown 20s to 16s, Damage 60 to 100.",true,4);
+		SKILL_ORB=War3_AddRaceSkill(thisRaceID,"Orb of Lightning","Gain attackspeed and cleave within 150 HU for 6 seconds, Can give to teammates if looking nearby them.\nup to +30% attack speed and 25% cleave.",false,4, "(voice Help!)");
+		ULT_LIGHTNING=War3_AddRaceSkill(thisRaceID,"Lightning Strike","Strike nearby enemies, will chain to other enemies if nearby.\nCooldown 20s to 16s, Damage 60 to 100.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }

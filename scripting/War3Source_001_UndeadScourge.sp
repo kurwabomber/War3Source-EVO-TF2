@@ -146,7 +146,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_LEECH=War3_AddRaceSkill(thisRaceID,"Vampiric Aura","Leech Health\nYou recieve up to 40% of your damage dealt as Health\nCan not buy item mask any level",false,4);
 		SKILL_SPEED=War3_AddRaceSkill(thisRaceID,"Unholy Aura","You run up to 32% faster",false,4);
 		SKILL_LOWGRAV=War3_AddRaceSkill(thisRaceID,"Blood Lust","When you gain health from Vampiric Aura, your crit chance by +2%.\nCrit Chance resets on death and is capped to 40%.\nCrits count as 50% damage increase.",false,4);
-		SKILL_SUICIDE=War3_AddRaceSkill(thisRaceID,"Reincarnation","When you die, you revive on the spot.\nHas a base 60 second cooldown.\nDecreases cooldown by -5s each upgrade. After 4 upgrades, reduces to -1s.",true,4);
+		SKILL_SUICIDE=War3_AddRaceSkill(thisRaceID,"Reincarnation","When you die, you revive on the spot.\nHas a base 60 second cooldown.\nDecreases cooldown by -5s each upgrade. After 4 upgrades, reduces to -1s.",true,4, "READY");
 		War3_CreateRaceEnd(thisRaceID);
 
 		War3_AddSkillBuff(thisRaceID, SKILL_LEECH, fVampirePercent, VampirePercent);

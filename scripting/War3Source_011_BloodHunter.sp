@@ -130,7 +130,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_CRAZY=War3_AddRaceSkill(thisRaceID,"Blood Crazy","Those damaged by you will bleed for 2 HP per second for 4 - 7 seconds.",false,4);
 		SKILL_FEAST=War3_AddRaceSkill(thisRaceID,"Feast","Heal 20-28 percent of the victim's max HP on kill",false,4);
 		SKILL_SENSE=War3_AddRaceSkill(thisRaceID,"Blood Sense","Those who are below 30-40% max HP take critical damage",false,4);
-		ULT_RUPTURE=War3_AddRaceSkill(thisRaceID,"Hemorrhage","The target will take damage if he moves.\nDuration Scales 6 to 8.5 seconds.",true,4);
+		ULT_RUPTURE=War3_AddRaceSkill(thisRaceID,"Hemorrhage","The target will take damage if he moves.\nDuration Scales 6 to 8.5 seconds.",true,4,"(voice Jeers)");
 		//ULT_IMPROVED_RUPTURE=War3_AddRaceSkill(thisRaceID,"Improved Hemorrhage","You heal 10/20 percent of the damage rupture deals.",false,2);
 		War3_CreateRaceEnd(thisRaceID);
 		//War3_SetDependency(thisRaceID, ULT_IMPROVED_RUPTURE, ULT_RUPTURE, 4);

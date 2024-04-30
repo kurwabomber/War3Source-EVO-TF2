@@ -64,7 +64,7 @@ public OnWar3RaceDisabled(oldrace)
 new SKILL_VITALITY, SKILL_SPEAR, SKILL_BLOOD, ULT_BREAK; //,IMPROVED_ULT_BREAK;
 
 // Inner Vitality, HP healed
-new Float:VitalityHealed[]={4.5, 5.0, 5.5, 6.0}; // How much HP Vitality heals each second
+new Float:VitalityHealed[]={4.0, 4.5, 5.0, 5.5, 6.0}; // How much HP Vitality heals each second
 
 // Burning Spear stacking effect
 new SpearDamage[]={4,5,6,7,8}; // How much damage does a stack do?
@@ -80,20 +80,15 @@ new bool:bSpearActivated[MAXPLAYERSCUSTOM]; // Does the player have Burning Spea
 //new Float:BerserkerBuffDamage[]={0.0,0.005,0.01,0.015,0.02};  // each 7% you add one of these
 new Float:BerserkerBuffASPD[]={0.04, 0.045, 0.05, 0.055, 0.06};      // to get the total buff...
 
-// Life Break costs / damage dealt
-new Float:LifeBreakHPVictim[]={0.50, 0.525, 0.55, 0.575, 0.6};
-new Float:LifeBreakHPCaster[]={0.3, 0.275, 0.25, 0.225, 0.2};
-
-
-new Handle:ultCooldownCvar;
 new Float:ultmaxdistance = 600.0;
+float ultCooldown[] = {35.0, 33.0, 31.0, 29.0, 27.0};
+
 public OnPluginStart()
 {
 
 	CreateTimer(0.3,BerserkerCalculateTimer,_,TIMER_REPEAT);      // Berserker ASPD Buff timer
 	CreateTimer(1.0,Heal_BurningSpearTimer,_,TIMER_REPEAT);  // Burning Spear DoT Timer
 	//LoadTranslations("w3s.race.sacredw.phrases");
-	ultCooldownCvar=CreateConVar("war3_sacredw_ult_cooldown","20","Cooldown time for ult.");
 }
 
 /* ***************************	OnMapStart *************************************/
@@ -109,10 +104,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("sacredw",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Sacred Warrior","sacredw",reloadrace_id,"Rage & regeneration");
-		SKILL_VITALITY=War3_AddRaceSkill(thisRaceID,"Inner Vitality","Passively recover 1 to 6HP per second.\nWhen below 40% you heal twice as fast.",false,4);
-		SKILL_SPEAR=War3_AddRaceSkill(thisRaceID,"Burning Spear","(+ability) Passively lose 5% maxHP, but set enemies ablaze.\nDeals 1 to 8 DPS for next 3 seconds.\nStacks 5 times.",false,4);
-		SKILL_BLOOD=War3_AddRaceSkill(thisRaceID,"Berserkers Blood","Gain 1 to 6 percent attack speed for each 7 percent of your health missing",false,4);
-		ULT_BREAK=War3_AddRaceSkill(thisRaceID,"Life Break","(+ultimate) Damage yourself (30% to 20% of maxHP) to deal\na great amount of damage (50% to 60% of victim's currentHP)",true,4);
+		SKILL_VITALITY=War3_AddRaceSkill(thisRaceID,"Inner Vitality","Passively recover 4 to 6HP per second.\nWhen below 40% you heal twice as fast.",false,4);
+		SKILL_SPEAR=War3_AddRaceSkill(thisRaceID,"Burning Spear","(+ability) Passively lose 5% maxHP, but set enemies ablaze.\nDeals 4 to 8 DPS for next 3 seconds.\nStacks 5 times.",false,4,"(voice Help!)");
+		SKILL_BLOOD=War3_AddRaceSkill(thisRaceID,"Berserkers Blood","Gain 4 to 6 percent attack speed for each 7 percent of your health missing",false,4);
+		ULT_BREAK=War3_AddRaceSkill(thisRaceID,"Life Break","(+ultimate) Damage yourself and target for 60 damage. Target takes +15% current health damage.\nCooldown of 35s, every level decreases cd by -2s.",true,4,"(voice Jeers");
 		War3_CreateRaceEnd(thisRaceID); ///DO NOT FORGET THE END!!!
 	}
 }
@@ -262,13 +257,13 @@ public void OnSkillLevelChanged(int client, int currentrace, int skill, int news
 
 			if(bSpearActivated[client])
 			{
-				War3_SetBuff(client,fHPDecay,thisRaceID,VictimMaxHP*0.03);
+				War3_SetBuff(client,fHPDecay,thisRaceID,VictimMaxHP*0.05);
 			}
 			else
 			{
 				//level 0 is fine
 				War3_SetBuff(client,fHPRegen,thisRaceID,  (VictimCurHP<=DoubleTrigger)  ?  VitalityHealed[newskilllevel]*2.0: VitalityHealed[newskilllevel] );
-				War3_SetBuff(client,fHPDecay,thisRaceID,0.0);
+				War3_SetBuff(client,fHPDecay,thisRaceID, 0.0);
 			}
 		}
 	}
@@ -321,7 +316,6 @@ CheckSkills(client)
 		}
 		else
 		{
-		//level 0 is fine
 			War3_SetBuff(client,fHPRegen,thisRaceID,  (VictimCurHP<=DoubleTrigger)  ?  VitalityHealed[skill]*2.0: VitalityHealed[skill] );
 			War3_SetBuff(client,fHPDecay,thisRaceID,0.0);
 		}
@@ -333,7 +327,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 	if(RaceDisabled)
 		return;
 
-	if(War3_GetRace(client)==thisRaceID && ability==0 && pressed && IsPlayerAlive(client)&&!Silenced(client))
+	if(War3_GetRace(client)==thisRaceID && ability==0 && pressed && IsPlayerAlive(client) && !Silenced(client))
 	{
 		if(!bSpearActivated[client])
 		{
@@ -361,47 +355,28 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 	if(race==thisRaceID && pressed && ValidPlayer(client,true) &&!Silenced(client) )
 	{
 		new ult_level=War3_GetSkillLevel(client,race,ULT_BREAK);
-		new Float:AttackerMaxHP = float(War3_GetMaxHP(client));
-		new AttackerCurHP = GetClientHealth(client);
-		new SelfDamage = RoundToCeil(AttackerMaxHP * LifeBreakHPCaster[ult_level]);
-		new bool:bUltPossible = SelfDamage < AttackerCurHP;
 		if(!Silenced(client)&&(bypass||War3_SkillNotInCooldown(client,thisRaceID,ULT_BREAK,true)))
 		{
-			if(!bUltPossible)
+			if(GetClientHealth(client) <= 60)
 			{
 				PrintHintText(client,"You do not have enough HP to cast that...");
 			}
 			else
 			{
-
-
 				new target = War3_GetTargetInViewCone(client,ultmaxdistance,false,23.0,UltFilter,ULT_BREAK);
 				if(target>0)
 				{
-
-					new Float:VictimMaxHP = float(War3_GetMaxHP(target));
-					new Damage = RoundToFloor(LifeBreakHPVictim[ult_level] * VictimMaxHP * W3GetBuffStackedFloat(target, fUltimateResistance));
-
-					if(War3_DealDamage(target,Damage,client,DMG_BULLET,"lifebreak")) // do damage to nearest enemy
+					if(War3_DealDamage(target,RoundFloat(60.0 + 0.15*GetClientHealth(target) * W3GetBuffStackedFloat(target, fUltimateResistance)),client,DMG_BULLET,"lifebreak")) // do damage to nearest enemy
 					{
-						//W3PrintSkillDmgHintConsole(target,client,War3_GetWar3DamageDealt(),ULT_BREAK); // print damage done
+						W3PrintSkillDmgHintConsole(target,client,War3_GetWar3DamageDealt(),ULT_BREAK); // print damage done
 						War3_NotifyPlayerTookDamageFromSkill(target, client, War3_GetWar3DamageDealt(), ULT_BREAK);
 						W3FlashScreen(target,RGBA_COLOR_RED); // notify victim he got hurt
 						W3FlashScreen(client,RGBA_COLOR_RED); // notify he got hurt
-
-						//IMPROVED_ULT_BREAK
-						//new improved_ult_level=War3_GetSkillLevel(client,race,IMPROVED_ULT_BREAK);
-						//War3_SetBuff(target,fSlow,thisRaceID,LifeBreakSLOWVictim[improved_ult_level]); // Set the buff
-						//CreateTimer(2.5,Ult_Remove_Slow,target);
-
-						//War3_EmitSoundToAll(ultimateSound,client);
-						if(War3_DealDamage(client,SelfDamage,client,DMG_BULLET,"lifebreak")) // Do damage to attacker
+						if(War3_DealDamage(client,60,client,DMG_BULLET,"lifebreak")) // Do damage to attacker
 						{
 							War3_NotifyPlayerTookDamageFromSkill(client, client, War3_GetWar3DamageDealt(), ULT_BREAK);
 						}
-						War3_CooldownMGR(client,GetConVarFloat(ultCooldownCvar),thisRaceID,ULT_BREAK); // invoke cooldown
-
-						PrintHintText(client,"Life Break");
+						War3_CooldownMGR(client,ultCooldown[ult_level],thisRaceID,ULT_BREAK); // invoke cooldown
 					}
 				}
 				else{

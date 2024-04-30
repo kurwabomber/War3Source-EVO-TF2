@@ -89,7 +89,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_CRITS=War3_AddRaceSkill(thisRaceID,"Precision","Chance to deal +100% -> +140% damage crits. 36% chance to proc.",false,4);
 		SKILL_BERSERK=War3_AddRaceSkill(thisRaceID,"Berserk","Passive : Gives +60-100 health and +20%-28% movespeed.",false,4);
 		SKILL_SALVE=War3_AddRaceSkill(thisRaceID,"Healing Salve","After 2.5 seconds of being out of combat, you gain +16-24 regen per second.",false,4);
-		ULT_WARCRY=War3_AddRaceSkill(thisRaceID,"War Cry","Gives damage and movespeed to you and nearby players.\n+30-40% damage boost, +30-35% movespeed, 600-650HU radius, lasts 8 seconds.",true,4);
+		ULT_WARCRY=War3_AddRaceSkill(thisRaceID,"War Cry","Gives damage and movespeed to you and nearby players.\n+30-40% damage boost, +30-35% movespeed, 600-650HU radius, lasts 8 seconds.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		
 		War3_AddSkillBuff(thisRaceID, SKILL_BERSERK, fMaxSpeed2, BerserkSpeed);

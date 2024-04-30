@@ -170,7 +170,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_REVIVE=War3_AddRaceSkill(thisRaceID,"Phoenix","20-70% chance to revive your teammates that die.\nEach time you revive, chance is reduced by half\nto a minimum of 2-16%",false,4);
 		SKILL_BANISH=War3_AddRaceSkill(thisRaceID,"Banish","5-35% of making enemy blind and disoriented for 0.2 seconds",false,4);
 		SKILL_MONEYSTEAL=War3_AddRaceSkill(thisRaceID,"Siphon Mana","2-14% chance of stealing gold based on victim's level via damage",false,4);
-		ULT_FLAMESTRIKE=War3_AddRaceSkill(thisRaceID,"Flame Strike","Burn the enemy over time for 10 damage 4-16 times.\n500-1400 HU range.",true,4);
+		ULT_FLAMESTRIKE=War3_AddRaceSkill(thisRaceID,"Flame Strike","Burn the enemy over time for 10 damage 4-16 times.\n500-1400 HU range.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
 

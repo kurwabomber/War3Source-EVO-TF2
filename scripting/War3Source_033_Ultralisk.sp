@@ -72,7 +72,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_ORGAN=War3_AddRaceSkill(thisRaceID,"Organ Redundancy","20% to 30% max ammo per 5 seconds.",false,4);
 		SKILL_REGEN=War3_AddRaceSkill(thisRaceID,"Anabolic Synthesis","Increases health regen by 5 to 7 per second.",false,4);
 		SKILL_PLATING=War3_AddRaceSkill(thisRaceID,"Chitinous Plating","Increase health by 60 to 80.",false,4);
-		ULT_FRENZY=War3_AddRaceSkill(thisRaceID,"Frenzied","Reduce damage by 75% for the next hit taken. Cooldown is 4.5-3.5 seconds.\nPierces through attacker ultimate immunity.",true,4);
+		ULT_FRENZY=War3_AddRaceSkill(thisRaceID,"Frenzied","Reduce damage by 75% for the next hit taken. Cooldown is 4.5-3.5 seconds.\nPierces through attacker ultimate immunity.",true,4,"READY");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_REGEN, fHPRegen, SynthesisRegen);
 		War3_AddSkillBuff(thisRaceID, SKILL_PLATING, iAdditionalMaxHealth, PlatingHealth);

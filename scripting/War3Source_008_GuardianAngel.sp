@@ -189,10 +189,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID=War3_CreateNewRace(RACE_LONGNAME,RACE_SHORTNAME,reloadrace_id,"Flight & support.");
 		SKILL_SONG=War3_AddRaceSkill(thisRaceID,"Prayers Song","Every 30 to 20 seconds, the lowest HP player on your team gets 50% of max health.",false,4);
-		ABILITY_WINGSOFGLORY=War3_AddRaceSkill(thisRaceID,"Wings of Glory","[+ability] Flight for 9-13 seconds.\nLeveling increases speed & duration.\n3x speed modifier.",false,4);
+		ABILITY_WINGSOFGLORY=War3_AddRaceSkill(thisRaceID,"Wings of Glory","[+ability] Flight for 9-13 seconds.\nLeveling increases speed & duration.\n3x speed modifier.",false,4,"(voice Help!)");
 		SKILL_HOLYSWORD=War3_AddRaceSkill(thisRaceID,"Powerful Judgement","16-20% more damage.",false,4);
 		SKILL_MOONBEAM =War3_AddRaceSkill(thisRaceID,"Angel's Light","Up to 20-23 dmg. Autocast. 5s cooldown.",false,4);
-		ULTIMATE_LORDSREWARD=War3_AddRaceSkill(thisRaceID,"Lords Reward","In a 650 to 850HU radius, splashes Mad Milk Effect for 10 to 14 seconds.",true,4);
+		ULTIMATE_LORDSREWARD=War3_AddRaceSkill(thisRaceID,"Lords Reward","In a 650 to 850HU radius, splashes Mad Milk Effect for 10 to 14 seconds.",true,4,"(voice Jeers)");
 		W3SkillCooldownOnSpawn( thisRaceID, ULTIMATE_LORDSREWARD, GetConVarFloat(ultCooldownCvar_SPAWN) );
 		War3_CreateRaceEnd(thisRaceID);
 	}

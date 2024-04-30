@@ -110,13 +110,13 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 
 		SKILL_SWIMFAST = War3_AddRaceSkill( thisRaceID, "Swim Uber Fast", "Swim 1.5 to 3 times faster!\nIn Water Only", false, 4 );
 		
-		SKILL_BUGZAP_WARD = War3_AddRaceSkill( thisRaceID, "Bug Zapper", "(+ability) Zaps enemies.\nMaximum of 6 wards 120 HU radius.\n2 to 8 dmg per quarter second", false, 4 );
+		SKILL_BUGZAP_WARD = War3_AddRaceSkill( thisRaceID, "Bug Zapper", "(+ability) Zaps enemies.\nMaximum of 6 wards 120 HU radius.\n2 to 8 dmg per quarter second", false, 4, "(voice Help!)");
 
-		SKILL_HYPERSWIM = War3_AddRaceSkill( thisRaceID, "(+ability2) Hyper Swim", "Gives you an extra push of hyper speed\nIn Water Only!", false, 4 );
+		SKILL_HYPERSWIM = War3_AddRaceSkill( thisRaceID, "(+ability2) Hyper Swim", "Gives you an extra push of hyper speed\nIn Water Only!", false, 4, "(voice Battle Cry)");
 
 		SKILL_WATERBREATHING = War3_AddRaceSkill( thisRaceID, "Water Breathing", "Stay under water longer.\nLast level is infinite water breathing!\nIn Water Only!", false, 4 );
 
-		ULTIMATE =  War3_AddRaceSkill( thisRaceID, "Drown", "Drown a player", true, 1 );
+		ULTIMATE =  War3_AddRaceSkill( thisRaceID, "Drown", "Drown a player", true, 1, "(voice Jeers)");
 
 		War3_CreateRaceEnd( thisRaceID );
 	}

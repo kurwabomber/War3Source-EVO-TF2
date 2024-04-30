@@ -158,11 +158,11 @@ public OnWar3LoadRaceOrItemOrdered(num)
 
 		shopItem[ARMBAND]=War3_CreateShopItem("Armband of Repetition","armband","+15% attack speed","Increases attack speed by 15%\n(does not stack with other attack speed increases)",10,3000);
 
-		shopItem[MBOOTS]=War3_CreateShopItem("Medi Boots","mboots","healing gives speed","Gives healing target increased movement speed",9,3000);
+		shopItem[MBOOTS]=War3_CreateShopItem("Medi Boots","mboots","healing gives +20% speed","Gives healing target increased movement speed",9,3000);
 		War3_TFSetItemClasses(shopItem[MBOOTS],TFClass_Medic);
-		shopItem[MRING]=War3_CreateShopItem("Medi Ring","mring","healing gives regen","Gives healing target regeneration of hp",9,3000);
+		shopItem[MRING]=War3_CreateShopItem("Medi Ring","mring","healing gives +4 regen","Gives healing target regeneration of hp",9,3000);
 		War3_TFSetItemClasses(shopItem[MRING],TFClass_Medic);
-		shopItem[MHEALTH]=War3_CreateShopItem("Medi Health","mhealth","healing gives health","Gives healing target extra hp",9,3000);
+		shopItem[MHEALTH]=War3_CreateShopItem("Medi Health","mhealth","healing gives +35 health","Gives healing target extra hp",9,3000);
 		War3_TFSetItemClasses(shopItem[MHEALTH],TFClass_Medic);
 
 		shopItem[DIVINERAPIER]=War3_CreateShopItem("Divine Rapier", "rapier", "+4 additive damage", "+4 additive damage", 17, 10000);
@@ -308,13 +308,13 @@ public Action:SecondLoop(Handle:timer,any:data)
 					if(War3_GetOwnsItem(client,shopItem[MRING]))
 					{
 						// Regen
-						War3_SetBuffItem(HealTarget,fHPRegen,shopItem[MRING],2.0,client);
+						War3_SetBuffItem(HealTarget,fHPRegen,shopItem[MRING],4.0,client);
 						//DP("set fHPRegen HealTarget");
 					}
 					if(War3_GetOwnsItem(client,shopItem[MHEALTH]))
 					{
 						// Regen
-						War3_SetBuffItem(HealTarget,iAdditionalMaxHealth,shopItem[MHEALTH],100,client);
+						War3_SetBuffItem(HealTarget,iAdditionalMaxHealth,shopItem[MHEALTH],35,client);
 						//DP("set iAdditionalMaxHealth HealTarget");
 					}
 					continue;
@@ -382,16 +382,20 @@ public doCloak() //this loop should detec weapon chnage and add a new alpha
 {
 	for(int x=1;x<=MaxClients;x++)
 	{
-		if(ValidPlayer(x,true)&&War3_GetOwnsItem(x,shopItem[CLOAK]))
+		if(ValidPlayer(x,true))
 		{
-			//knife? melle?
-			if(War3_IsUsingMeleeWeapon(x))
-			{
-				War3_SetBuffItem(x,fInvisibilityItem,shopItem[CLOAK],0.4);
-			}
-			else
-			{
-				War3_SetBuffItem(x,fInvisibilityItem,shopItem[CLOAK],0.6); // was 0.5
+			if(War3_GetOwnsItem(x,shopItem[CLOAK])){
+				//knife? melle?
+				if(War3_IsUsingMeleeWeapon(x))
+				{
+					War3_SetBuffItem(x,fInvisibilityItem,shopItem[CLOAK],0.4);
+				}
+				else
+				{
+					War3_SetBuffItem(x,fInvisibilityItem,shopItem[CLOAK],0.6); // was 0.5
+				}
+			}else{
+				War3_SetBuffItem(x,fInvisibilityItem,shopItem[CLOAK],1.0);
 			}
 		}
 	}

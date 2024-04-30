@@ -73,10 +73,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("shadowhunter",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Shadow Hunter","shadowhunter",reloadrace_id,"Spy Race");
-		SKILL_BLINK=War3_AddRaceSkill(thisRaceID,"Blink","Teleports you by 1000 to 1400HU. (+ability)",false,4);
+		SKILL_BLINK=War3_AddRaceSkill(thisRaceID,"Blink","Teleports you by 1000 to 1400HU. (+ability)",false,4,"(voice Help!)");
 		SKILL_OUTRUN=War3_AddRaceSkill(thisRaceID,"Vision Outrun","Increases movespeed by 28% to 35%.",false,4);
 		SKILL_HIDDENATTACKS=War3_AddRaceSkill(thisRaceID,"Hidden Attacks","Attacks that are from 60 degrees backwards deal 40% to 50% more damage.",false,4);
-		ULT_HIDDEN=War3_AddRaceSkill(thisRaceID,"Hidden","Gives a cloak that you are able to attack in for 4 to 5 seconds. (+ultimate)",true,4);
+		ULT_HIDDEN=War3_AddRaceSkill(thisRaceID,"Hidden","Gives a cloak that you are able to attack in for 4 to 5 seconds. (+ultimate)",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_OUTRUN, fMaxSpeed, OutrunSpeed);
 	}

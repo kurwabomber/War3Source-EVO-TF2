@@ -148,10 +148,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 
 		thisRaceID=War3_CreateNewRace("Luna Moonfang ","luna",reloadrace_id,"Additive damage & lunar power.");
-		SKILL_MOONBEAM=War3_AddRaceSkill(thisRaceID,"Lucent Beam","Luna concentrates on the moon`s energy and channels it forcefully to the surface, 6-10 to 8-12. Autocast. 3s cooldown.",false,4);
+		SKILL_MOONBEAM=War3_AddRaceSkill(thisRaceID,"Lucent Beam","Luna concentrates on the moon`s energy and channels it forcefully to the surface, 6-10 to 8-12. Autocast. 3s cooldown.",false,4,"READY");
 		SKILL_BOUNCE=War3_AddRaceSkill(thisRaceID,"Moon Glaive","Allows Luna to attack extra enemies with each Glaive attack.\nHas a radius of 250 to 500HU, and does 12 to 16 damage. 11% chance to proc.",false,4);
 		SKILL_AURA=War3_AddRaceSkill(thisRaceID,"Lunar Blessing","Nearby ranged units gain the power of the moon. Increases damage.\nRadius of 320 to 400HU, increases damage by 8% to 12%.",false,4);
-		ULT=War3_AddRaceSkill(thisRaceID,"Eclipse","Calls to the moon`s magic, summoning a concentrated burst of Lucent Beams to damage targets around Luna.\n13-17 beams that each deal 8 to 12 damage within a 500 HU radius.",true,4);
+		ULT=War3_AddRaceSkill(thisRaceID,"Eclipse","Calls to the moon`s magic, summoning a concentrated burst of Lucent Beams to damage targets around Luna.\n13-17 beams that each deal 8 to 12 damage within a 500 HU radius.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		AuraID=W3RegisterChangingDistanceAura("luna_blessing");
 	}

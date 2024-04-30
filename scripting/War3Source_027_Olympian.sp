@@ -85,8 +85,8 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace("Olympian","olympian",reloadrace_id,"Scout Race");
 		SKILL_ACRO=War3_AddRaceSkill(thisRaceID,"Acrobatics","Each level increases mobility.\nGives 5 to 20% movespeed, 20% jump height, 25% to 35% air control, and an extra jump.",false,4);
 		SKILL_STR=War3_AddRaceSkill(thisRaceID,"Olympian's Strength","Non-melee damage increased by 8 to 16%, but melee damage is drastically increased by 50 to 70%.",false,4);
-		SKILL_ENERGIZE=War3_AddRaceSkill(thisRaceID,"Energize","Gives a short burst of speed. Lasts 6 to 8 seconds.",false,4);
-		ULT_SPEAR=War3_AddRaceSkill(thisRaceID,"Spear Throw","Throw a spear that deals heavy damage. Explodes on impact.\nSpear does 100 to 120 damage.",true,4);
+		SKILL_ENERGIZE=War3_AddRaceSkill(thisRaceID,"Energize","Gives a short burst of speed. Lasts 6 to 8 seconds.",false,4,"(voice Help!)");
+		ULT_SPEAR=War3_AddRaceSkill(thisRaceID,"Spear Throw","Throw a spear that deals heavy damage. Explodes on impact.\nSpear does 100 to 120 damage.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }

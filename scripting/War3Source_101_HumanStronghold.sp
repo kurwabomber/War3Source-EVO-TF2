@@ -101,9 +101,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace(RACE_LONGNAME,RACE_SHORTNAME,reloadrace_id,"Extreme Tank");
 		SKILL_HEALTH=War3_AddRaceSkill(thisRaceID,"Devotion Aura","Gives you additional 30/60/80/100 health and Increased Magical resistance 1/2/3/4.\n(Only Works in Siege.)",false,4);
 		SKILL_ARMOR=War3_AddRaceSkill(thisRaceID,"Devotion Armor","1-4 physical armor (always) and when maxed it gives 100% Immunity to crits (only during under siege)\nReduces speed down to 85%/80%/75%/70% (always)",false,4);
-		SKILL_SIEGE=War3_AddRaceSkill(thisRaceID,"Siege","You can not move while in Siege mode.\nYou Obtain 1-4 Addition Armor and Magical Resistance.\nSlight Health Regeneration(+ability)",false,4);
+		SKILL_SIEGE=War3_AddRaceSkill(thisRaceID,"Siege","You can not move while in Siege mode.\nYou Obtain 1-4 Addition Armor and Magical Resistance.\nSlight Health Regeneration(+ability)",false,4,"(voice Help!)");
 		SKILL_ADVANCED_ARMOR=War3_AddRaceSkill(thisRaceID,"Advanced Siege","1-4 additional physical Armor.(Added to Siege Mode Only)",false,4);
-		ULT_LASTSTAND=War3_AddRaceSkill(thisRaceID,"Last Stand","Gives Uber and 25% more Attack power to self for 1/2/3/4 seconds.\n(Must be in siege mode)",true,4);
+		ULT_LASTSTAND=War3_AddRaceSkill(thisRaceID,"Last Stand","Gives Uber and 25% more Attack power to self for 1/2/3/4 seconds.\n(Must be in siege mode)",true,4,"(voice Jeers)");
 		W3SkillCooldownOnSpawn(thisRaceID,ULT_LASTSTAND,10.0,_);
 		War3_CreateRaceEnd(thisRaceID);
 		War3_SetDependency(thisRaceID, SKILL_ADVANCED_ARMOR, SKILL_SIEGE, 4);

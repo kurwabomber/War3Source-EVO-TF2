@@ -96,8 +96,8 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace("Dark Elf","darkelf_o",reloadrace_id,"Blind players");
 		SKILL_FADE=War3_AddRaceSkill(thisRaceID,"Fade","You fade out of sight on hit, 20-28% Chance",false,4);
 		SKILL_SLOWFALL=War3_AddRaceSkill(thisRaceID,"Fade Reaction","When you fade, you lose 20 non-lethal health, but gain 40 to 50 health when you're visible again.",false,4);
-		SKILL_TRIBUNAL=War3_AddRaceSkill(thisRaceID,"Tribunal","(+ability) At the cost 6.5 to 5.5 hp/sec, you speed up 40 to 50%.",false,4);
-		ULTIMATE_DARKORB=War3_AddRaceSkill(thisRaceID,"DarkOrb","Blind a player. 2-3 second duration & 1000 Range. Cooldown is 10s.",true,4);
+		SKILL_TRIBUNAL=War3_AddRaceSkill(thisRaceID,"Tribunal","(+ability) At the cost 6.5 to 5.5 hp/sec, you speed up 40 to 50%.",false,4,"(voice Help!)");
+		ULTIMATE_DARKORB=War3_AddRaceSkill(thisRaceID,"DarkOrb","Blind a player. 2-3 second duration & 1000 Range. Cooldown is 10s.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID); ///DO NOT FORGET THE END!!!
 	}
 }

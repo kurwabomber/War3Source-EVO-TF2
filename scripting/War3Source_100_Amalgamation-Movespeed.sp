@@ -93,10 +93,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("speed",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Amalgamation - Speed","speed",reloadrace_id,"pure speed");
-		SKILL_LEAP=War3_AddRaceSkill(thisRaceID,"Time Leap","Burst of velocity forwards when jumping.",false,4);
-		SKILL_ASSAULT=War3_AddRaceSkill(thisRaceID,"Assault Tackle","Boosts speed when jumping.",false,4);
+		SKILL_LEAP=War3_AddRaceSkill(thisRaceID,"Time Leap","Burst of velocity forwards when jumping.",false,4,"READY");
+		SKILL_ASSAULT=War3_AddRaceSkill(thisRaceID,"Assault Tackle","Boosts speed when jumping.",false,4,"READY");
 		SKILL_WINDWALKER=War3_AddRaceSkill(thisRaceID,"Windwalker","Gain speed and invis while not in combat for 1 second.",false,4);
-		ULT_WARCRY=War3_AddRaceSkill(thisRaceID,"Wings of Glory","Toggles flight. (+ultimate)",true,4);
+		ULT_WARCRY=War3_AddRaceSkill(thisRaceID,"Wings of Glory","Toggles flight. (+ultimate)",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }

@@ -223,13 +223,13 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                 new race=War3_GetRace(client);
                 if (race > 0)
                 {                    
-                    new String:HUD_Text[1024];
+                    new String:HUD_Text[2048];
 					new String:MiniHUD_Text[1024];
                     new String:racename[64];
-                    War3_GetRaceName(race,racename,sizeof(racename));
+                    War3_GetRaceShortname(race,racename,sizeof(racename));
                     new level=War3_GetLevel(client, race);
    
-                    Format(HUD_Text, sizeof(HUD_Text), "Type w3e for info.\nRace: %s\nLevel: %i/%i - XP: %i/%i\nGold: %i | Diamonds: %i | Platinum: %i", 
+                    Format(HUD_Text, sizeof(HUD_Text), "Race: %s\nLevel: %i/%i - XP: %i/%i\nGold: %i | Dia: %i | Plat: %i", 
                         racename,
                         level,
                         W3GetRaceMaxLevel(race),
@@ -299,7 +299,7 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                     }
                     if(W3GetBuffSumInt(client, iAdditionalMaxHealth) != 0.0)
                     {
-                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nAdditive Health: +%i hp",MiniHUD_Text, W3GetBuffSumInt(client, iAdditionalMaxHealth));
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nHealth Bonus: +%i hp",MiniHUD_Text, W3GetBuffSumInt(client, iAdditionalMaxHealth));
                     }
                     if(totalHealthRegen != 0.0)
                     {
@@ -401,16 +401,48 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                             }
                         }
                     }
+                    int gems = GetClientItems3Owned(client);
+                    if(gems > 0){
+                        Format(HUD_Text,sizeof(HUD_Text),"%s\n--- Gems ---",HUD_Text);
+
+                        int sh3item1 = War3_GetItemId1(client,race);
+                        int sh3item2 = War3_GetItemId2(client,race);
+                        int sh3item3 = War3_GetItemId3(client,race);
+
+                        char sh3ItemName[32];
+                        if(War3_GetOwnsItem3(client, race, sh3item1)){
+                            int itemLevel = War3_GetItemLevel(client, race, sh3item1);
+                            W3GetItem3Shortname(sh3item1, sh3ItemName, sizeof(sh3ItemName));
+                            Format(HUD_Text,sizeof(HUD_Text),"%s\n%s: LVL %i | %i XP",HUD_Text, sh3ItemName, itemLevel, War3_GetItemXP(client, race, sh3item1));
+                        }
+                        if(War3_GetOwnsItem3(client, race, sh3item2)){
+                            int itemLevel = War3_GetItemLevel(client, race, sh3item2);
+                            W3GetItem3Shortname(sh3item2, sh3ItemName, sizeof(sh3ItemName));
+                            Format(HUD_Text,sizeof(HUD_Text),"%s\n%s: LVL %i | %i XP",HUD_Text, sh3ItemName, itemLevel, War3_GetItemXP(client, race, sh3item2));
+                        }
+                        if(War3_GetOwnsItem3(client, race, sh3item3)){
+                            int itemLevel = War3_GetItemLevel(client, race, sh3item3);
+                            W3GetItem3Shortname(sh3item3, sh3ItemName, sizeof(sh3ItemName));
+                            Format(HUD_Text,sizeof(HUD_Text),"%s\n%s: LVL %i | %i XP",HUD_Text, sh3ItemName, itemLevel, War3_GetItemXP(client, race, sh3item3));
+                        }
+                    }
 					Format(HUD_Text,sizeof(HUD_Text),"%s\n--- Cooldowns ---",HUD_Text);
   					for(new i = 1;i <= War3_GetRaceSkillCount(race);i++)
 					{
 						new cooldown = War3_CooldownRemaining(client,race,i);
+                        char readyDescription[32];
+                        W3GetRaceSkillReadyDesc(race, i, readyDescription, sizeof(readyDescription));
 						if(cooldown > 0)
 						{
 							new String:skillname[64];
 							W3GetRaceSkillName(race,i,skillname,sizeof(skillname));
 							Format(HUD_Text,sizeof(HUD_Text), "%s\n%s: %is",HUD_Text,skillname,cooldown);
 						}
+                        else if(readyDescription[0] != '\0'){
+							new String:skillname[64];
+							W3GetRaceSkillName(race,i,skillname,sizeof(skillname));
+							Format(HUD_Text,sizeof(HUD_Text), "%s\n%s: %s",HUD_Text,skillname,readyDescription);
+                        }
 					}
                     if(g_bShowHUD[display] != 1)
                     {
