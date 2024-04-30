@@ -271,11 +271,9 @@ public void OnWar3Event(W3EVENT event,int client)
 			if(player.raceid==thisRaceID)
 			{
 				int skill_level=player.getskilllevel( thisRaceID, SKILL_LOWGRAV );
-				PrintToServer("before| %.2f", CurrentCritChance[client]);
 				if(CurrentCritChance[client]<0.2)
 				{
 					CurrentCritChance[client] += 0.01 + 0.002*skill_level;
-					PrintToServer("after| %.2f", CurrentCritChance[client]);
 					War3_SetBuff(client, fCritChance,thisRaceID,CurrentCritChance[client]);
 				}
 				else if(CurrentCritChance[client]>0.2)
