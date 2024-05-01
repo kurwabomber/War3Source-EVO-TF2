@@ -741,7 +741,7 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 	buffpropertiesarray[ iCritMode ].DefaultValue=-1;
 	buffpropertiesarray[ iCritMode ].BuffStackType=iLastValue;
 
-	buffpropertiesarray[ fCritModifier ].DefaultValue=0.0;
+	buffpropertiesarray[ fCritModifier ].DefaultValue=1.0;
 	buffpropertiesarray[ fCritModifier ].BuffStackType=fMaximum;
 
 	buffpropertiesarray[ iDamageBonus ].DefaultValue=0;

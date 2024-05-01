@@ -78,8 +78,8 @@ new Float:WindWalkerInvis[] = {0.6,0.6,0.5,0.45,0.4};
 new Float:WindWalkerMoveSpeed[]={0.35,0.375,0.4,0.425,0.450};
 
 // Critical Strike
-new Float:CritChance = 0.10;
-new Float:CritMultiplier[] = {2.0,2.125,2.25,2.375,2.5};
+new Float:CritChance[] = {0.1, 0.1, 0.1, 0.1, 0.1};
+new Float:CritMultiplier[] = {1.0,1.125,1.25,1.375,1.5};
 
 // Orb Of Lightning
 new Float:OrbAttackspeed[]={0.2,0.225,0.25,0.275,0.3};
@@ -119,6 +119,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_CRITS=War3_AddRaceSkill(thisRaceID,"Critical Strike","You have a 10% chance to deal up to 2.5 times damage.",false,4);
 		SKILL_ORB=War3_AddRaceSkill(thisRaceID,"Orb of Lightning","Gain attackspeed and cleave within 150 HU for 6 seconds, Can give to teammates if looking nearby them.\nup to +30% attack speed and 25% cleave.",false,4, "(voice Help!)");
 		ULT_LIGHTNING=War3_AddRaceSkill(thisRaceID,"Lightning Strike","Strike nearby enemies, will chain to other enemies if nearby.\nCooldown 20s to 16s, Damage 60 to 100.",true,4,"(voice Jeers)");
+
+		War3_AddSkillBuff(thisRaceID, SKILL_CRITS, fCritChance, CritChance);
+		War3_AddSkillBuff(thisRaceID, SKILL_CRITS, fCritModifier, CritMultiplier);
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }
@@ -208,23 +211,6 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 		if(ValidPlayer(victim,true) && War3_GetRace(victim)==thisRaceID)
 		{
 			StopWindWalker(victim);
-		}
-		if(War3_GetRace(attacker)==thisRaceID)
-		{
-			new skilllvl = War3_GetSkillLevel(attacker,thisRaceID,SKILL_CRITS);
-			new Float:Chance = GetRandomFloat(0.0, 1.0);
-			float resistance = W3GetBuffStackedFloat(victim, fAbilityResistance);
-
-			if(!ValidPlayer(victim,false) && CritChance*resistance >= Chance)
-			{
-				War3_DamageModPercent(CritMultiplier[skilllvl]);
-				W3Hint(attacker,HINT_COOLDOWN_NOTREADY,2.0,"Crit!");
-			}
-			if(ValidPlayer(victim,false) && CritChance*resistance >= Chance && !W3HasImmunity(victim,Immunity_Skills))
-			{
-				War3_DamageModPercent(CritMultiplier[skilllvl]);
-				W3Hint(attacker,HINT_COOLDOWN_NOTREADY,2.0,"Crit!");			
-			}
 		}
 	}
 	return Plugin_Continue;
@@ -422,5 +408,7 @@ public OnRaceChanged(client,oldrace,newrace)
 	else
 	{
 		StopWindWalker(client);
+		War3_SetBuff(client, fCritChance, thisRaceID, 0.0);
+		War3_SetBuff(client, fCritModifier, thisRaceID, 1.0);
 	}
 }

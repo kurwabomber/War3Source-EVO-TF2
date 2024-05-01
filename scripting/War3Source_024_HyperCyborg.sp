@@ -133,9 +133,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual(RACE_SHORTNAME,shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Hyper Cyborg",RACE_SHORTNAME,reloadrace_id,"Engineer race");
-		SKILL_NANO_PRODUCTION=War3_AddRaceSkill(thisRaceID,"Nano Production","Regenerates 2-17 metal per second.\nNano requires 1-4-3 health/second to rebuild metal.\nMust have at least 50 or more health to regen metal.\n(+ability)",false,4);
-		SKILL_AUTO_DISPENSER=War3_AddRaceSkill(thisRaceID,"Auto Dispenser","When buildings are near to dispensers,\nit repairs and refills building (increases by dispenser level & job level).\nIncreases fire rate for melee by 20 to 85% percent.",false,4);
-		SKILL_ACP_SENTRY=War3_AddRaceSkill(thisRaceID,"ACP Sentry Rounds","Sentry's Damage Increased by 5 to 27.5% and Victim Slowed by 20 to 50%.",false,4);
+		SKILL_NANO_PRODUCTION=War3_AddRaceSkill(thisRaceID,"Nano Production","Regenerates 13-17 metal per second.\nNano requires 4-3 health/second to rebuild metal.\nMust have at least 50 or more health to regen metal.\n(+ability)",false,4);
+		SKILL_AUTO_DISPENSER=War3_AddRaceSkill(thisRaceID,"Auto Dispenser","Dispenser repairs and refills nearby buildings.\nIncreases fire rate for melee by 65 to 85% percent.",false,4);
+		SKILL_ACP_SENTRY=War3_AddRaceSkill(thisRaceID,"ACP Sentry Rounds","Sentry's Damage Increased by 22.5 to 27.5% and Victim Slowed by 42.5 to 50%.",false,4);
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }
