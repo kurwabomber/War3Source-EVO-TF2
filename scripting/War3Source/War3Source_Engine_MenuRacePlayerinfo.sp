@@ -661,6 +661,31 @@ War3_playertargetMenu(client,target)
 			}
 		}
 	}
+
+	int gems = GetClientItems3Owned(client);
+	if(gems > 0){
+		int sh3item1 = War3_GetItemId1(client,raceid);
+		int sh3item2 = War3_GetItemId2(client,raceid);
+		int sh3item3 = War3_GetItemId3(client,raceid);
+
+		char sh3ItemName[32];
+		if(War3_GetOwnsItem3(client, raceid, sh3item1)){
+			int itemLevel = War3_GetItemLevel(client, raceid, sh3item1);
+			W3GetItem3Shortname(sh3item1, sh3ItemName, sizeof(sh3ItemName));
+			Format(title,sizeof(title),"%s\n%s: LVL %i| %i/%i XP",title, sh3ItemName, itemLevel, War3_GetItemXP(client, raceid, sh3item1));
+		}
+		if(War3_GetOwnsItem3(client, raceid, sh3item2)){
+			int itemLevel = War3_GetItemLevel(client, raceid, sh3item2);
+			W3GetItem3Shortname(sh3item2, sh3ItemName, sizeof(sh3ItemName));
+			Format(title,sizeof(title),"%s\n%s: LVL %i| %i/%i XP",title, sh3ItemName, itemLevel, War3_GetItemXP(client, raceid, sh3item2));
+		}
+		if(War3_GetOwnsItem3(client, raceid, sh3item3)){
+			int itemLevel = War3_GetItemLevel(client, raceid, sh3item3);
+			W3GetItem3Shortname(sh3item3, sh3ItemName, sizeof(sh3ItemName));
+			Format(title,sizeof(title),"%s\n%s: LVL %i| %i/%i XP",title, sh3ItemName, itemLevel, War3_GetItemXP(client, raceid, sh3item3));
+		}
+	}
+
 	float armorred=(1.0-PhysicalArmorMulti(target))*100;
 	Format(title,sizeof(title),"%s\n \n%T",title,"Physical Armor: {amount} (+-{amount}%)",client,GetBuffSumFloat(target,fArmorPhysical),armorred<0.0?"+":"-",armorred<0.0?armorred*-1.0:armorred);
 

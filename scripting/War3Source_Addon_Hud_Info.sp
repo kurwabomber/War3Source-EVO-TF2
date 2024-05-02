@@ -226,10 +226,10 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                     new String:HUD_Text[2048];
 					new String:MiniHUD_Text[1024];
                     new String:racename[64];
-                    War3_GetRaceShortname(race,racename,sizeof(racename));
+                    War3_GetRaceName(race,racename,sizeof(racename));
                     new level=War3_GetLevel(client, race);
    
-                    Format(HUD_Text, sizeof(HUD_Text), "Race: %s\nLevel: %i/%i - XP: %i/%i\nGold: %i | Dia: %i | Plat: %i", 
+                    Format(HUD_Text, sizeof(HUD_Text), "Race: %s\nLevel: %i/%i - XP: %i/%i\nGold: %i | Diamonds: %i | Platinum: %i", 
                         racename,
                         level,
                         W3GetRaceMaxLevel(race),
@@ -399,31 +399,6 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                                 W3GetItemShortname(itemid,itemname,sizeof(itemname));
                                 Format(MiniHUD_Text,sizeof(MiniHUD_Text),"%s%s | ",MiniHUD_Text,itemname);
                             }
-                        }
-                    }
-                    int gems = GetClientItems3Owned(client);
-                    if(gems > 0){
-                        Format(HUD_Text,sizeof(HUD_Text),"%s\n--- Gems ---",HUD_Text);
-
-                        int sh3item1 = War3_GetItemId1(client,race);
-                        int sh3item2 = War3_GetItemId2(client,race);
-                        int sh3item3 = War3_GetItemId3(client,race);
-
-                        char sh3ItemName[32];
-                        if(War3_GetOwnsItem3(client, race, sh3item1)){
-                            int itemLevel = War3_GetItemLevel(client, race, sh3item1);
-                            W3GetItem3Shortname(sh3item1, sh3ItemName, sizeof(sh3ItemName));
-                            Format(HUD_Text,sizeof(HUD_Text),"%s\n%s: LVL %i | %i XP",HUD_Text, sh3ItemName, itemLevel, War3_GetItemXP(client, race, sh3item1));
-                        }
-                        if(War3_GetOwnsItem3(client, race, sh3item2)){
-                            int itemLevel = War3_GetItemLevel(client, race, sh3item2);
-                            W3GetItem3Shortname(sh3item2, sh3ItemName, sizeof(sh3ItemName));
-                            Format(HUD_Text,sizeof(HUD_Text),"%s\n%s: LVL %i | %i XP",HUD_Text, sh3ItemName, itemLevel, War3_GetItemXP(client, race, sh3item2));
-                        }
-                        if(War3_GetOwnsItem3(client, race, sh3item3)){
-                            int itemLevel = War3_GetItemLevel(client, race, sh3item3);
-                            W3GetItem3Shortname(sh3item3, sh3ItemName, sizeof(sh3ItemName));
-                            Format(HUD_Text,sizeof(HUD_Text),"%s\n%s: LVL %i | %i XP",HUD_Text, sh3ItemName, itemLevel, War3_GetItemXP(client, race, sh3item3));
                         }
                     }
 					Format(HUD_Text,sizeof(HUD_Text),"%s\n--- Cooldowns ---",HUD_Text);
