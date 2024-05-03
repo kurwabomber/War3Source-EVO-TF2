@@ -107,6 +107,10 @@ ShowMenu3ShopCategory(client)
 		{
 			AddMenuItem(shopMenu, category, "Purple - matching blue and red", ITEMDRAW_DEFAULT);
 		}
+		else if(StrEqual(category,"Prismatic"))
+		{
+			AddMenuItem(shopMenu, category, "Prismatic - All or Misc", ITEMDRAW_DEFAULT);
+		}
 		else
 		{
 			AddMenuItem(shopMenu, category, "Uncategorizable", ITEMDRAW_DEFAULT);

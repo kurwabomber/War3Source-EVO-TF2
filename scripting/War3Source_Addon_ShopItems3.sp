@@ -53,7 +53,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		}
 
 		ItemID[STORMHEART]=War3_CreateShopItem3("Heart of the Storm","stormheart","Adds +2 damage to all hits.\nLeveling up increases additive damage. Adds 0.1 damage per level.",80,"Red","Heart of the Storm",10,"Heart of the Storm",0);
-		
+
 		//Yellow - Modifiers
 		ItemID[WINDPEARL]=War3_CreateShopItem3("Cloudy Pearl","windpearl","Gives +6%% movespeed.\nLeveling increases movespeed. 1%% increase per level.",30,"Yellow","Cloudy Pearl",10,"Cloudy Pearl",0);
 		ItemID[FREEZE]=War3_CreateShopItem3("Frozen Fists","freeze","Hits have a 10% chance to stop enemy movement for 0.2 seconds.\nCannot level up.",60,"Yellow","Frozen Fists",0,"Frozen Fists",0);
@@ -73,6 +73,10 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		//Purple - Red & Blue
 		ItemID[MARKSMAN]=War3_CreateShopItem3("Marksman's Sign","marksman","Shots to the head deal 15%% more damage and have 15%% lifesteal.\nLeveling up increases lifesteal. +1%% lifesteal per level.",50,"Purple","Marksman's Sign",10,"Marksman's Sign",0);
 		ItemID[RAGE]=War3_CreateShopItem3("Rage Gem","rage","You gain 0.2%% attackspeed per 1%% health missing.\nLeveling up increases attackspeed. +0.005%% attackspeed per level.",55,"Purple","Rage Gem",10,"Rage Gem",0);
+		ItemID[RUNESHARD]=War3_CreateShopItem3("Rune Shard","runeshard","Gives 1.1x cooldown reduction. Increased by +0.005 per level.",70,"Purple","Rune Shard",10,"Rune Shard",0);
+
+		//Prism - All or Misc
+		ItemID[SANGE]=War3_CreateShopItem3("Sange","sange","Gives +20% healing efficiency and +4% damage.\nEvolves into Sange & Yasha after hitting level 16 giving:\n+20 mHP,+1 hpr,+5% atkspd,+1 damage,+4% dmg,+20% healing efficiency,+6% ms and 0.9x inc. ability.",250,"Prismatic","Sange",16,"Sange",0);
 	}
 }
 
@@ -85,6 +89,18 @@ public OnRaceChanged(client,oldrace,newrace)
 	War3_SetBuffItem3(client,fBashDuration,ItemID[FREEZE],0.0);
 	War3_SetBuffItem3(client,fMaxHealth,ItemID[UBERHEART],1.0);
 	War3_SetBuffItem3(client,bSlowImmunity,ItemID[HEATINGPLATES],false);
+	War3_SetBuffItem3(client,fCooldownReduction,ItemID[RUNESHARD],1.0);
+	War3_SetBuffItem3(client,fMaxSpeed2, ItemID[WINDPEARL], 0.0);
+
+	//Sange
+	War3_SetBuffItem3(client,fAbilityResistance,ItemID[SANGE],1.0);
+	War3_SetBuffItem3(client,fSustainEfficiency,ItemID[SANGE],0.0);
+	War3_SetBuffItem3(client,fDamageModifier,ItemID[SANGE],0.0);
+	War3_SetBuffItem3(client,iDamageBonus,ItemID[SANGE],0);
+	War3_SetBuffItem3(client,iAdditionalMaxHealth,ItemID[SANGE],0);
+	War3_SetBuffItem3(client,fHPRegen,ItemID[SANGE],0.0);
+	War3_SetBuffItem3(client,fAttackSpeed,ItemID[SANGE],1.0);
+	War3_SetBuffItem3(client,fMaxSpeed2,ItemID[SANGE],0.0);
 }
 
 public Action:Timer_QuickTimer(Handle:timer)
@@ -181,6 +197,26 @@ public Action:Timer_SlowTimer(Handle:timer)
 		
 		if(War3_GetOwnsItem3(client,race,ItemID[HEATINGPLATES])){
 			War3_SetBuffItem3(client,bSlowImmunity,ItemID[HEATINGPLATES],true);
+		}
+
+		if(War3_GetOwnsItem3(client, race, ItemID[RUNESHARD])){
+			int level = War3_GetItemLevel(client,race,ItemID[RUNESHARD])+1;
+			War3_SetBuffItem3(client,fCooldownReduction,ItemID[RUNESHARD],1.1 + 0.005*level);
+		}
+
+		if(War3_GetOwnsItem3(client, race, ItemID[SANGE])){
+			int level = War3_GetItemLevel(client,race,ItemID[SANGE])+1;
+			War3_SetBuffItem3(client,fSustainEfficiency,ItemID[SANGE],0.2);
+			War3_SetBuffItem3(client,fDamageModifier,ItemID[SANGE],0.04);
+
+			if(level >= 16){
+				War3_SetBuffItem3(client,fAbilityResistance,ItemID[SANGE],0.9);
+				War3_SetBuffItem3(client,iDamageBonus,ItemID[SANGE],1);
+				War3_SetBuffItem3(client,iAdditionalMaxHealth,ItemID[SANGE],20);
+				War3_SetBuffItem3(client,fHPRegen,ItemID[SANGE],1.0);
+				War3_SetBuffItem3(client,fAttackSpeed,ItemID[SANGE],1.05);
+				War3_SetBuffItem3(client,fMaxSpeed2,ItemID[SANGE],0.06);
+			}
 		}
 	}
 }

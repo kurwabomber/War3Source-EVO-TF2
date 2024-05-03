@@ -121,7 +121,6 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		ULT_LIGHTNING=War3_AddRaceSkill(thisRaceID,"Lightning Strike","Strike nearby enemies, will chain to other enemies if nearby.\nCooldown 20s to 16s, Damage 60 to 100.",true,4,"(voice Jeers)");
 
 		War3_AddSkillBuff(thisRaceID, SKILL_CRITS, fCritChance, CritChance);
-		War3_AddSkillBuff(thisRaceID, SKILL_CRITS, fCritModifier, CritMultiplier);
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }

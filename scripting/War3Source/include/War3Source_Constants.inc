@@ -101,6 +101,8 @@ enum SHOPITEMS3{
 	UBERHEART,
 	FREEZE,
 	HEATINGPLATES,
+	RUNESHARD,
+	SANGE,
 	MAXITEMSCOUNT3
 };
 //zeroth item not used
@@ -738,7 +740,7 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 	buffpropertiesarray[ fCritChance ].DefaultValue=0.0;
 	buffpropertiesarray[ fCritChance ].BuffStackType=fAbsolute;
 
-	buffpropertiesarray[ iCritMode ].DefaultValue=-1;
+	buffpropertiesarray[ iCritMode ].DefaultValue=1;
 	buffpropertiesarray[ iCritMode ].BuffStackType=iLastValue;
 
 	buffpropertiesarray[ fCritModifier ].DefaultValue=1.0;

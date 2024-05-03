@@ -339,11 +339,11 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                     }
                     if(W3GetBuffStackedFloat(client, fAbilityResistance) != 1.0)
                     {
-                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nIncoming Abilities: x%.1f",MiniHUD_Text, W3GetBuffStackedFloat(client, fAbilityResistance));
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nIncoming Abilities: x%.2f",MiniHUD_Text, W3GetBuffStackedFloat(client, fAbilityResistance));
                     }
                     if(W3GetBuffStackedFloat(client, fUltimateResistance) != 1.0)
                     {
-                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nIncoming Ultimates: x%.1f",MiniHUD_Text, W3GetBuffStackedFloat(client, fUltimateResistance));
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nIncoming Ultimates: x%.2f",MiniHUD_Text, W3GetBuffStackedFloat(client, fUltimateResistance));
                     }
                     if(W3GetBuffHasTrue(client,bSlowImmunity) || W3GetBuffHasTrue(client,bImmunitySkills) || W3GetBuffHasTrue(client,bImmunityUltimates) || W3GetBuffHasTrue(client,bImmunityWards))
                     {

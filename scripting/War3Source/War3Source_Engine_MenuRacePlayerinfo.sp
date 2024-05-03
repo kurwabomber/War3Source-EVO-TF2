@@ -672,17 +672,17 @@ War3_playertargetMenu(client,target)
 		if(War3_GetOwnsItem3(client, raceid, sh3item1)){
 			int itemLevel = War3_GetItemLevel(client, raceid, sh3item1);
 			W3GetItem3Shortname(sh3item1, sh3ItemName, sizeof(sh3ItemName));
-			Format(title,sizeof(title),"%s\n%s: LVL %i| %i/%i XP",title, sh3ItemName, itemLevel, War3_GetItemXP(client, raceid, sh3item1));
+			Format(title,sizeof(title),"%s\n%s: LVL %i| %i/%i XP",title, sh3ItemName, itemLevel, War3_GetItemXP(client, raceid, sh3item1), W3GetItemReqXP(itemLevel+1));
 		}
 		if(War3_GetOwnsItem3(client, raceid, sh3item2)){
 			int itemLevel = War3_GetItemLevel(client, raceid, sh3item2);
 			W3GetItem3Shortname(sh3item2, sh3ItemName, sizeof(sh3ItemName));
-			Format(title,sizeof(title),"%s\n%s: LVL %i| %i/%i XP",title, sh3ItemName, itemLevel, War3_GetItemXP(client, raceid, sh3item2));
+			Format(title,sizeof(title),"%s\n%s: LVL %i| %i/%i XP",title, sh3ItemName, itemLevel, War3_GetItemXP(client, raceid, sh3item2), W3GetItemReqXP(itemLevel+1));
 		}
 		if(War3_GetOwnsItem3(client, raceid, sh3item3)){
 			int itemLevel = War3_GetItemLevel(client, raceid, sh3item3);
 			W3GetItem3Shortname(sh3item3, sh3ItemName, sizeof(sh3ItemName));
-			Format(title,sizeof(title),"%s\n%s: LVL %i| %i/%i XP",title, sh3ItemName, itemLevel, War3_GetItemXP(client, raceid, sh3item3));
+			Format(title,sizeof(title),"%s\n%s: LVL %i| %i/%i XP",title, sh3ItemName, itemLevel, War3_GetItemXP(client, raceid, sh3item3), W3GetItemReqXP(itemLevel+1));
 		}
 	}
 

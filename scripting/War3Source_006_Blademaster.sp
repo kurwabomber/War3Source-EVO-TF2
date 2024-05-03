@@ -99,6 +99,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 public OnAllPluginsLoaded()
 {
 	War3_RaceOnPluginStart("blademaster");
+	ServerCommand("war3 blademaster_flags \"nobots\"");
 }
 
 public OnPluginEnd()
