@@ -364,7 +364,7 @@ public Action:OnW3TakeDmgBullet(victim,attacker,Float:damage)
 		new inflictor = W3GetDamageInflictor();
 		if(isBuildingOwner(attacker,inflictor))
 		{
-			if(!bFrosted[victim] && ValidPlayer(victim,true))
+			if(ValidPlayer(victim,true) && !bFrosted[victim])
 			{
 				new Float:speed_frost=ORB[sentry_ACP_level];
 				if(speed_frost<=0.0) speed_frost=0.01; // 0.0 for override removes

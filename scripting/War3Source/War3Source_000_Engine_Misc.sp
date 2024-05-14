@@ -82,7 +82,7 @@ public Native_War3_SpawnPlayer(Handle:plugin,numParams)
 	{
 		//War3Respawn(client);
 #if GGAMETYPE == GGAME_TF2
-		if(!GetEntProp(client, Prop_Send, "m_bUseBossHealthBar"))
+		if(!GetEntProp(client, Prop_Send, "m_bUseBossHealthBar") || !GetEntProp(client, Prop_Send, "m_bIsMiniBoss"))
 			TF2_RespawnPlayer(client);
 #elseif (GGAMETYPE == GGAME_CSS || GGAMETYPE == GGAME_CSGO)
 		CS_RespawnPlayer(client);

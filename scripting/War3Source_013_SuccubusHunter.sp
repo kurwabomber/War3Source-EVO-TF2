@@ -269,29 +269,28 @@ public void OnWar3EventSpawn (int client)
 		if (xp > kill_XP)
 			xp = kill_XP;
 
-		if(W3GetPlayerProp(client,W3PlayerProp::bStatefulSpawn)){
-			War3_SetXP(client,thisRaceID,old_XP+xp);
-			new max=W3GetMaxGold(client);
+		War3_SetXP(client,thisRaceID,old_XP+xp);
+		new max=W3GetMaxGold(client);
 
-			new old_credits=War3_GetGold(client);
-			//PrintToChat(client,"dollar %d",dollar);
-			// orignal war3source was 100 gold max.. so.. 100/6 = 17 rounded up
-			dollar /= 16; // was dollar /= (max/6);
-			//PrintToChat(client,"dollar %d",dollar);
-			new new_credits = old_credits + dollar;
-			if (new_credits > max)
-			new_credits = max;
-			//PrintToChat(client,"new_credits %d",new_credits);
-			War3_SetGold(client,new_credits);
-			new_credits = War3_GetGold(client);
+		new old_credits=War3_GetGold(client);
+		//PrintToChat(client,"dollar %d",dollar);
+		// orignal war3source was 100 gold max.. so.. 100/6 = 17 rounded up
+		dollar /= 16; // was dollar /= (max/6);
+		//PrintToChat(client,"dollar %d",dollar);
+		new new_credits = old_credits + dollar;
+		if (new_credits > max)
+		new_credits = max;
+		//PrintToChat(client,"new_credits %d",new_credits);
+		War3_SetGold(client,new_credits);
+		new_credits = War3_GetGold(client);
 
-			if (new_credits > 0){
-				dollar = new_credits-old_credits;
-			}
-			if(W3GetPlayerProp(client,W3PlayerProp::bStatefulSpawn)){
-				PrintToChat(client,"\0x04[Totem Incanation] \0x01You gained %i HP, %i credits and %i XP",hp,dollar,xp);
-			}
+		if (new_credits > 0){
+			dollar = new_credits-old_credits;
 		}
+		if(W3GetPlayerProp(client,W3PlayerProp::bStatefulSpawn)){
+			PrintToChat(client,"\0x04[Totem Incanation] \0x01You gained %i HP, %i gold and %i XP",hp,dollar,xp);
+		}
+
 		skulls[client]=skulls[client]-10;
 		if(skulls[client]<0)
 			skulls[client]=0;
@@ -318,7 +317,7 @@ public Action OnW3TakeDmgBullet(int victim,int attacker, float damage)
 			//new xdamage= RoundFloat(0.2*float(damage) * skulls[attacker]/20 );
 			
 			new xdamage= RoundFloat(damage * 0.01 * HeadDMG[skilllevelheadhunter] * skulls[attacker] * W3GetBuffStackedFloat(victim, fAbilityResistance));
-			War3_DealDamage(victim,xdamage,attacker,_,"headhunter",W3DMGORIGIN_SKILL,W3DMGTYPE_PHYSICAL);
+			War3_DealDamage(victim,xdamage,attacker,_,"weapon_additionalDamage",W3DMGORIGIN_SKILL,W3DMGTYPE_PHYSICAL);
 
 			//W3PrintSkillDmgConsole(victim,attacker,War3_GetWar3DamageDealt(),SKILL_HEADHUNTER);
 			if(xdamage>0)

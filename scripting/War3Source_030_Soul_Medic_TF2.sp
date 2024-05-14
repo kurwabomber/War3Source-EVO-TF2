@@ -136,7 +136,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 	if(RaceDisabled || War3_GetRace(victim) != thisRaceID)
 		return Plugin_Continue;
 
-	if(W3GetDamageIsBullet() && ValidPlayer(victim, true))
+	if(W3GetDamageIsBullet() && ValidPlayer(victim, true) && ValidPlayer(attacker, false))
 	{
 		new skill = War3_GetSkillLevel(victim, thisRaceID, SKILL_SHARED_PAIN);
 		if(damage > 0.0 && GetClientTeam(attacker) != GetClientTeam(victim))

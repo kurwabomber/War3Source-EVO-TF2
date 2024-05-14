@@ -488,10 +488,8 @@ stock KillParticle(int entity)
 }
 stock bool IsValidForDamage(entity)
 {
-	if(!IsValidEdict(entity)) return false; 
-	if(ValidPlayer(entity) && (!IsPlayerAlive(entity) || IsClientObserver(entity))) return false;	
+	if(!IsValidEdict(entity)) return false;
 	if(HasEntProp(entity, Prop_Data, "m_hActiveWeapon")) return true;
-	if(GetEntProp(entity, Prop_Data, "m_takedamage") == 0) return false;
 	return false; 
 }
 stock bool:IsOnDifferentTeams(entity1,entity2)

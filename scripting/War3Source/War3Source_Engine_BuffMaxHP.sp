@@ -290,7 +290,7 @@ public Action:OnGetMaxHealth(client, &maxhealth)
 			}
 		}
 
-		return Plugin_Handled;
+		return Plugin_Changed;
 	}
 #else
 	if (ValidPlayer(client))
@@ -307,7 +307,7 @@ public Action:OnGetMaxHealth(client, &maxhealth)
 			}
 		}
 
-		return Plugin_Handled;
+		return Plugin_Changed;
 	}
 #endif
 	return Plugin_Continue;

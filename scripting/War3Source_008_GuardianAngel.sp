@@ -11,18 +11,6 @@
 // My own Functions:
 // GetSpectatorCount, IsFlyingAllowed
 //
-// Rcon variables:
-//command                     default
-//war3angel_scout_nofly        false
-//war3angel_soldier_nofly      false
-//war3angel_pyro_nofly         false
-//war3angel_demoman_nofly      false
-//war3angel_heavy_nofly        true
-//war3angel_engineer_nofly     false
-//war3angel_medic_nofly        false
-//war3angel_sniper_nofly       true
-//war3angel_spy_nofly          true
-//
 //SONG_HealAmountCvar          1.0
 // The song HealAmount 0.0-1.0  while 1.0 is equal to 100% of max health to heal.
 
@@ -64,16 +52,6 @@ new bool:SONG[Maximum_Players_array];
 new Handle:ultCooldownCvar_SPAWN;
 new Handle:ultCooldownCvar;
 new Handle:SONG_HealAmountCvar;
-
-new Handle:NoFly_Scout;
-new Handle:NoFly_Soldier;
-new Handle:NoFly_Pyro;
-new Handle:NoFly_Demoman;
-new Handle:NoFly_Heavy;
-new Handle:NoFly_Engineer;
-new Handle:NoFly_Medic;
-new Handle:NoFly_Sniper;
-new Handle:NoFly_Spy;
 
 new thisRaceID;
 #define RACE_ID_NUMBER 8
@@ -239,25 +217,6 @@ public OnPluginStart()
      "The percentage of max player health the Guardian Angel will heal. (0.00 - 1.00) Default = 0.50 (50%)",
      _,true,0.0,true,1.0);
 
-     NoFly_Scout=CreateConVar("war3angel_scout_nofly","0",
-     "If 1, Scout will get alternative for Wings of Glory and will not be able to fly. Def = 0");
-     NoFly_Soldier=CreateConVar("war3angel_soldier_nofly","0",
-     "If 1, Soldier will get alternative for Wings of Glory and will not be able to fly. Def = 0");
-     NoFly_Pyro=CreateConVar("war3angel_pyro_nofly","0",
-     "If 1, Pyro will get alternative for Wings of Glory and will not be able to fly. Def = 0");
-     NoFly_Demoman=CreateConVar("war3angel_demoman_nofly","0",
-     "If 1, Demoman will get alternative for Wings of Glory and will not be able to fly. Def = 0");
-     NoFly_Heavy=CreateConVar("war3angel_heavy_nofly","0",
-     "If 1, Heavy will get alternative for Wings of Glory and will not be able to fly. Def = 1");
-     NoFly_Engineer=CreateConVar("war3angel_engineer_nofly","0",
-     "If 1, Engineer will get alternative for Wings of Glory and will not be able to fly. Def = 0");
-     NoFly_Medic=CreateConVar("war3angel_medic_nofly","0",
-     "If 1, Medic will get alternative for Wings of Glory and will not be able to fly. Def = 0");
-     NoFly_Sniper=CreateConVar("war3angel_sniper_nofly","0",
-     "If 1, Sniper will get alternative for Wings of Glory and will not be able to fly. Def = 0");
-     NoFly_Spy=CreateConVar("war3angel_spy_nofly","0",
-     "If 1, Spy will get alternative for Wings of Glory and will not be able to fly. Def = 1");
-
 
 //Hook events here!!!!
 	HookEvent("player_hurt",PlayerHurtEvent);
@@ -267,15 +226,6 @@ public OnPluginStart()
   //HookEvent("teamplay_round_start",TeamplayRoundStartEvent);
 	HookConVarChange(ultCooldownCvar_SPAWN, W3CvarCooldownHandler);
 	HookConVarChange(SONG_HealAmountCvar, W3CvarSONG_HealAmountCvar);
-    HookConVarChange(NoFly_Scout, W3CvarNoFly_Scout);
-    HookConVarChange(NoFly_Soldier, W3CvarNoFly_Soldier);
-    HookConVarChange(NoFly_Pyro, W3CvarNoFly_Pyro);
-    HookConVarChange(NoFly_Demoman, W3CvarNoFly_Demoman);
-    HookConVarChange(NoFly_Heavy, W3CvarNoFly_Heavy);
-    HookConVarChange(NoFly_Engineer, W3CvarNoFly_Engineer);
-    HookConVarChange(NoFly_Medic, W3CvarNoFly_Medic);
-    HookConVarChange(NoFly_Sniper, W3CvarNoFly_Sniper);
-    HookConVarChange(NoFly_Spy, W3CvarNoFly_Spy);
 }
 public Event_PlayerreSpawn(Handle:event, const String:name[], bool:dontBroadcast)
 {
@@ -345,78 +295,6 @@ public W3CvarSONG_HealAmountCvar(Handle:cvar, const String:oldValue[], const Str
 {
 	new Float:value = StringToFloat(newValue);
     SetConVarFloat(SONG_HealAmountCvar,value);
-}
-
-/* ****************************** W3CvarNoFly_Scout ************************** */
-
-public W3CvarNoFly_Scout(Handle:cvar, const String:oldValue[], const String:newValue[])
-{
-	new value = StringToInt(newValue);
-    SetConVarInt(NoFly_Scout,value);
-}
-
-/* ****************************** W3CvarNoFly_Soldier ************************** */
-
-public W3CvarNoFly_Soldier(Handle:cvar, const String:oldValue[], const String:newValue[])
-{
-	new value = StringToInt(newValue);
-    SetConVarInt(NoFly_Soldier,value);
-}
-
-/* ****************************** W3CvarNoFly_Pyro ************************** */
-
-public W3CvarNoFly_Pyro(Handle:cvar, const String:oldValue[], const String:newValue[])
-{
-	new value = StringToInt(newValue);
-    SetConVarInt(NoFly_Pyro,value);
-}
-
-/* ****************************** W3CvarNoFly_Demoman ************************** */
-
-public W3CvarNoFly_Demoman(Handle:cvar, const String:oldValue[], const String:newValue[])
-{
-	new value = StringToInt(newValue);
-    SetConVarInt(NoFly_Demoman,value);
-}
-
-/* ****************************** W3CvarNoFly_Heavy ************************** */
-
-public W3CvarNoFly_Heavy(Handle:cvar, const String:oldValue[], const String:newValue[])
-{
-	new value = StringToInt(newValue);
-    SetConVarInt(NoFly_Heavy,value);
-}
-
-/* ****************************** W3CvarNoFly_Engineer ************************** */
-
-public W3CvarNoFly_Engineer(Handle:cvar, const String:oldValue[], const String:newValue[])
-{
-	new value = StringToInt(newValue);
-    SetConVarInt(NoFly_Engineer,value);
-}
-
-/* ****************************** W3CvarNoFly_Medic ************************** */
-
-public W3CvarNoFly_Medic(Handle:cvar, const String:oldValue[], const String:newValue[])
-{
-	new value = StringToInt(newValue);
-    SetConVarInt(NoFly_Medic,value);
-}
-
-/* ****************************** W3CvarNoFly_Sniper ************************** */
-
-public W3CvarNoFly_Sniper(Handle:cvar, const String:oldValue[], const String:newValue[])
-{
-	new value = StringToInt(newValue);
-    SetConVarInt(NoFly_Sniper,value);
-}
-
-/* ****************************** W3CvarNoFly_Spy ************************** */
-
-public W3CvarNoFly_Spy(Handle:cvar, const String:oldValue[], const String:newValue[])
-{
-	new value = StringToInt(newValue);
-    SetConVarInt(NoFly_Spy,value);
 }
 
 
@@ -618,13 +496,6 @@ for(new i;i<Maximum_Players_array;i++)
           CreateParticle("community_sparkle", 3.0, pickplayerid, 2,50.0,-25.0,-25.0);
           CreateParticle("community_sparkle", 3.0, pickplayerid, 2,50.0,0.0,-25.0);
           CreateParticle("community_sparkle", 3.0, pickplayerid, 2,25.0,0.0,-40.0);
-          CreateParticle("community_sparkle", 3.0, pickplayerid, 2,100.0,-25.0,-25.0);
-          CreateParticle("community_sparkle", 3.0, pickplayerid, 2,100.0,0.0,-25.0);
-          CreateParticle("community_sparkle", 3.0, pickplayerid, 2,30.0,25.0,-25.0);
-          W3Hint(i,HINT_NORMAL,1.0,"Your Prayers Song blessed %s!", NamePlayer);
-          W3Hint(pickplayerid,HINT_NORMAL,1.0,"Guardian Angel %s blessed you!", NameGuardianAngel);
-          //PrintToChatAll("DEBUG: \x05 %s Blessed %s",NameGuardianAngel,NamePlayer);
-
           //PrintToChat( i, "\x05>>> \x03Your Prayers Song blessed \x04%s", NamePlayer );
           //PrintToChat( pickplayerid, "\x05>>> \x03Your Guardian Angel \x04%s \x03blessed you!", NameGuardianAngel );
           //EmitSoundToClient( pickplayerid, BlessingSoundd );
@@ -660,7 +531,7 @@ public PlayerHurtEvent( Handle:event, const String:name[], bool:dontBroadcast )
 				{
 					if(W3GetBuffHasTrue(victim,bFlyMode))
 					{
-						W3ResetAllBuffRace(victim,thisRaceID);
+						CreateTimer(0.1, Stop_WingsOfGlory, victim);
 						W3Hint(victim,HINT_SKILL_STATUS,2.0,"You got hurt! Wings of Glory Ended!");
 					}
 				}
@@ -669,51 +540,18 @@ public PlayerHurtEvent( Handle:event, const String:name[], bool:dontBroadcast )
 	}
 }
 
-/* ****************************** IsNoFly ************************** */
-
-stock bool:IsNoFly(client){
-        new bool:NoFly_Boolean=false;
-	if(ValidPlayer(client))
-	{
-        if(TF2_GetPlayerClass(client)==TFClass_Scout && GetConVarInt(NoFly_Scout)==1) NoFly_Boolean=true;
-        if(TF2_GetPlayerClass(client)==TFClass_Soldier && GetConVarInt(NoFly_Soldier)==1) NoFly_Boolean=true;
-        if(TF2_GetPlayerClass(client)==TFClass_Pyro && GetConVarInt(NoFly_Pyro)==1) NoFly_Boolean=true;
-        if(TF2_GetPlayerClass(client)==TFClass_DemoMan && GetConVarInt(NoFly_Demoman)==1) NoFly_Boolean=true;
-        if(TF2_GetPlayerClass(client)==TFClass_Heavy && GetConVarInt(NoFly_Heavy)==1) NoFly_Boolean=true;
-        if(TF2_GetPlayerClass(client)==TFClass_Engineer && GetConVarInt(NoFly_Engineer)==1) NoFly_Boolean=true;
-        if(TF2_GetPlayerClass(client)==TFClass_Medic && GetConVarInt(NoFly_Medic)==1) NoFly_Boolean=true;
-        if(TF2_GetPlayerClass(client)==TFClass_Sniper && GetConVarInt(NoFly_Sniper)==1) NoFly_Boolean=true;
-        if(TF2_GetPlayerClass(client)==TFClass_Spy && GetConVarInt(NoFly_Spy)==1) NoFly_Boolean=true;
-	}
-
-   return NoFly_Boolean;
-}
-
-
 /* ****************************** Stop_WingsOfGlory ************************** */
 
 public Action:Stop_WingsOfGlory(Handle:timer, any:client)
 {
-  W3ResetPlayerColor(client,thisRaceID);
-  War3_SetBuff(client,fSlow,thisRaceID,1.0);
-  War3_SetBuff(client,fMaxSpeed,thisRaceID,1.0);
-  W3Hint(client,HINT_SKILL_STATUS,1.0,"END OF:...Wings of Glory...");
+	if(W3GetBuffHasTrue(client,bFlyMode)){
+		W3ResetPlayerColor(client,thisRaceID);
+		War3_SetBuff(client,fSlow,thisRaceID,1.0);
+		War3_SetBuff(client,fMaxSpeed,thisRaceID,1.0);
+		W3Hint(client,HINT_SKILL_STATUS,1.0,"END OF:...Wings of Glory...");
 
-
-
-  if(IsNoFly(client))
-    {
-     War3_SetBuff(client,bSlowImmunity,thisRaceID,0.0);
-     War3_SetBuff(client,bImmunitySkills,thisRaceID,0.0);
-     War3_SetBuff(client,bImmunityUltimates,thisRaceID,0.0);
-     War3_SetBuff(client,bImmunityWards,thisRaceID,0.0);
-    }
-    else
-    {
-     War3_SetBuff(client,bFlyMode,thisRaceID,0.0);
-     W3ResetPlayerColor(client,thisRaceID);
-    }
-
+		War3_SetBuff(client,bFlyMode,thisRaceID,0.0);
+	}
 }
 
 /* ****************************** OnAbilityCommand ************************** */
@@ -731,25 +569,13 @@ public OnAbilityCommand(client,ability,bool:pressed)
 
         War3_SetBuff(client,fSlow,thisRaceID,1.0);
 
-        if(IsNoFly(client))
-         {
-			W3Hint(client,HINT_SKILL_STATUS,1.0,"Wings of Glory 2 (Immunities to Skills/Ultimates/Wards/Slow)+speed");
-			War3_SetBuff(client,bSlowImmunity,thisRaceID,1.0);
-			War3_SetBuff(client,bImmunitySkills,thisRaceID,1.0);
-			War3_SetBuff(client,bImmunityUltimates,thisRaceID,1.0);
-			War3_SetBuff(client,bImmunityWards,thisRaceID,1.0);
-			War3_SetBuff(client,fMaxSpeed,thisRaceID,1.4);
-         }
-         else
-         {
-			War3_SetBuff(client,fMaxSpeed,thisRaceID,WingsOfGlory_Speed[skilllevelz]);
-			War3_SetBuff(client,bFlyMode,thisRaceID,1.0);
-			new Float:ClientPos[3];
-			GetClientAbsOrigin( client, ClientPos );
-			ClientPos[2] += 25;
-			TeleportEntity( client, ClientPos, NULL_VECTOR, NULL_VECTOR );
-			W3Hint(client,HINT_SKILL_STATUS,1.0,"Look up and Fly! Wings of Glory!");
-         }
+		War3_SetBuff(client,fMaxSpeed,thisRaceID,WingsOfGlory_Speed[skilllevelz]);
+		War3_SetBuff(client,bFlyMode,thisRaceID,1.0);
+		new Float:ClientPos[3];
+		GetClientAbsOrigin( client, ClientPos );
+		ClientPos[2] += 25;
+		TeleportEntity( client, ClientPos, NULL_VECTOR, NULL_VECTOR );
+		W3Hint(client,HINT_SKILL_STATUS,1.0,"Look up and Fly! Wings of Glory!");
 
         // My hope was to create a glow effect around Guardian Angel, but couldn't get it to work.
 

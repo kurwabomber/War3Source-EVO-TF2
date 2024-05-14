@@ -98,7 +98,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		ABILITY_HEATSEEKING=War3_AddRaceSkill(thisRaceID,"Homing Rocket","Locks your rockets on a single player.\nMay run into walls and other things.\nMax range is 800HU to 1200HU. (+ability)",false,4,"(voice Help!)");
 		STABILIZERS_SKILL=War3_AddRaceSkill(thisRaceID,"Supernova","Increases blast radius by +10% to +20%. Reduces blast falloff by +20% to +30%",false,4);
 		T_SKILL2=War3_AddRaceSkill(thisRaceID,"Barrier","Increases magic armor. 4 to 6 magic armor.\nDecreases self blast damage by -40% to -60%.",false,4);
-		ULT_MULTIPLEROCKET=War3_AddRaceSkill(thisRaceID," Missile Barrage","Loads an extra +6 rockets into your clip.\n2x fire rate for 10s and forces firing for duration.",true,4,"(voice Jeers)");
+		ULT_MULTIPLEROCKET=War3_AddRaceSkill(thisRaceID,"Missile Barrage","Loads an extra +6 rockets into your clip.\n2x fire rate for 10s and forces firing for duration.",true,4,"(voice Jeers)");
 		W3SkillCooldownOnSpawn(thisRaceID,ULT_MULTIPLEROCKET,20.0,_);
 		War3_CreateRaceEnd(thisRaceID);
 	}

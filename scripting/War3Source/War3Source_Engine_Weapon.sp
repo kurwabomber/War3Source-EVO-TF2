@@ -9,8 +9,6 @@ new highestPriority[MAXPLAYERSCUSTOM];
 new bool:restrictionEnabled[MAXPLAYERSCUSTOM][MAXRACES]; ///if restriction has length, then this should be true (caching allows quick skipping)
 new bool:hasAnyRestriction[MAXPLAYERSCUSTOM]; //if any of the races said client has restriction, this is true (caching allows quick skipping)
 
-new timerskip;
-
 /*
 public Plugin:myinfo=
 {
@@ -72,7 +70,6 @@ public NWar3_WeaponRestrictTo(Handle:plugin,numParams)
 	//LogError("%s NEW RESTRICTION: %s",pluginname,restrictedto);
 	//PrintIfDebug(client,"%s NEW RESTRICTION: %s",pluginname,restrictedto);
 	strcopy(weaponsAllowed[client][raceid],200,restrictedto);
-	CalculateWeaponRestCache(client);
 }
 
 public NWar3_GetWeaponRestrict(Handle:plugin,numParams)
@@ -82,30 +79,6 @@ public NWar3_GetWeaponRestrict(Handle:plugin,numParams)
 	//new String:restrictedto[300];
 	new maxsize=GetNativeCell(4);
 	if(maxsize>0) SetNativeString(3, weaponsAllowed[client][raceid], maxsize, false);
-}
-CalculateWeaponRestCache(client)
-{
-	int num=0;
-	int limit=GetRacesLoaded();
-	int highestpri=0;
-	for(int raceid=0;raceid<=limit;raceid++)
-	{
-		restrictionEnabled[client][raceid]=(strlen(weaponsAllowed[client][raceid])>0)?true:false;
-		if(restrictionEnabled[client][raceid])
-		{
-			num++;
-			if(restrictionPriority[client][raceid]>highestpri)
-			{
-				highestpri=restrictionPriority[client][raceid];
-			}
-		}
-	}
-	hasAnyRestriction[client]=num>0?true:false;
-
-
-	highestPriority[client]=highestpri;
-
-	timerskip=0; //force next timer to check weapons
 }
 
 public War3Source_Engine_Weapon_OnClientPutInServer(client)
@@ -117,7 +90,6 @@ public War3Source_Engine_Weapon_OnClientPutInServer(client)
 		//Format(weaponsAllowed[client][i],3,"");
 
 	}
-	CalculateWeaponRestCache(client);
 	SDKHook(client, SDKHook_WeaponCanUse, OnWeaponCanUse); //weapon touch and equip only
 }
 public War3Source_Engine_Weapon_OnClientDisconnect(client)
@@ -165,77 +137,15 @@ public War3Source_Engine_Weapon_DeciSecondTimer()
 {
 	if(MapChanging || War3SourcePause) return 0;
 
-	timerskip--;
-	if(timerskip<1)
+	for(new client=1;client<=MaxClients;++client)
 	{
-		timerskip=10;
-		for(new client=1;client<=MaxClients;client++)
+		if(ValidPlayer(client,true))
 		{
-			/*if(true){ //test
-			new wpnent = GetCurrentWeaponEnt(client);
-			if(FindSendPropOffs("CWeaponUSP","m_bSilencerOn")>0){
-
-			SetEntData(wpnent,FindSendPropOffs("CWeaponUSP","m_bSilencerOn"),true,true);
-			}
-
-			}*/
-			if(ValidPlayer(client,true))
-			{
-				if(hasAnyRestriction[client])
-				{
-					new String:name[32];
-					GetClientName(client,name,sizeof(name));
-					//PrintToChatAll("ValidPlayer %d",client);
-
-					new wpnent = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
-					//PrintIfDebug(client,"   weapon ent %d %d",client,wpnent);
-					//new String:WeaponName[32];
-
-					//if(IsValidEdict(wpnent)){
-
-					//	}
-
-					//PrintIfDebug(client,"    %s res: (%s) weapon: %s",name,weaponsAllowed[client],WeaponName);
-					//	if(strlen(weaponsAllowed[client])>0){
-					if(wpnent>0&&IsValidEdict(wpnent)){
-
-
-						if (CheckCanUseWeapon(client,wpnent)){
-							//allow
-						}
-						else
-						{
-							//RemovePlayerItem(client,wpnent);
-
-							//PrintIfDebug(client,"            drop");
-	#if GGAMETYPE != GGAME_TF2
-							CS_DropWeapon(client,wpnent,true);
-	#endif
-							//SDKHooks_DropWeapon(client, wpnent);
-							//AcceptEntityInput(wpnent, "Kill");
-							//UTIL_Remove(wpnent);
-
-						}
-
-					}
-					else{
-						//PrintIfDebug(client,"no weapon");
-						//PrintToChatAll("no weapon");
-					}
-					//	}
-				}
-				new Float:multi = W3GetBuffStackedFloat(client,fAttackSpeed);
-				TF2Attrib_SetByName(client, "fire rate bonus", 1.0/multi);
-				TF2Attrib_SetByName(client, "effect bar recharge rate increased", 1.0/multi);
-				TF2Attrib_SetByName(client, "mult_item_meter_charge_rate", 1.0/multi);
-				TF2Attrib_ClearCache(client);
-				for(new i = 0; i < 2; i++)
-				{
-					new iEnt = TF2Util_GetPlayerLoadoutEntity(client, i);
-					if(IsValidEntity(iEnt))
-						TF2Attrib_ClearCache(iEnt);
-				}
-			}
+			new Float:multi = W3GetBuffStackedFloat(client,fAttackSpeed);
+			TF2Attrib_SetByName(client, "fire rate bonus", 1.0/multi);
+			TF2Attrib_SetByName(client, "mult smack time", 1.0/multi);
+			TF2Attrib_SetByName(client, "effect bar recharge rate increased", 1.0/multi);
+			TF2Attrib_SetByName(client, "mult_item_meter_charge_rate", 1.0/multi);
 		}
 	}
 	return 1;

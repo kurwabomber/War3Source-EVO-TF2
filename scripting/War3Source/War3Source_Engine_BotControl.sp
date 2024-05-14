@@ -258,9 +258,13 @@ public Action:RaceScrambler(client, args)
 
 public void War3Source_BotControl_LoadRacesAndItems()
 {
-	CreateBotList();
+	CreateTimer(1.0, Timer_CreateBotList);
 }
 
+public Action Timer_CreateBotList(Handle timer){
+	CreateBotList();
+	return Plugin_Stop;
+}
 // from 0 to maxraces -1 == race
 int BotRace[MAXRACES];
 int BotMaxLevel[MAXRACES];
@@ -292,7 +296,7 @@ public void CreateBotList()
 	{
 		if (RaceHasFlag(x, "nobots"))
 		{
-				continue;
+			continue;
 		}
 
 		race_max_level = GetRaceMaxLevel(x);
@@ -322,6 +326,9 @@ public void CreateBotList()
 		BotMaxLevel[BotRaceCount] = level;
 
 		BotRaceCount++;
+		char curRaceName[32];
+		GetRaceName(x, curRaceName, sizeof(curRaceName));
+		PrintToServer("WAR3 | Added %s to available bot list at level %i", curRaceName, level);
 	}
 	//LogMessage("------------------------------");
 }
@@ -628,10 +635,7 @@ public War3Source_Engine_BotControl_OnWar3EventSpawn(client)
 		for(new attempts = 0;items_holding < maxItems && attempts < maxItems;attempts++)
 		{
 			int item = GetRandomInt(0, totalItemsLoaded);
-			internal_W3SetVar(EventArg1, item);
-			internal_W3SetVar(EventArg2, 0);
-			DoFwd_War3_Event(DoTriedToBuyItem, client);
-			War3Source_Engine_MenuShopmenu_OnWar3Event(DoTriedToBuyItem,client); //internal function instead of native
+			War3_SetOwnsItem(client, item, true);
 			items_holding = AmountOfItems(client);
 		}
 	}

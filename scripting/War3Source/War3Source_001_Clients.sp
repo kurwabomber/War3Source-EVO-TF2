@@ -23,6 +23,7 @@ public OnClientConnected(client)
 public OnClientPutInServer(client)
 {
 	LastLoadingHintMsg[client]=GetGameTime();
+	PrintToServer("Hooking for %N", client);
 	PrintToServer("1");
 	//DatabaseSaveXP now handles clearing of vars and triggering retrieval
 

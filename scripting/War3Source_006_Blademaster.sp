@@ -137,7 +137,6 @@ GiveBlademasterPerks(client)
 RemoveBlademasterPerks(client)
 {
 	new weapon = GetPlayerWeaponSlot(client, 2);
-	TF2Attrib_RemoveByName(client,"max health additive bonus");
 	TF2Attrib_RemoveByName(client,"CARD: move speed bonus");
 	TF2Attrib_RemoveByName(client,"cancel falling damage");
 	TF2Attrib_RemoveByName(client,"dmg taken increased");

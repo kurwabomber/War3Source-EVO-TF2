@@ -121,6 +121,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		ULT_LIGHTNING=War3_AddRaceSkill(thisRaceID,"Lightning Strike","Strike nearby enemies, will chain to other enemies if nearby.\nCooldown 20s to 16s, Damage 60 to 100.",true,4,"(voice Jeers)");
 
 		War3_AddSkillBuff(thisRaceID, SKILL_CRITS, fCritChance, CritChance);
+		War3_AddSkillBuff(thisRaceID, SKILL_CRITS, fCritModifier, CritMultiplier);
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }
@@ -238,7 +239,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 		new Float:dist = 150.0;
 		new AttackerTeam = GetClientTeam(attacker);
 		new Float:OriginalVictimPos[3];
-		GetClientAbsOrigin(victim,OriginalVictimPos);
+		GetEntPropVector(victim, Prop_Send, "m_vecOrigin", OriginalVictimPos);
 		new Float:VictimPos[3];
 		if(attacker>0)
 		{
@@ -246,7 +247,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 			{
 				if(ValidPlayer(i,true)&&(GetClientTeam(i)!=AttackerTeam)&&(victim!=i))
 				{
-					GetClientAbsOrigin(i,VictimPos);
+					GetEntPropVector(i, Prop_Send, "m_vecOrigin", VictimPos);
 					if(GetVectorDistance(OriginalVictimPos,VictimPos)<=dist)
 					{
 						if(War3_DealDamage(i,splashdmg,attacker,_,"lightningorb"))
@@ -274,7 +275,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 		{
 			new Float:Range = 300.0;
 			new Float:AttackerPos[3];
-			GetClientAbsOrigin(client,AttackerPos);
+			GetEntPropVector(client, Prop_Send, "m_vecOrigin", AttackerPos);
 			new AttackerTeam = GetClientTeam(client);
 			float VictimPos[3];
 			bool victimfound = false;
@@ -283,10 +284,9 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 				if(ValidPlayer(i,true))
 				{
 					int VictimTeam = GetClientTeam(i);
-					GetClientAbsOrigin(i,VictimPos);
+					GetEntPropVector(i, Prop_Send, "m_vecOrigin", VictimPos);
 					if(GetVectorDistance(AttackerPos,VictimPos)<Range && VictimTeam == AttackerTeam)
 					{
-						GetClientAbsOrigin(i,VictimPos);
 						bOrbActivated[i] = true;
 						orbInflictor[i] = client;
 						CreateTimer(6.0,BuffOff,i);

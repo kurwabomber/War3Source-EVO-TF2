@@ -1333,49 +1333,9 @@ public DestoryEngiBuildings(client)
 	{
 		bool iCleanDestroy = true;
 		int iEnt = -1;
-
-		while ((iEnt = FindEntityByClassname(iEnt, "obj_sentrygun")) != INVALID_ENT_REFERENCE)
+		while ((iEnt = FindEntityByClassname(iEnt, "obj_*")) != INVALID_ENT_REFERENCE)
 		{
-			if (GetEntPropEnt(iEnt, Prop_Send, "m_hBuilder") == client)
-			{
-				if (iCleanDestroy)
-					AcceptEntityInput(iEnt, "Kill");
-				else
-				{
-					SetVariantInt(1000);
-					AcceptEntityInput(iEnt, "RemoveHealth");
-				}
-			}
-		}
-		while ((iEnt = FindEntityByClassname(iEnt, "obj_dispenser")) != INVALID_ENT_REFERENCE)
-		{
-			if (GetEntPropEnt(iEnt, Prop_Send, "m_hBuilder") == client)
-			{
-				if (iCleanDestroy)
-					AcceptEntityInput(iEnt, "Kill");
-				else
-				{
-					SetVariantInt(1000);
-					AcceptEntityInput(iEnt, "RemoveHealth");
-				}
-			}
-		}
-		while ((iEnt = FindEntityByClassname(iEnt, "obj_teleporter")) != INVALID_ENT_REFERENCE)
-		{
-			if (GetEntPropEnt(iEnt, Prop_Send, "m_hBuilder") == client && TF2_GetObjectMode(iEnt) == TFObjectMode_Entrance)
-			{
-				if (iCleanDestroy)
-					AcceptEntityInput(iEnt, "Kill");
-				else
-				{
-					SetVariantInt(1000);
-					AcceptEntityInput(iEnt, "RemoveHealth");
-				}
-			}
-		}
-		while ((iEnt = FindEntityByClassname(iEnt, "obj_teleporter")) != INVALID_ENT_REFERENCE)
-		{
-			if (GetEntPropEnt(iEnt, Prop_Send, "m_hBuilder") == client && TF2_GetObjectMode(iEnt) == TFObjectMode_Exit)
+			if (HasEntProp(iEnt, Prop_Send, "m_hBuilder") &&  GetEntPropEnt(iEnt, Prop_Send, "m_hBuilder") == client)
 			{
 				if (iCleanDestroy)
 					AcceptEntityInput(iEnt, "Kill");

@@ -21,6 +21,7 @@ new Float:g_CurDMGModifierPercent=-99.9;
 
 new g_CurLastActualDamageDealt=-99;
 
+bool isEntityHooked[MAXENTITIES];
 new bool:g_CanSetDamageMod=false; //default false, you may not change damage percent when there is none to change
 new bool:g_CanDealDamage=true; //default true, you can initiate damage out of nowhere
 //for deal damage only
@@ -178,20 +179,31 @@ public OnEntityCreated(entity, const String:classname[])
 	// Errors from this event... gives massive negative values.. should use entity > 0
 	// DONT REMOVE entity>0
 	Engine_Wards_Checking_OnEntityCreated(entity, classname);
-	if( entity>0 && IsValidForDamage(entity) )
+	RequestFrame(ApplyDamageHooks, entity);
+}
+public void OnEntityDestroyed(int entity){
+	if(0 <= entity < MAXENTITIES)
+		isEntityHooked[entity] = false;
+}
+public void ApplyDamageHooks(int entity){
+	if(IsValidForDamage(entity) && !isEntityHooked[entity])
 	{
 		SDKHook(entity, SDKHook_OnTakeDamage, SDK_Forwarded_OnTakeDamage);
-		SDKHook(entity, SDKHook_OnTakeDamagePost, OnTakeDamagePostHook);
+		if(IS_PLAYER(entity))
+			SDKHook(entity, SDKHook_OnTakeDamageAlive, OnTakeDamageAliveHook);
+		else
+			SDKHook(entity, SDKHook_OnTakeDamagePost, OnTakeDamagePostHook);
+
+		isEntityHooked[entity] = true;
 	}
 }
-
 public War3Source_Engine_DamageSystem_OnClientPutInServer(client){
-	SDKHook(client,SDKHook_OnTakeDamage,SDK_Forwarded_OnTakeDamage);
-	SDKHook(client, SDKHook_OnTakeDamagePost, OnTakeDamagePostHook);
+	RequestFrame(ApplyDamageHooks, client);
 }
 public War3Source_Engine_DamageSystem_OnClientDisconnect(client){
 	SDKUnhook(client,SDKHook_OnTakeDamage,SDK_Forwarded_OnTakeDamage);
-	SDKUnhook(client, SDKHook_OnTakeDamagePost, OnTakeDamagePostHook);
+	SDKUnhook(client, SDKHook_OnTakeDamageAlive, OnTakeDamageAliveHook);
+	isEntityHooked[client] = false;
 }
 #if GGAMETYPE == GGAME_TF2
 stock bool:IsOwnerSentry(client,bool:UseInternalInflictor=true,ExternalInflictor=0)
@@ -392,7 +404,6 @@ public Action:SDK_Forwarded_OnTakeDamage(victim,&attacker,&inflictor,&Float:dama
 			Call_PushCell(attacker);
 			Call_PushFloat(damage);
 			Call_Finish(dummyresult); //this will be returned to
-
 			if(!g_CurDamageIsWarcraft)
 			{
 				Call_StartForward(p_OnW3TakeDmgBullet);
@@ -424,7 +435,67 @@ public Action:SDK_Forwarded_OnTakeDamage(victim,&attacker,&inflictor,&Float:dama
 	return Plugin_Changed;
 }
 
+public Action OnTakeDamageAliveHook(int victim, int& attacker, int& inflictor, float& damage, int& damagetype, int& weapon, float damageForce[3], float damagePosition[3], int damagecustom)
+{
+	if(MapChanging || War3SourcePause) return Plugin_Handled;
 
+	// GHOSTS!!
+	if (weapon == -1 && inflictor == -1)
+	{
+		return Plugin_Handled;
+	}
+
+	//Block uber hits (no actual damage)
+#if GGAMETYPE == GGAME_TF2
+	if(War3_IsUbered(victim))
+	{
+		return Plugin_Handled;
+	}
+#endif
+	damagestack++;
+
+	new bool:old_CanDealDamage=g_CanDealDamage;
+	g_CanSetDamageMod=true;
+
+	g_CurInflictor = inflictor;
+
+	// war3source 2.0 uses this:
+	//Figure out what really hit us. A weapon? A sentry gun?
+	char weaponName[64];
+	new realWeapon = weapon == -1 ? inflictor : weapon;
+	GetEntityClassname(realWeapon, weaponName, sizeof(weaponName));
+
+	bool isWarCraft = g_CurDamageIsWarcraft?true:false;
+
+	War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
+	Engine_WCX_Engine_Vampire_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
+	War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
+	
+	//damage += newdamage;
+
+	Call_StartForward(p_OnWar3EventPostHurt);
+	Call_PushCell(victim);
+	Call_PushCell(attacker);
+	Call_PushFloat(damage);
+
+	// new war3source 2.0 uses this.. we don't
+	//Call_PushFloat(damage);
+	Call_PushString(weaponName);
+	Call_PushCell(g_CurDamageIsWarcraft);
+
+	Call_PushArray(damageForce,sizeof(damageForce));
+	Call_PushArray(damagePosition,sizeof(damagePosition));
+
+	Call_Finish(dummyresult);
+
+	g_CanDealDamage=old_CanDealDamage;
+
+	damagestack--;
+
+	g_CurLastActualDamageDealt = RoundToFloor(damage);
+
+	return Plugin_Changed;
+}
 public OnTakeDamagePostHook(victim, attacker, inflictor, Float:damage, damagetype, weapon, const Float:damageForce[3], const Float:damagePosition[3])
 {
 		if(MapChanging || War3SourcePause) return 0;
@@ -579,7 +650,7 @@ stock bool:DealDamage(int victim,int damage,int attacker=0,int damage_type=DMG_G
 		IntToString(damage_type,dmg_type_str,sizeof(dmg_type_str));
 
 		new pointHurt=CreateEntityByName("point_hurt");
-		if(pointHurt)
+		if(IsValidEntity(pointHurt))
 		{
 			DispatchKeyValue(victim,"targetname","war3_hurtme"); //set victim as the target for damage
 			DispatchKeyValue(pointHurt,"Damagetarget","war3_hurtme");
@@ -595,7 +666,7 @@ stock bool:DealDamage(int victim,int damage,int attacker=0,int damage_type=DMG_G
 			DispatchSpawn(pointHurt);
 			AcceptEntityInput(pointHurt,"Hurt",(attacker>0)?attacker:-1);
 			DispatchKeyValue(victim,"targetname","war3_donthurtme"); //unset the victim as target for damage
-			RemoveEdict(pointHurt);
+			RemoveEntity(pointHurt);
 		}
 		//damage has been dealt BY NOW
 
