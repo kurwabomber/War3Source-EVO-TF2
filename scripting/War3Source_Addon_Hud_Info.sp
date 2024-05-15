@@ -30,9 +30,9 @@ new g_bShowHUD[MAXPLAYERS];
 new MoneyOffsetCS;
 new Handle:g_hMyCookie;
 new Handle:ShowOtherPlayerItemsCvar;
-new String:HUD_Text_Buffer[MAXPLAYERS][1024];
-new String:MiniHUD_Text_Buffer[MAXPLAYERS][1024];
-new String:HUD_Text_Add[MAXPLAYERS][1024];
+new String:HUD_Text_Buffer[MAXPLAYERS][512];
+new String:MiniHUD_Text_Buffer[MAXPLAYERS][512];
+new String:HUD_Text_Add[MAXPLAYERS][512];
 new bool:g_bCustomHUD = false;
 new Float:g_fHUDDisplayTime = 0.5;
 new Handle:g_hPlayerHUDMenu = INVALID_HANDLE;
@@ -293,6 +293,10 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                     {
                         Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Damage: x%.2f",MiniHUD_Text, W3GetBuffSumFloat(client, fDamageModifier)+1.0);
                     }
+                    if(W3GetBuffSumInt(client, iDamageBonus) != 0.0)
+                    {
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Damage: +%i",MiniHUD_Text, W3GetBuffSumInt(client, iDamageBonus));
+                    }
                     if(W3GetBuffSumFloat(client, fArmorPenetration) != 0.0)
                     {
                         Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nArmor Penetration: %.2f",MiniHUD_Text, W3GetBuffSumFloat(client, fArmorPenetration));
@@ -315,11 +319,7 @@ public Action:HudInfo_Timer(Handle:timer, any:client)
                     }
                     if(W3GetBuffSumFloat(client, fBashChance) != 0.0)
                     {
-                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBash Chance: %.0fpct",MiniHUD_Text, W3GetBuffSumFloat(client, fBashChance)*100.0);
-                    }
-                    if(W3GetBuffSumFloat(client, fBashDuration) != 0.0)
-                    {
-                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBash Duration: %.1fs",MiniHUD_Text, W3GetBuffSumFloat(client, fBashDuration));
+                        Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBash: %.0fpct | %.1fs | %i dmg",MiniHUD_Text, W3GetBuffSumFloat(client, fBashChance)*100.0, W3GetBuffSumFloat(client, fBashDuration), W3GetBuffSumInt(client, iBashDamage));
                     }
                     if(W3GetBuffSumFloat(client, fCritChance) != 0.0)
                     {

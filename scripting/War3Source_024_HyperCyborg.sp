@@ -64,6 +64,9 @@ new bool:IsTeleporterAntiSapperEnabled[MAXPLAYERS+1] = {false,...};
 
 new bool:bFrosted[65]; // don't frost before unfrosted
 
+char spawnSound1[] = "war3source/SCV1.mp3";
+char spawnSound2[] = "war3source/SCV2.mp3";
+
 bool HooksLoaded = false;
 public void Load_Hooks()
 {
@@ -194,6 +197,14 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 public OnMapStart()
 {
 	CreateTimer(1.0, Timer_Ammo_Regen, _, TIMER_REPEAT);
+	PrecacheSound(spawnSound1);
+	PrecacheSound(spawnSound2);
+}
+public OnAddSound(int priority){
+	if(priority == PRIORITY_MEDIUM){
+		War3_AddSound(spawnSound1);
+		War3_AddSound(spawnSound2);
+	}
 }
 
 public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
@@ -395,6 +406,7 @@ public OnWar3EventSpawn(client){
 	if(War3_GetRace(client)==thisRaceID)
 	{
 		InitPassiveSkills(client);
+		War3_EmitSoundToAll(GetRandomInt(0,1) == 0 ? spawnSound1 : spawnSound2, client);
 	}
 	else
 	{

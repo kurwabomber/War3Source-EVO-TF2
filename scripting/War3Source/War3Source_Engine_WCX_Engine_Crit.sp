@@ -58,7 +58,7 @@ public void War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(int victim, in
 	new additionalDamage = RoundToNearest(PercentIncrease) + DamageIncrease;
 	if(additionalDamage > 0)
 	{
-		if(War3_DealDamage(victim,additionalDamage,attacker,_,"weapon_additionalDamage"))
+		if(War3_DealDamage(victim,additionalDamage,attacker,_,"weapon_additionalDamage",_,W3DMGTYPE_PHYSICAL))
 		{
 		}
 	}
@@ -114,7 +114,7 @@ public void War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(int victim, in
 
 	if(damageASint > 0)
 	{
-		if(War3_DealDamage(victim,damageASint,attacker,_,"weapon_crit"))
+		if(War3_DealDamage(victim,damageASint,attacker,_,"weapon_crit",_,W3DMGTYPE_PHYSICAL))
 		{
 			if(CritPercentIncrease>0)
 			{

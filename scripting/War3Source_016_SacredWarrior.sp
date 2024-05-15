@@ -75,6 +75,8 @@ new VictimSpearTicks[MAXPLAYERSCUSTOM];
 //new bool:bSpeared[MAXPLAYERSCUSTOM]; // Is this player speared (has DoT on him)?
 new SpearedBy[MAXPLAYERSCUSTOM]; // Who was the victim speared by?
 new bool:bSpearActivated[MAXPLAYERSCUSTOM]; // Does the player have Burning Spear activated?
+char spearSound[] = "war3source/OrcHumanMediumBuildingFire1.wav";
+float lastSoundTime[MAXPLAYERSCUSTOM];
 
 // Buffs that berserker applys
 //new Float:BerserkerBuffDamage[]={0.0,0.005,0.01,0.015,0.02};  // each 7% you add one of these
@@ -82,6 +84,7 @@ new Float:BerserkerBuffASPD[]={0.04, 0.045, 0.05, 0.055, 0.06};      // to get t
 
 new Float:ultmaxdistance = 600.0;
 float ultCooldown[] = {35.0, 33.0, 31.0, 29.0, 27.0};
+char ultSound[] = "war3source/ArtilleryCorpseExplodeDeath1.mp3";
 
 public OnPluginStart()
 {
@@ -97,6 +100,16 @@ public OnMapStart()
 {
 	UnLoad_Hooks();
 	PrecacheSound("buttons/button2.wav");
+	PrecacheSound(ultSound);
+	PrecacheSound(spearSound);
+}
+public OnAddSound(sound_priority)
+{
+	if(sound_priority==PRIORITY_MEDIUM)
+	{
+		War3_AddSound(ultSound);
+		War3_AddSound(spearSound);
+	}
 }
 
 public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
@@ -126,6 +139,7 @@ public void OnWar3EventSpawn (int client)
 	War3_SetBuff(client,fAttackSpeed,thisRaceID,1.0);
 	VictimSpearStacks[client] = 0;  // deactivate Burning Spear
 	VictimSpearTicks[client] = 0;
+	lastSoundTime[client] = 0.0;
 	bSpearActivated[client] = false;  // on spawn
 	CheckSkills(client);
 }
@@ -202,6 +216,11 @@ public Action:BerserkerCalculateTimer(Handle:timer,any:userid) // Check each 0.5
 					}
 					//PrintToChat(client,"%f",ASPD);
 					War3_SetBuff(client,fAttackSpeed,thisRaceID,ASPD); // Set the buff
+
+					if(bSpearActivated[client] && lastSoundTime[client]+3.0 < GetGameTime()){
+						lastSoundTime[client] = GetGameTime();
+						War3_EmitSoundToAll(spearSound, client);
+					}
 				}
 			}
 		}
@@ -336,6 +355,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 			War3_EmitSoundToClient(client,"buttons/button2.wav");
 			bSpearActivated[client] = true;
 			CheckSkills(client);
+
 		}
 		else
 		{
@@ -366,7 +386,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 				new target = War3_GetTargetInViewCone(client,ultmaxdistance,false,23.0,UltFilter,ULT_BREAK);
 				if(target>0)
 				{
-					if(War3_DealDamage(target,RoundFloat(60.0 + 0.15*GetClientHealth(target) * W3GetBuffStackedFloat(target, fUltimateResistance)),client,DMG_BULLET,"lifebreak")) // do damage to nearest enemy
+					if(War3_DealDamage(target,RoundFloat(60.0 + 0.15*GetClientHealth(target) * W3GetBuffStackedFloat(target, fUltimateResistance)),client,DMG_BULLET,"lifebreak", W3DMGORIGIN_ULTIMATE)) // do damage to nearest enemy
 					{
 						W3PrintSkillDmgHintConsole(target,client,War3_GetWar3DamageDealt(),ULT_BREAK); // print damage done
 						War3_NotifyPlayerTookDamageFromSkill(target, client, War3_GetWar3DamageDealt(), ULT_BREAK);
@@ -377,6 +397,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 							War3_NotifyPlayerTookDamageFromSkill(client, client, War3_GetWar3DamageDealt(), ULT_BREAK);
 						}
 						War3_CooldownMGR(client,ultCooldown[ult_level],thisRaceID,ULT_BREAK); // invoke cooldown
+						War3_EmitSoundToAll(ultSound,client);
 					}
 				}
 				else{

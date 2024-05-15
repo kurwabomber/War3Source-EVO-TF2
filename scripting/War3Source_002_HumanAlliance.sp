@@ -128,7 +128,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace(RACE_LONGNAME,RACE_SHORTNAME,reloadrace_id,"Teleport,Invis,+hp");
 		SKILL_SPEED=War3_AddRaceSkill(thisRaceID,"Whisk","Increases movement speed by 16->20%.",false,4);
 		SKILL_HEALTH=War3_AddRaceSkill(thisRaceID,"Devotion Aura","Gives you additional 40->50 health.",false,4);
-		SKILL_BASH=War3_AddRaceSkill(thisRaceID,"Bash","7/13/19/25% chance to bash the enemy.\nRenders the enemy immobile for 0.2->0.3 seconds.",false,4);
+		SKILL_BASH=War3_AddRaceSkill(thisRaceID,"Bash","7/13/19/25% chance to bash the enemy.\nRenders the enemy immobile for 0.2->0.3 seconds.\nInitial bash hit deals +30 damage.",false,4);
 		ULT_TELEPORT=War3_AddRaceSkill(thisRaceID,"Teleport","Teleport toward where you aim.\nUp to 1200 HU range. Ultimate Immunity has 350 blocking radius.",true,4, "(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_SPEED, fMaxSpeed, WhiskSpeed);
@@ -171,6 +171,7 @@ public OnRaceChanged(client,oldrace,newrace)
 		//War3_SetBuff(client,fInvisibilitySkill,thisRaceID,1.0); // if we aren't their race anymore we shouldn't be controlling their alpha
 		War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,0);
 		War3_SetBuff(client,fBashChance,thisRaceID,0.0);
+		War3_SetBuff(client,iBashDamage,thisRaceID,0);
 		War3_SetBuff(client,fBashDuration,thisRaceID,0.0);
 		War3_SetBuff(client,fHPDecay,thisRaceID,0.0);
 		War3_SetBuff(client,fMaxSpeed,thisRaceID,1.0);
@@ -232,6 +233,7 @@ public ActivateSkills(client)
 	float bashDuration=BashDuration[skill_bash];
 	War3_SetBuff(client,fBashChance,thisRaceID,bash);
 	War3_SetBuff(client,fBashDuration,thisRaceID,bashDuration);
+	War3_SetBuff(client,iBashDamage,thisRaceID,30);
 }
 
 

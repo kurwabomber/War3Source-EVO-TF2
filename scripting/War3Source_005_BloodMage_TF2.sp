@@ -34,7 +34,7 @@ Handle ClientReviveMessage;
 //skill 1
 float MaxRevivalChance[MAXPLAYERSCUSTOM]; //chance for first attempt at revival
 float CurrentRevivalChance[MAXPLAYERSCUSTOM]; //decays by half per revival attempt, will stay at minimum of 10% after decays
-float RevivalChancesArr[]={0.5,0.55,0.6,0.65,0.7};
+float RevivalChancesArr[]={0.2,0.225,0.25,0.275,0.3};
 int RevivedBy[MAXPLAYERSCUSTOM];
 bool  bRevived[MAXPLAYERSCUSTOM];
 float fLastRevive[MAXPLAYERSCUSTOM];
@@ -52,21 +52,18 @@ float CreditStealChanceTF[]={0.08,0.10,0.12,0.13,0.14};   //what are the chances
 //float TFCreditStealPercent=0.02;  //how much to steal
 
 //ultimate
-float ultCooldownCvar=20.0;
 Handle hrevivalDelayCvar;
 
-float UltimateMaxDistance[]={800.0,900.0,1000.0,1100.0,1200.0}; //max distance u can target your ultimate
-int UltimateDamageDuration[]={10,12,14,15,16}; ///how many times damage is taken (like pyro's fire)
+float UltimateMaxDamage[]={70.0,78.0,86.0,94.0,100.0}; //max distance u can target your ultimate
 
 int BurnsRemaining[MAXPLAYERSCUSTOM]; //burn count for victims
 int BeingBurnedBy[MAXPLAYERSCUSTOM];
 int UltimateUsed[MAXPLAYERSCUSTOM];
 
-int ULT_DAMAGE_TF = 12;
-
 new String:reviveSound[]="war3source/reincarnation.mp3";
+char ultSound[] = "war3source/FlameStrike1.mp3";
 
-int BeamSprite,HaloSprite,FireSprite;
+int BeamSprite,HaloSprite;
 int BloodSpray,BloodDrop;
 
 public Plugin:myinfo =
@@ -122,9 +119,6 @@ public OnPluginStart()
 {
 	HookEvent("player_spawn",PlayerSpawnEvent);
 	HookEvent("round_start",RoundStartEvent);
-	// removed cooldown because its a common factor that should be changed in sourcecode.
-	// no need to 'test run this during game play'.
-	//ultCooldownCvar=CreateConVar("war3_mage_fire_strike_cooldown","20","Cooldown between fire strikes (ultimate)");
 	hrevivalDelayCvar=CreateConVar("war3_mage_revive_delay","4.0","Delay when reviving a teammate (since death)");
 
 	HookEvent("player_death",PlayerDeathEvent);
@@ -167,13 +161,12 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("mage",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Blood Mage","mage",reloadrace_id,"Revive teammates, steal money.");
-		SKILL_REVIVE=War3_AddRaceSkill(thisRaceID,"Phoenix","20-70% chance to revive your teammates that die.\nEach time you revive, chance is reduced by half\nto a minimum of 2-16%",false,4);
-		SKILL_BANISH=War3_AddRaceSkill(thisRaceID,"Banish","5-35% of making enemy blind and disoriented for 0.2 seconds",false,4);
-		SKILL_MONEYSTEAL=War3_AddRaceSkill(thisRaceID,"Siphon Mana","2-14% chance of stealing gold based on victim's level via damage",false,4);
-		ULT_FLAMESTRIKE=War3_AddRaceSkill(thisRaceID,"Flame Strike","Burn the enemy over time for 10 damage 4-16 times.\n500-1400 HU range.",true,4,"(voice Jeers)");
+		SKILL_REVIVE=War3_AddRaceSkill(thisRaceID,"Phoenix","20-30% chance to revive your teammates that die.\nEach time you revive, chance is reduced by half\nto a minimum of ?%",false,4);
+		SKILL_BANISH=War3_AddRaceSkill(thisRaceID,"Banish","20-35% of making enemy blind and disoriented for 0.2 seconds",false,4);
+		SKILL_MONEYSTEAL=War3_AddRaceSkill(thisRaceID,"Siphon Mana","6-8% chance of stealing gold based on victim's level via damage",false,4,"(Autocast)");
+		ULT_FLAMESTRIKE=War3_AddRaceSkill(thisRaceID,"Flame Strike","Shoot out a fireball that deals 70-100 damage.\nCooldown is 15s long.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
-
 }
 public OnAllPluginsLoaded()
 {
@@ -189,17 +182,14 @@ public OnMapStart()
 {
 	UnLoad_Hooks();
 
-	{
-		strcopy(reviveSound,sizeof(reviveSound),"war3source/reincarnation.mp3");
-	}
 	BeamSprite=War3_PrecacheBeamSprite();
 	HaloSprite=War3_PrecacheHaloSprite();
 	//we gonna use theese bloodsprite as "money blood"(change color)
 	BloodSpray = PrecacheModel("sprites/bloodspray.vmt");
 	BloodDrop = PrecacheModel("sprites/blood.vmt");
-	FireSprite	 = PrecacheModel("materials/sprites/fireburst.vmt");
 
 	PrecacheSound(reviveSound);
+	PrecacheSound(ultSound);
 
 	// Reset Can Player Revive
 	for(int i=1;i<=MaxClients;i++)    // was MAXPLAYERSCUSTOM
@@ -213,6 +203,7 @@ public OnAddSound(sound_priority)
 	if(sound_priority==PRIORITY_LOW)
 	{
 		War3_AddSound(reviveSound);
+		War3_AddSound(ultSound);
 	}
 }
 
@@ -243,8 +234,8 @@ public OnRaceChanged(client,oldrace,newrace)
 public InitPassiveSkills(client)
 {
 	// Natural Armor Buff
-	War3_SetBuff(client,fArmorPhysical,thisRaceID,2.0);
-	//War3_SetBuff(client,fArmorMagic,thisRaceID,3.0);
+	//War3_SetBuff(client,fArmorPhysical,thisRaceID,2.0);
+	War3_SetBuff(client,fArmorMagic,thisRaceID,3.0);
 }
 
 public RemovePassiveSkills(client)
@@ -261,8 +252,8 @@ public RemovePassiveSkills(client)
 			}
 		}
 	}
-	War3_SetBuff(client,fArmorPhysical,thisRaceID,0.0);
-	//War3_SetBuff(client,fArmorMagic,thisRaceID,0.0);
+	//War3_SetBuff(client,fArmorPhysical,thisRaceID,0.0);
+	War3_SetBuff(client,fArmorMagic,thisRaceID,0.0);
 }
 
 public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
@@ -280,96 +271,36 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 		//}
 		if(!Silenced(client)&&(bypass||War3_SkillNotInCooldown(client,thisRaceID,ULT_FLAMESTRIKE,true)))
 		{
-			/////Flame Strike
-			int target = War3_GetTargetInViewCone(client,UltimateMaxDistance[ult_level],false,180.0,IsBurningFilter,ULT_FLAMESTRIKE);
-			//int target = client;
-			if(target>0)
+			War3_EmitSoundToAll(ultSound, client);
+			War3_CooldownMGR(client, 15.0, thisRaceID, ULT_FLAMESTRIKE);
+
+			int iEntity = CreateEntityByName("tf_projectile_spellfireball");
+			if (IsValidEntity(iEntity)) 
 			{
-				++UltimateUsed[client];
-				BeingBurnedBy[target]=GetClientUserId(client);
-				BurnsRemaining[target]=UltimateDamageDuration[ult_level];
-				CreateTimer(1.0,BurnLoop,GetClientUserId(target));
-				War3_CooldownMGR(client,ultCooldownCvar,thisRaceID,ULT_FLAMESTRIKE,_,_);
-				PrintHintText(client,"Flame Strike!");
-				PrintHintText(target,"You have been struck with Flame Strike!");
-				W3SetPlayerColor(target,thisRaceID,255,128,0,_,GLOW_ULTIMATE);
-				float effect_vec[3];
-				GetClientEyePosition(target,effect_vec);
-				effect_vec[2]+=200.0;
-				TE_SetupGlowSprite(effect_vec, FireSprite, 2.0, 4.0, 255);
-				TE_SendToAll();
-				ThrowAwayParticle("weapon_molotov_thrown_glow", effect_vec, 3.5);
-				AttachParticle(target, "burning_character", effect_vec);
+				int iTeam = GetClientTeam(client);
+				float fAngles[3],fOrigin[3],vBuffer[3],fVelocity[3],fwd[3];
+
+				SetEntPropEnt(iEntity, Prop_Send, "m_hOwnerEntity", client);
+				SetEntProp(iEntity, Prop_Send, "m_iTeamNum", iTeam);
+				GetClientEyePosition(client, fOrigin);
+				GetClientEyeAngles(client, fAngles);
+
+				GetAngleVectors(fAngles,fwd, NULL_VECTOR, NULL_VECTOR);
+				ScaleVector(fwd, 30.0);
+				
+				AddVectors(fOrigin, fwd, fOrigin);
+				GetAngleVectors(fAngles, vBuffer, NULL_VECTOR, NULL_VECTOR);
+				fVelocity[0] = vBuffer[0]*1500.0;
+				fVelocity[1] = vBuffer[1]*1500.0;
+				fVelocity[2] = vBuffer[2]*1500.0;
+				
+				SetEntDataFloat(iEntity, FindSendPropInfo("CTFProjectile_Rocket", "m_iDeflected") + 4, UltimateMaxDamage[ult_level], true); 
+				TeleportEntity(iEntity, fOrigin, fAngles, fVelocity);
+				DispatchSpawn(iEntity);
 			}
-			else
-			{
-				W3MsgNoTargetFound(client,UltimateMaxDistance[ult_level]);
-			}
 		}
 	}
 }
-public bool IsBurningFilter(int client,int target,int SkillID)
-{
-	int team = GetClientTeam(target);
-	int team2 = GetClientTeam(client);
-	//new team2 = GetClientTeam(ultimateCaller);
-	if(team==team2)
-	{
-		//DP("same team");
-		return false;
-	}
-	if (W3HasImmunity(target,Immunity_Ultimates))
-	{
-		//new String:clientName[64];
-		//GetClientName(client, clientName, sizeof(clientName));
-		//War3_ChatMessage(ultimateCaller,"(Flame Strike) %s is immune!", clientName);
-		//DP("has immunity");
-		War3_NotifyPlayerImmuneFromSkill(client, target, SkillID);
-		return false;
-	}
-	//DP("return true");
-	return (BurnsRemaining[target]<=0);
-}
-public Action BurnLoop(Handle timer,any userid)
-{
-	PrintToServer("its triggering");
-	int victim=GetClientOfUserId(userid);
-	int attacker=GetClientOfUserId(BeingBurnedBy[victim]);
-
-	if(BurnsRemaining[victim]<=0)
-		return Plugin_Stop;
-
-	if(ValidPlayer(victim, true))
-	{
-		if (W3HasImmunity(victim,Immunity_Ultimates))
-		{
-			W3ResetPlayerColor(victim,thisRaceID);
-			BurnsRemaining[victim]=0;
-			War3_NotifyPlayerImmuneFromSkill(attacker, victim, ULT_FLAMESTRIKE);
-			//PrintToChatAll("War3_NotifyPlayerImmuneFromSkill ULT_FLAMESTRIKE");
-			return Plugin_Stop;
-		}
-
-		BurnsRemaining[victim]--;
-		//PrintToChatAll("Burns Remaining %d (inside function)",BurnsRemaining[victim]);
-		int damage = ULT_DAMAGE_TF;
-		float resistance = W3GetBuffStackedFloat(victim, fUltimateResistance);
-
-		if(War3_DealDamage(victim,RoundFloat(damage*resistance),attacker,DMG_BURN,"flamestrike",_,W3DMGTYPE_MAGIC))
-		{
-			//PrintToChatAll("War3_DealDamage flamestrike is True");
-			War3_NotifyPlayerTookDamageFromSkill(victim, attacker, War3_GetWar3DamageDealt(), ULT_FLAMESTRIKE);
-		}
-		CreateTimer(1.0,BurnLoop,userid);
-		W3FlashScreen(victim,RGBA_COLOR_ORANGE);
-		if(BurnsRemaining[victim]<=0)
-		{
-			W3ResetPlayerColor(victim,thisRaceID);
-		}
-	}
-	return Plugin_Continue;
-}
-
 
 public void OnSkillLevelChanged(int client, int currentrace, int skill, int newskilllevel, int oldskilllevel)
 {
@@ -535,7 +466,6 @@ public PlayerSpawnEvent(Handle:event,const String:name[],bool:dontBroadcast)
 	int client=GetClientOfUserId(userid);
 	if(client>0)
 	{
-
 		UltimateUsed[client]=0;
 		if(War3_GetRace(client)==thisRaceID)
 		{

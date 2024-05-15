@@ -72,7 +72,7 @@ new bool:InInvis[MAXPLAYERSCUSTOM];
 new bool:InFade[MAXPLAYERSCUSTOM];
 //new Handle:EndFadeTimer[MAXPLAYERSCUSTOM];
 new Float:FadeCoolDown[]={4.0,4.0,3.0,2.0,1.0};
-new FadeDurationREQ[]={3,2,2,1,1};
+new FadeDurationREQ[]={4,4,3,3,3};
 
 
 new Float:EyeRadius[]={800.0,900.0,1000.0,1100.0,1200.0};
@@ -158,7 +158,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID=War3_CreateNewRace("Scout","scout_o",reloadrace_id,"Sniper styled race");
 		SKILL_TRUESIGHT=War3_AddRaceSkill(thisRaceID,"TrueSight","Enemies cannot be invisible or partially invisible around you. \n800-1100 units.\nDoes not affect spy cloak",false,4);
-		SKILL_FADE=War3_AddRaceSkill(thisRaceID,"Blink","If standing still for 3 to 1 seconds, you go completely invisible.\nAny movement or damage (to or from you) makes you visible.",false,4);
+		SKILL_FADE=War3_AddRaceSkill(thisRaceID,"Blink","If standing still for 4 to 3 seconds, you go completely invisible.\nAny movement or damage (to or from you) makes you visible.",false,4);
 		SKILL_DISARM=War3_AddRaceSkill(thisRaceID,"Disarm","15 to 19% chance to disarm the enemy on hit\n1 to 1.2 seconds to disarm victim.",false,4);
 		ULT_MARKSMAN=War3_AddRaceSkill(thisRaceID,"Marksman","Standing still for 3 seconds, scout is able to deal 1.8-1.9x damage the further the target.\n1024 units or more deals maximum damage",true,4);
 		War3_CreateRaceEnd(thisRaceID);

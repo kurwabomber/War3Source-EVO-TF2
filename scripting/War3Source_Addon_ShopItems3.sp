@@ -63,7 +63,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		ItemID[UBERHEART]=War3_CreateShopItem3("Ubered Heart","uberheart","Gives +2.5%% max health.\nLeveling up increases max health. +0.2%% max health per level.",50,"Blue","Ubered Heart",10,"Ubered Heart",0);
 		
 		//Orange - Red & Yellow
-		ItemID[MAGMACHARM]=War3_CreateShopItem3("Magmatic Charm","magmacharm","Ignites target for 1 second on hit.\nCannot level up.",140,"Orange","Magmatic Charm",0,"Magmatic Charm",0);
+		ItemID[MAGMACHARM]=War3_CreateShopItem3("Magmatic Charm","magmacharm","Ignites target for 1 second on hit.\nCannot level up.",90,"Orange","Magmatic Charm",0,"Magmatic Charm",0);
 		ItemID[POISONGEM]=War3_CreateShopItem3("Poison Gem","poisongem","10%% chance to apply 4 ticks of 2 dmg poison on hit.\nLeveling up decreases tickspeed and increases damage.\n -0.05s per tick per level, +0.25 dmg per level.",50,"Orange","Poison Gem",10,"Poison Gem",0);
 		
 		//Green - Blue & Yellow
@@ -76,7 +76,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		ItemID[RUNESHARD]=War3_CreateShopItem3("Rune Shard","runeshard","Gives 1.1x cooldown reduction. Increased by +0.005 per level.",70,"Purple","Rune Shard",10,"Rune Shard",0);
 
 		//Prism - All or Misc
-		ItemID[SANGE]=War3_CreateShopItem3("Sange","sange","Gives +20% healing efficiency and +4% damage.\nEvolves into Sange & Yasha after hitting level 16 giving:\n+20 mHP,+1 hpr,+5% atkspd,+1 damage,+4% dmg,+20% healing efficiency,+6% ms and 0.9x inc. ability.",250,"Prismatic","Sange",16,"Sange",0);
+		ItemID[SANGE]=War3_CreateShopItem3("Sange","sange","Gives +5%% healing efficiency and +5%% damage.\nEach level gives +0.3%% healing efficiency and attackspeed.",200,"Prismatic","Sange",20,"Sange",0);
 	}
 }
 
@@ -93,14 +93,9 @@ public OnRaceChanged(client,oldrace,newrace)
 	War3_SetBuffItem3(client,fMaxSpeed2, ItemID[WINDPEARL], 0.0);
 
 	//Sange
-	War3_SetBuffItem3(client,fAbilityResistance,ItemID[SANGE],1.0);
 	War3_SetBuffItem3(client,fSustainEfficiency,ItemID[SANGE],0.0);
 	War3_SetBuffItem3(client,fDamageModifier,ItemID[SANGE],0.0);
-	War3_SetBuffItem3(client,iDamageBonus,ItemID[SANGE],0);
-	War3_SetBuffItem3(client,iAdditionalMaxHealth,ItemID[SANGE],0);
-	War3_SetBuffItem3(client,fHPRegen,ItemID[SANGE],0.0);
 	War3_SetBuffItem3(client,fAttackSpeed,ItemID[SANGE],1.0);
-	War3_SetBuffItem3(client,fMaxSpeed2,ItemID[SANGE],0.0);
 }
 
 public Action:Timer_QuickTimer(Handle:timer)
@@ -206,17 +201,9 @@ public Action:Timer_SlowTimer(Handle:timer)
 
 		if(War3_GetOwnsItem3(client, race, ItemID[SANGE])){
 			int level = War3_GetItemLevel(client,race,ItemID[SANGE])+1;
-			War3_SetBuffItem3(client,fSustainEfficiency,ItemID[SANGE],0.2);
-			War3_SetBuffItem3(client,fDamageModifier,ItemID[SANGE],0.04);
-
-			if(level >= 16){
-				War3_SetBuffItem3(client,fAbilityResistance,ItemID[SANGE],0.9);
-				War3_SetBuffItem3(client,iDamageBonus,ItemID[SANGE],1);
-				War3_SetBuffItem3(client,iAdditionalMaxHealth,ItemID[SANGE],20);
-				War3_SetBuffItem3(client,fHPRegen,ItemID[SANGE],1.0);
-				War3_SetBuffItem3(client,fAttackSpeed,ItemID[SANGE],1.05);
-				War3_SetBuffItem3(client,fMaxSpeed2,ItemID[SANGE],0.06);
-			}
+			War3_SetBuffItem3(client,fSustainEfficiency,ItemID[SANGE],0.05+level*0.003);
+			War3_SetBuffItem3(client,fDamageModifier,ItemID[SANGE],0.05);
+			War3_SetBuffItem3(client,fAttackSpeed,ItemID[SANGE],1.0+level*0.003);
 		}
 	}
 }

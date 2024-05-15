@@ -23,24 +23,22 @@ public War3Source_Engine_WCX_Engine_Bash_OnPluginStart()
 
 // modified because W3ChanceModifier() may not work with this:
 //public OnWar3EventPostHurt(victim,attacker,damage,const String:weapon[32],bool:isWarcraft){
-public OnW3TakeDmgAll(victim,attacker,Float:damage){
+public void War3Source_Engine_WCX_Engine_Bash_OnWar3EventPostHurt(int victim, int attacker,float damage,char weapon[64],bool isWarcraft){
 	//new dmg=RoundToCeil(damage);
+	if(StrEqual(weapon, "weapon_additionaldamage") || StrEqual(weapon, "crit") || StrEqual(weapon, "bash") || StrEqual(weapon, "weapon_crit") || StrEqual(weapon, "weapon_bash"))
+		return;
+		
 	if(IS_PLAYER(victim)&&IS_PLAYER(attacker)&&victim>0&&attacker>0&&attacker!=victim)
 	{
-		decl String:weapon[64];
-		GetEventString(internal_W3GetVar(SmEvent),"weapon",weapon,63);
-		if(StrEqual(weapon, "weapon_additionaldamage") || StrEqual(weapon, "crit") || StrEqual(weapon, "bash") || StrEqual(weapon, "weapon_crit") || StrEqual(weapon, "weapon_bash"))
-			return;
-
 		new vteam=GetClientTeam(victim);
 		new ateam=GetClientTeam(attacker);
 		if(vteam!=ateam)
 		{
 			new Float:percent = GetBuffSumFloat(attacker,fBashChance);
-			if((percent > 0.0) && !Hexed(attacker) && W3Chance(fChanceModifier(attacker)))
+			if((percent > 0.0) && !Hexed(attacker))
 			{
 				// Bash
-				if(War3_Chance(percent) && !GetBuffHasOneTrue(victim,bBashed) && IsPlayerAlive(attacker))
+				if(War3_Chance(percent * fChanceModifier(attacker)) && !GetBuffHasOneTrue(victim,bBashed) && IsPlayerAlive(attacker))
 				{
 					if(!W3HasImmunity(victim,Immunity_Skills))
 					{

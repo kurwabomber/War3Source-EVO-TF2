@@ -58,10 +58,10 @@ public OnWar3RaceDisabled(oldrace)
 new SKILL_FIRST, SKILL_SECOND, SKILL_THIRD, ULT;
 
 //Juggernaut
-new Float:JuggernautHPR[]={6.0,6.5,7.0,7.5,8.0};
+new Float:JuggernautHPR[]={3.0,3.5,4.0,4.5,5.0};
 new JuggernautHP[]={50,55,60,65,70};
 new Float:JuggernautMovespeed[]={0.6,0.6,0.6,0.6,0.6};
-new Float:JuggernautArmor[]={8.0,8.0,8.0,8.0,8.0};
+new Float:JuggernautArmor[]={6.0,6.0,6.0,6.0,6.0};
 new Float:JuggernautDamage[]={0.15,0.15,0.15,0.15,0.15};
 //Cleansing Flame
 new Float:CleasningFlameDamage[]={80.0,85.0,85.0,85.0,85.0};
@@ -81,10 +81,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual(raceshortname,shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace(racelongname,raceshortname,reloadrace_id,racedescription);
-		SKILL_FIRST=War3_AddRaceSkill(thisRaceID,"Juggernaut","+8 armor. Deal 15% more damage.\n+6 to 8 HPR, +50-70 MaxHP. -40% movespeed. (passive)",false,4);
+		SKILL_FIRST=War3_AddRaceSkill(thisRaceID,"Juggernaut","+6 armor. Deal 15% more damage.\n+3 to 5 HPR, +50-70 MaxHP. -40% movespeed. (passive)",false,4);
 		SKILL_SECOND=War3_AddRaceSkill(thisRaceID,"Cleansing Flame","Within a 500HU radius, deal 80 to 85 damage.\n25s to 18.5s cooldown. Using this also adds cooldown to other abilities. (+ability)",false,4,"(voice Help!)");
 		SKILL_THIRD=War3_AddRaceSkill(thisRaceID,"Chokeslam","Grab a nearby enemy, dealing 75 -> 95 dmg. Stuns for 1.5s.\n30s cooldown.  Using this also adds cooldown to other abilities. (+ability2)",false,4,"(voice Battle Cry)");
-		ULT=War3_AddRaceSkill(thisRaceID,"Steadfast Corruption","Creates a shockwave arc with 550HU length.\nCast time is 2.5s. Deals 130 -> 160 dmg.\n45s cooldown. (+ultimate)",true,4,"(voice Jeers)");
+		ULT=War3_AddRaceSkill(thisRaceID,"Steadfast Corruption","Creates a shockwave arc with 400HU length.\nCast time is 2.5s. Deals 130 -> 160 dmg.\n45s cooldown. (+ultimate)",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_FIRST, fHPRegen, JuggernautHPR);
 		War3_AddSkillBuff(thisRaceID, SKILL_FIRST, iAdditionalMaxHealth, JuggernautHP);
@@ -310,9 +310,9 @@ public OnWar3CastingFinished(client, target, W3SpellEffects:spelleffect, String:
 			{
 				if(ValidPlayer(i,true) && IsPlayerAlive(i) && GetClientTeam(i) != GetClientTeam(client))
 				{	
-					if(IsTargetInSightRange(client, i, 90.0, 550.0, true, false))
+					if(IsTargetInSightRange(client, i, 90.0, 400.0, true, false))
 					{
-						if(IsAbleToSee(client,i) == true)
+						if(IsAbleToSee(i,client))
 						{
 							if(!W3HasImmunity(i,Immunity_Ultimates))
 							{

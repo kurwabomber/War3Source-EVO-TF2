@@ -467,9 +467,12 @@ public Action OnTakeDamageAliveHook(int victim, int& attacker, int& inflictor, f
 
 	bool isWarCraft = g_CurDamageIsWarcraft?true:false;
 
-	War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
-	Engine_WCX_Engine_Vampire_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
-	War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
+	if(!(damagetype == DMG_BURN + DMG_PREVENT_PHYSICS_FORCE)){
+		War3Source_Engine_WCX_Engine_Bash_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
+		War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
+		Engine_WCX_Engine_Vampire_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
+		War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft,weapon);
+	}
 	
 	//damage += newdamage;
 
@@ -528,10 +531,12 @@ public OnTakeDamagePostHook(victim, attacker, inflictor, Float:damage, damagetyp
 
 		bool isWarCraft = g_CurDamageIsWarcraft?true:false;
 
-		War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
-		Engine_WCX_Engine_Vampire_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
-		War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
-		
+		if(!(damagetype == DMG_BURN + DMG_PREVENT_PHYSICS_FORCE)){
+			War3Source_Engine_WCX_Engine_Bash_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
+			War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
+			Engine_WCX_Engine_Vampire_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
+			War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft,weapon);
+		}
 		//damage += newdamage;
 
 		Call_StartForward(p_OnWar3EventPostHurt);

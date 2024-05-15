@@ -205,14 +205,14 @@ public Action:OnW3TeleportLocationChecking(client,Float:playerVec[3])
 				GetClientAbsOrigin(i,otherVec);
 				float resistance = W3GetBuffStackedFloat(i, fAbilityResistance);
 				if(W3HasImmunity(i,Immunity_Skills)){
-					if(GetVectorDistance(playerVec,otherVec)<400.0)
+					if(GetVectorDistance(playerVec,otherVec)<700.0)
 					{
 						War3_NotifyPlayerImmuneFromSkill(client, i, SKILL_BLINK);
 						return Plugin_Handled;
 					}
 				}
 				else if(resistance != 1.0){
-					if(GetVectorDistance(playerVec,otherVec)<400.0*(1-resistance))
+					if(GetVectorDistance(playerVec,otherVec)<700.0*(1-resistance))
 					{
 						War3_NotifyPlayerImmuneFromSkill(client, i, SKILL_BLINK);
 						return Plugin_Handled;

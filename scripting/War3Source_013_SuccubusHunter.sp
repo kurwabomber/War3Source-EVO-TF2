@@ -50,7 +50,8 @@ new Float:assaultMoveMult[]={1.0,1.1,1.2,1.3,1.4};
 new TransformHealth[]={60,65,70,75,80};
 new Float:TransformAttackspeed[]={0.25,0.275,0.285,0.3,0.325};
 new Float:TransformSpeed[]={0.35,0.38,0.4,0.43,0.45};
-
+char ultSound[] = "war3source/DemonHunterMorph1.mp3";
+char tackleSound[] = "war3source/tackle.mp3";
 public Plugin:myinfo =
 {
 	name = "Race - Succubus Hunter",
@@ -108,6 +109,14 @@ public OnMapStart()
 	//PrecacheSound("npc/fast_zombie/claw_strike1.wav");
 	//BeamSprite=PrecacheModel("materials/sprites/purpleglow1.vmt");
 	Laser=PrecacheModel("materials/sprites/laserbeam.vmt");
+	PrecacheSound(ultSound);
+	PrecacheSound(tackleSound);
+}
+public OnAddSound(int priority){
+	if(priority == PRIORITY_MEDIUM){
+		War3_AddSound(ultSound);
+		War3_AddSound(tackleSound);
+	}
 }
 public OnW3Denyable(W3DENY:event,client)
 {
@@ -409,6 +418,7 @@ public PlayerJumpEvent(Handle:event,const String:name[],bool:dontBroadcast)
 					}
 				}
 			}
+			War3_EmitSoundToAll(tackleSound, client);
 		}
 	}
 }
@@ -560,6 +570,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 				SetEntityHealth(client,old_health+TransformHealth[skill_trans]);
 
 				PrintToChat(client,"\0x04[Daemonic transformation] \0x01Your demonic powers boost your strength");
+				War3_EmitSoundToAll(ultSound, client);
 				CreateTimer(10.0,Finishtrans,client);
 				War3_CooldownMGR(client,GetConVarFloat(ultCooldownCvar),thisRaceID,ULT_TRANSFORM,_,_);
 			}

@@ -28,9 +28,9 @@ new SKILL_TIDE, SKILL_CONDUIT, SKILL_STATIC, ULT_OVERLOAD;
 
 
 // Chance/Data Arrays
-new ElectricTideMaxDamage[]={140,150,160,170,180};
-new Float:ElectricTideRadius=450.0;
-new Float:AbilityCooldownTime=7.5;
+new ElectricTideMaxDamage[]={80,85,90,95,100};
+new Float:ElectricTideRadius=250.0;
+new Float:AbilityCooldownTime=6.0;
 
 new ConduitPerHit[]={2,3,3,4,4};
 new ConduitDuration=10;

@@ -62,6 +62,7 @@ new SKILL_FANOFKNIVES, SKILL_BLINK,SKILL_SHADOWSTRIKE,ULT_VENGENCE;
 
 new String:shadowstrikestr[]="war3source/shadowstrikebirth.mp3";
 new String:ultimateSound[]="war3source/MiniSpiritPissed1.mp3";
+char fanSound[] = "war3source/FanOfKnives.mp3";
 
 new BeamSprite;
 new HaloSprite;
@@ -125,6 +126,7 @@ public OnMapStart()
 {
 	PrecacheSound(shadowstrikestr);
 	PrecacheSound(ultimateSound);
+	PrecacheSound(fanSound);
 	BeamSprite=War3_PrecacheBeamSprite();
 	HaloSprite=War3_PrecacheHaloSprite();
 }
@@ -134,6 +136,7 @@ public OnAddSound(sound_priority)
 	{
 		War3_AddSound(shadowstrikestr);
 		War3_AddSound(ultimateSound);
+		War3_AddSound(fanSound);
 	}
 }
 public OnWar3EventSpawn(client){
@@ -238,6 +241,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 						}
 					}
 				}
+				War3_EmitSoundToAll(fanSound, victim);
 				War3_CooldownMGR(victim, 7.0, thisRaceID, SKILL_FANOFKNIVES);
 			}
 			

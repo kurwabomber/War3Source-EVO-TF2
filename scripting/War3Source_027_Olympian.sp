@@ -77,6 +77,7 @@ new Float:meleeDamageMult[] = {1.5,1.55,1.6,1.65,1.7};
 new Float:energizeDuration[] = {6.0,6.5,7.0,7.5,8.0};
 //Spear Throw
 new Float:spearDamage[] = {100.0,105.0,110.0,115.0,120.0};
+char ultSound[] = "war3source/Warstomp.mp3";
 
 public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 {
@@ -162,6 +163,12 @@ public OnPluginEnd()
 public OnMapStart()
 {
 	UnLoad_Hooks();
+	PrecacheSound(ultSound);
+}
+public OnAddSound(int priority){
+	if(priority == PRIORITY_MEDIUM){
+		War3_AddSound(ultSound);
+	}
 }
 public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int damagecustom)
 {
@@ -220,6 +227,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 		{
 			War3_CooldownMGR(client,30.0,thisRaceID,ULT_SPEAR,false,true);
 			PrintHintText(client, "Spear Thrown!");
+			War3_EmitSoundToAll(ultSound, client);
 			new iEntity = CreateEntityByName("tf_projectile_arrow");
 			if (IsValidEdict(iEntity)) 
 			{

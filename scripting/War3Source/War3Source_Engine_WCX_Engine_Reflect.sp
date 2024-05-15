@@ -1,6 +1,6 @@
 // War3Source_Engine_WCX_Engine_Reflect.sp
 
-public void War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(int victim, int attacker,float damage,char weapon[64],bool isWarcraft)
+public void War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(int victim, int attacker,float damage,char weapon[64],bool isWarcraft,int wep)
 {
 	if((victim == attacker) || (!IsValidEntity(victim) || !ValidPlayer(attacker)))
 	{
@@ -17,7 +17,10 @@ public void War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(int victim,
 	if(StrEqual(weapon, "reflect"))
 		return;
 
-	if(!War3_IsUsingMeleeWeapon(attacker))
+	if(!IsValidEntity(wep) || !HasEntProp(wep, Prop_Send, "m_iItemDefinitionIndex"))
+		return;
+
+	if(TF2Util_GetWeaponSlot(wep) != TFWeaponSlot_Melee)
 		return;
 
 	float ReflectRatio = GetBuffSumFloat(victim, fMeleeThorns);
@@ -25,9 +28,8 @@ public void War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(int victim,
 
 	if(damageDealt > 0)
 	{
-		if(War3_DealDamage(attacker,damageDealt,victim,_,"reflect"))
+		if(War3_DealDamage(attacker,damageDealt,victim,_,"reflect",W3DMGORIGIN_ITEM,W3DMGTYPE_PHYSICAL))
 		{
-
 		}
 	}
 }

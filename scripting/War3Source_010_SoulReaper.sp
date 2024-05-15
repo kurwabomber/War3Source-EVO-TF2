@@ -40,7 +40,7 @@ new Float:ultRange=400.0;
 new Float:ultCooldown[]={25.0,23.0,21.0,19.0,17.0};
 
 new String:judgesnd[]="war3source/sr/judgement.mp3";
-new String:ultsnd[]="war3source/sr/ult.mp3";
+new String:ultsnd[]="war3source/SOulBurn.mp3";
 
 new AuraID;
 

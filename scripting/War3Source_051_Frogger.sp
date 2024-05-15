@@ -908,62 +908,58 @@ public Action:event_player_builtobject(Handle:event, const String:name[], bool:d
 
 			if(BuildingType == TFObject_Sentry && !GetEntProp(index, Prop_Send, "m_bDisposableBuilding"))
 			{
-				int Frog_level=War3_GetSkillLevel(owner,thisRaceID,SKILL_FROGMAGIC);
-				if(Frog_level>0)
+				if(War3_SkillNotInCooldown(owner,thisRaceID,SKILL_FROGMAGIC,true))
 				{
-					if(War3_SkillNotInCooldown(owner,thisRaceID,SKILL_FROGMAGIC,true))
+					//if(GetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel")==3 && GetEntProp(index, Prop_Send, "m_bMiniBuilding") == 1 )
+					//{
+					//SetEntPropFloat(index, Prop_Send, "m_flModelScale",0.50);
+					SetEntProp(index, Prop_Send, "m_bBuilding",1);
+					SetEntProp(index, Prop_Send, "m_bMiniBuilding",1);
+					SetEntProp(index, Prop_Send, "m_iHealth", 50);
+					SetEntProp(index, Prop_Send, "m_iMaxHealth", 50);
+
+					static Float:g_fSentryMaxs[] = {9.0, 9.0, 29.7};
+					SetEntPropVector(index, Prop_Send, "m_vecMaxs", g_fSentryMaxs);
+
+					new OldMetal = GetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), 4);
+					SetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), OldMetal+30, 4, true);
+					new Metal = GetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), 4);
+					if(Metal>200)
+						SetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), 200, 4, true);
+					//}
+					//if((GetEntProp(index, Prop_Send, "m_bBuilding") == 1 ))
+					SetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel", 1);
+
+					CreateTimer(1.0, SkinFix, index); //sentries only fix
+
+					new Float:position[3];
+					GetEntPropVector(index, Prop_Send, "m_vecOrigin", position);
+
+					new Float:flAngles[3];
+					GetClientAbsAngles(owner, flAngles);
+
+					//TeleportEntity(owner, NULL_VECTOR, NULL_VECTOR, NULL_VECTOR);
+
+					//GetEntPropVector(index, Prop_Data, "m_angRotation", flAngles);
+					//position[1] += 30.0;
+
+					BuildSentry(owner,position,flAngles,1);
+					position[1] += 20.0;
+					BuildSentry(owner,position,flAngles,1);
+
+					position[1] -= 10.0;
+					position[2] += 50.0;
+
+					//SetEntProp(index, Prop_Data, "m_CollisionGroup", 0); //players can walk through sentry so they dont get stuck
+					SetEntData(index, g_offsCollisionGroup, 5, 4, true);
+					TeleportEntity(index, position, NULL_VECTOR, NULL_VECTOR);
+				}
+				else
+				{
+					if(index>MaxClients && IsValidEntity(index))
 					{
-						//if(GetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel")==3 && GetEntProp(index, Prop_Send, "m_bMiniBuilding") == 1 )
-						//{
-						//SetEntPropFloat(index, Prop_Send, "m_flModelScale",0.50);
-						SetEntProp(index, Prop_Send, "m_bBuilding",1);
-						SetEntProp(index, Prop_Send, "m_bMiniBuilding",1);
-						SetEntProp(index, Prop_Send, "m_iHealth", 50);
-						SetEntProp(index, Prop_Send, "m_iMaxHealth", 50);
-
-						static Float:g_fSentryMaxs[] = {9.0, 9.0, 29.7};
-						SetEntPropVector(index, Prop_Send, "m_vecMaxs", g_fSentryMaxs);
-
-						new OldMetal = GetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), 4);
-						SetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), OldMetal+30, 4, true);
-						new Metal = GetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), 4);
-						if(Metal>200)
-							SetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), 200, 4, true);
-						//}
-						//if((GetEntProp(index, Prop_Send, "m_bBuilding") == 1 ))
-						SetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel", 1);
-
-						CreateTimer(1.0, SkinFix, index); //sentries only fix
-
-						new Float:position[3];
-						GetEntPropVector(index, Prop_Send, "m_vecOrigin", position);
-
-						new Float:flAngles[3];
-						GetClientAbsAngles(owner, flAngles);
-
-						//TeleportEntity(owner, NULL_VECTOR, NULL_VECTOR, NULL_VECTOR);
-
-						//GetEntPropVector(index, Prop_Data, "m_angRotation", flAngles);
-						//position[1] += 30.0;
-
-						BuildSentry(owner,position,flAngles,1);
-						position[1] += 20.0;
-						BuildSentry(owner,position,flAngles,1);
-
-						position[1] -= 10.0;
-						position[2] += 50.0;
-
-						//SetEntProp(index, Prop_Data, "m_CollisionGroup", 0); //players can walk through sentry so they dont get stuck
-						SetEntData(index, g_offsCollisionGroup, 5, 4, true);
-						TeleportEntity(index, position, NULL_VECTOR, NULL_VECTOR);
-					}
-					else
-					{
-						if(index>MaxClients && IsValidEntity(index))
-						{
-							AcceptEntityInput(index,"Kill");
-							War3_ChatMessage(owner,"{lightgreen}You can not build a sentry while your Frog Magic is on cooldown!");
-						}
+						AcceptEntityInput(index,"Kill");
+						War3_ChatMessage(owner,"{lightgreen}You can not build a sentry while your Frog Magic is on cooldown!");
 					}
 				}
 			}

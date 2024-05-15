@@ -40,7 +40,7 @@ new addedHealth[MAXPLAYERSCUSTOM];
 new Handle:ultCooldownCvar;
 new Handle:ultRangeCvar;
 new DeathDecayAmt[]={100,110,120,130,140};
-new String:ultsnd[]="npc/antlion/attack_single2.wav";
+new String:ultsnd[]="war3source/DeathAndDecayTarget2.wav";
 new String:novasnd[]="npc/combine_gunship/ping_patrol.wav";
 new BeamSprite,HaloSprite;
 
@@ -149,7 +149,7 @@ public OnAddSound(sound_priority)
 {
 	if(sound_priority==PRIORITY_MEDIUM)
 	{
-		War3_AddSound(ultsnd,STOCK_SOUND);
+		War3_AddSound(ultsnd);
 	}
 	if(sound_priority==PRIORITY_TOP)
 	{

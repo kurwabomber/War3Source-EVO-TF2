@@ -35,7 +35,7 @@ float SelfBlastDamageReduction[]={0.6,0.55,0.5,0.45,0.4};
 float blastRadiusBonus[] = {1.1, 1.125, 1.15, 1.175, 1.2};
 float blastFalloffBonus[] = {1.2, 1.225, 1.25, 1.275, 1.3};
 
-char rocketsound[]="items/cart_explode.wav";
+char heatSeekingSound[]="war3source/Hunter_Seeker_launch.mp3";
 bool isProjectileHoming[MAXENTITIES] = {false,...};
 
 public Plugin:myinfo =
@@ -87,8 +87,13 @@ public OnAllPluginsLoaded()
 }
 public OnPluginStart()
 {
-	PrecacheSound(rocketsound);
+	PrecacheSound(heatSeekingSound);
 	//PrecacheSound(rocketticking);
+}
+public OnAddSound(int priority){
+	if(priority == PRIORITY_MEDIUM){
+		War3_AddSound(heatSeekingSound);
+	}
 }
 public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 {
@@ -230,6 +235,7 @@ public OnAbilityCommand(client,ability,bool:pressed)
 					PrintHintText(client, "Homing Rocket Locked on Target [%N]!",HeatSeeker_Target[client]);
 					PrintHintText(HeatSeeker_Target[client], "RUN! You're a target of a heat seeking rocket!");
 					War3_CooldownMGR(client, 5.0, thisRaceID, ABILITY_HEATSEEKING);
+					War3_EmitSoundToAll(heatSeekingSound, client);
 				}
 				else
 				{

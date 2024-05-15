@@ -92,6 +92,8 @@ new bool:bOrbActivated[MAXPLAYERS+1];
 new LSMaxDamage[]={60,70,80,90,100};
 new Float:Cooldown[] = {20.0,19.0,18.0,17.0,16.0}; // cooldown
 new String:lightningSound[]="war3source/lightningbolt.mp3";
+char lightningOrbSound[] = "war3source/LightningOrb.wav";
+
 new bool:bBeenHit[MAXPLAYERSCUSTOM][MAXPLAYERSCUSTOM];
 new BeamSprite,HaloSprite;
 stock bool:IsValidClient( client, bool:replaycheck = true )
@@ -168,12 +170,14 @@ public OnMapStart()
 	BeamSprite=War3_PrecacheBeamSprite(); 
 	HaloSprite=War3_PrecacheHaloSprite();
 	PrecacheSound(lightningSound);	
+	PrecacheSound(lightningOrbSound);
 }
 public OnAddSound(sound_priority)
 {
 	if(sound_priority==PRIORITY_MEDIUM)
 	{
 		War3_AddSound(lightningSound);
+		War3_AddSound(lightningOrbSound);
 	}
 }
 public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon)//on every server frame
@@ -299,6 +303,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 			if(victimfound)
 			{
 				War3_CooldownMGR(client,30.0,thisRaceID,SKILL_ORB,_,_);
+				War3_EmitSoundToAll(lightningOrbSound, client);
 			}
 			if(victimfound == false)
 			{

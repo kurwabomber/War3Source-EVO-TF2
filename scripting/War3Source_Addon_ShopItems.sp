@@ -143,7 +143,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 
 		shopItem[SOCK]=War3_CreateShopItemT("sock","-60% gravity",1,1500);
 
-		shopItem[OIL]=War3_CreateShopItem("Oil of Penetration","oil","+2 armor penetration","Coats your weapons with ability to armor.\n+2 armor penetration.",11,3500);
+		shopItem[OIL]=War3_CreateShopItem("Oil of Penetration","oil","+3 armor penetration","Coats your weapons with ability to armor.\n+3 armor penetration.",11,3500);
 
 		shopItem[SHIELD]=War3_CreateShopItemT("shield","40% immunity to skills",3,2000);
 
@@ -169,18 +169,18 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		shopItem[REFRESHERORB]=War3_CreateShopItem("Refresh Orb", "refreshorb", "1.4x faster ability cooldown", "1.4x faster ability cooldown", 15, 10000);
 		
 		shopItem[GLIMMERCAPE]=War3_CreateShopItem("Glimmer Cape", "cape", "+4 magic dmg reduction", "+4 magic dmg reduction", 4, 10000);
-		shopItem[AGHANIMSCEPTRE]=War3_CreateShopItem("Aghanim's Sceptre", "sceptre", "WIP:NOT WORKING upgrades all ultimates", "WIP:NOT WORKING upgrades all ultimates", 25, 10000);
+		//shopItem[AGHANIMSCEPTRE]=War3_CreateShopItem("Aghanim's Sceptre", "sceptre", "WIP:NOT WORKING upgrades all ultimates", "WIP:NOT WORKING upgrades all ultimates", 25, 10000);
 		shopItem[ORBOFVENOM]=War3_CreateShopItem("Orb of Venom", "venom", "attacks apply venom dot (4dps)", "attacks apply venom dot (4dps)", 1, 10000);
 		shopItem[RINGOFPROTECTION]=War3_CreateShopItem("Ring of Protection", "protection", "+3 dmg reduction", "+3 dmg reduction", 2, 10000);
 		shopItem[TALISMANOFEVASION]=War3_CreateShopItem("Talisman of Evasion", "evasion", "+10% evasion", "+10% evasion", 4, 10000);
-		shopItem[BLADEMAIL]=War3_CreateShopItem("Blade Mail", "blademail", "+4 dmg reduction & 65% melee reflect", "+4 dmg reduction & 65% melee reflect", 12, 10000);
+		shopItem[BLADEMAIL]=War3_CreateShopItem("Blade Mail", "blademail", "+4 dmg reduction & 40% melee reflect", "+4 dmg reduction & 40% melee reflect", 12, 10000);
 		shopItem[ASSAULTCUIRASS]=War3_CreateShopItem("Assault Cuirass", "cuirass", "+2 dmg reduction & +10% attack speed", "+2 dmg reduction & +10% attack speed", 10, 10000);
-		shopItem[HEARTOFTARRASQUE]=War3_CreateShopItem("Heart of Tarrasque", "heart", "+3% maxHPR", "+3% maxHPR", 8, 10000);
+		//shopItem[HEARTOFTARRASQUE]=War3_CreateShopItem("Heart of Tarrasque", "heart", "+3% maxHPR", "+3% maxHPR", 8, 10000);
 		shopItem[NULLTALISMAN]=War3_CreateShopItem("Null Talisman", "talisman", "+1 hpr, phys & magic dmg reduction, +5% ms and dmg.", "+1 hpr, phys & magic dmg reduction, +5% ms and dmg.", 2, 10000);
-		shopItem[DAEDALUS]=War3_CreateShopItem("Daedalus", "daedalus", "+10% crit chance.", "+10% crit chance.", 7, 10000);
-		shopItem[DESOLATOR]=War3_CreateShopItem("Desolator", "desolator", "+3 armor penetration", "+3 armor penetration", 15, 10000);
+		shopItem[DAEDALUS]=War3_CreateShopItem("Daedalus", "daedalus", "+15% crit chance.", "+15% crit chance.", 7, 10000);
+		shopItem[DESOLATOR]=War3_CreateShopItem("Desolator", "desolator", "+4 armor penetration", "+4 armor penetration", 15, 10000);
 		shopItem[PANICNECKLACE]=War3_CreateShopItem("Panic Necklade", "panic", "+4s speed boost when hit", "+4s speed boost when hit", 3, 10000);
-		shopItem[BLOODBOUNDGEM]=War3_CreateShopItem("Bloodbound Gem", "bloodbound", "+25% sustain boost", "+25% sustain boost", 7, 10000);
+		shopItem[BLOODBOUNDGEM]=War3_CreateShopItem("Bloodbound Gem", "bloodbound", "+20% sustain boost", "+20% sustain boost", 7, 10000);
 		shopItem[MEKANSM]=War3_CreateShopItem("Mekansm", "mekansm", "+15HP AOE heal/5s", "+15HP AOE heal/5s", 10, 10000);
 		shopItem[MANTLEOFINTEL]=War3_CreateShopItem("Mantle of Intelligence", "mantle", "+25% magic dmg", "+25% magic dmg", 6, 10000);
 
@@ -212,7 +212,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		War3_AddItemBuff(shopItem[ARMBAND], fAttackSpeed, 1.15);
 		War3_AddItemBuff(shopItem[CLAW],fDamageModifier,GetConVarFloat(ClawsAttackCvar));
 		War3_AddItemBuff(shopItem[MASK],fVampirePercent,GetConVarFloat(MaskDeathCvar));
-		War3_AddItemBuff(shopItem[DIVINERAPIER], iDamageBonus,34);
+		War3_AddItemBuff(shopItem[DIVINERAPIER], iDamageBonus,3);
 		War3_AddItemBuff(shopItem[FAITH],fArmorMagic,5.0);
 		War3_AddItemBuff(shopItem[COURAGE],fArmorPhysical,5.0);
 		War3_AddItemBuff(shopItem[REFRESHERORB],fCooldownReduction,1.4);
@@ -220,20 +220,20 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		War3_AddItemBuff(shopItem[RINGOFPROTECTION],fArmorPhysical,3.0);
 		War3_AddItemBuff(shopItem[TALISMANOFEVASION],fDodgeChance,0.1);
 		War3_AddItemBuff(shopItem[BLADEMAIL],fArmorPhysical,4.0);
-		War3_AddItemBuff(shopItem[BLADEMAIL],fMeleeThorns,0.65);
+		War3_AddItemBuff(shopItem[BLADEMAIL],fMeleeThorns,0.4);
 		War3_AddItemBuff(shopItem[ASSAULTCUIRASS],fArmorPhysical,2.0);
 		War3_AddItemBuff(shopItem[ASSAULTCUIRASS],fAttackSpeed,1.1);
-		War3_AddItemBuff(shopItem[HEARTOFTARRASQUE],fMaxHealthRegen,0.03);
+		//War3_AddItemBuff(shopItem[HEARTOFTARRASQUE],fMaxHealthRegen,0.03);
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fHPRegen,1.0);
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fArmorPhysical,1.0);
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fArmorMagic,1.0);
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fMaxSpeed2,0.05);
 		War3_AddItemBuff(shopItem[NULLTALISMAN],fDamageModifier,0.05);
-		War3_AddItemBuff(shopItem[DAEDALUS],fCritChance,0.1);
-		War3_AddItemBuff(shopItem[BLOODBOUNDGEM],fSustainEfficiency,0.25);
+		War3_AddItemBuff(shopItem[DAEDALUS],fCritChance,0.15);
+		War3_AddItemBuff(shopItem[BLOODBOUNDGEM],fSustainEfficiency,0.2);
 		War3_AddItemBuff(shopItem[MANTLEOFINTEL],fMagicDamageModifier,0.25);
-		War3_AddItemBuff(shopItem[OIL],fArmorPenetration,2.0);
-		War3_AddItemBuff(shopItem[DESOLATOR],fArmorPenetration,3.0);
+		War3_AddItemBuff(shopItem[OIL],fArmorPenetration,3.0);
+		War3_AddItemBuff(shopItem[DESOLATOR],fArmorPenetration,4.0);
 	}
 }
 

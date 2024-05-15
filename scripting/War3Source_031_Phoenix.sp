@@ -63,6 +63,9 @@ new Float:DefenseBonus[]={2.0,2.25,2.5,2.75,3.0};
 new Float:Reincarnation[]={45.0, 44.0, 43.0, 42.0, 40.0};
 new Float:FlameBaseDMG[]={20.0, 22.0, 24.0, 26.0, 28.0};
 
+char reviveSound[] = "war3source/FromTheAshes.mp3";
+char flameSound[] = "war3source/Incinerate1.mp3";
+
 public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 {
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("phoenix",shortname,false)))
@@ -122,6 +125,7 @@ public Action:DoDeathReject(Handle:timer,any:userid)
 		TeleportEntity(client, djPos[client], djAngle[client], NULL_VECTOR);
 		War3_RestoreItemsFromDeath(client,false);
 		War3_CooldownMGR(client,Reincarnation[skilllevel],thisRaceID,SKILL_REVIVE,false,true);
+		War3_EmitSoundToAll(reviveSound,client);
 	}
 	return Plugin_Continue;
 }
@@ -138,6 +142,16 @@ public OnPluginEnd()
 public OnMapStart()
 {
 	UnLoad_Hooks();
+	PrecacheSound(reviveSound);
+	PrecacheSound(flameSound);
+}
+public OnAddSound(sound_priority)
+{
+	if(sound_priority==PRIORITY_MEDIUM)
+	{
+		War3_AddSound(reviveSound);
+		War3_AddSound(flameSound);
+	}
 }
 public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 {
@@ -181,6 +195,10 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 			{
 				War3_ChatMessage(client,"{lightgreen}No victims found for Phoenix Flames!");
 				War3_CooldownMGR(client,1.0,thisRaceID,ULT_FIRE,_,_);
+			}
+			else
+			{
+				War3_EmitSoundToAll(flameSound, client);
 			}
 		}
 	}
