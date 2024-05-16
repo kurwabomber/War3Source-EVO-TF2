@@ -47,7 +47,7 @@ bool  Can_Player_Revive[MAXPLAYERSCUSTOM+1];
 float BanishChancesArr[]={0.20,0.25,0.30,0.325,0.35};
 
 //for TF only:
-float CreditStealChanceTF[]={0.06,0.065,0.07,0.075,0.08};   //what are the chances of stealing
+float CreditStealChanceTF[]={0.06,0.0675,0.075,0.0825,0.09};   //what are the chances of stealing
 // instead of a percent we now base it on the attacker level
 //float TFCreditStealPercent=0.02;  //how much to steal
 
@@ -164,7 +164,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace("Blood Mage","mage",reloadrace_id,"Revive teammates, steal money.");
 		SKILL_REVIVE=War3_AddRaceSkill(thisRaceID,"Phoenix","20-30% chance to revive your teammates that die.\nEach time you revive, chance is reduced by half\nto a minimum of 10% of original chance.",false,4);
 		SKILL_BANISH=War3_AddRaceSkill(thisRaceID,"Banish","20-35% of making enemy blind and disoriented for 0.5 seconds",false,4,"(Autocast)");
-		SKILL_MONEYSTEAL=War3_AddRaceSkill(thisRaceID,"Siphon Mana","6-8% chance of gaining 6-9 gold via damage",false,4,"(Autocast)");
+		SKILL_MONEYSTEAL=War3_AddRaceSkill(thisRaceID,"Siphon Mana","6-9% chance of gaining 6-9 gold via damage",false,4,"(Autocast)");
 		ULT_FLAMESTRIKE=War3_AddRaceSkill(thisRaceID,"Flame Strike","Shoot out a fireball that deals 70-100 damage.\nCooldown is 15s long.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
