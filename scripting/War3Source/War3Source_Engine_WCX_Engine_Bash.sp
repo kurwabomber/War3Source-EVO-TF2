@@ -47,7 +47,7 @@ public void War3Source_Engine_WCX_Engine_Bash_OnWar3EventPostHurt(int victim, in
 						SetBuffRace(victim,bBashed,race,true,attacker);
 						new newdamage = GetBuffSumInt(attacker,iBashDamage);
 						if(newdamage>0)
-							DealDamage(victim,newdamage,attacker,_,"weapon_bash");
+							DealDamage(victim,newdamage,attacker,_,"weapon_bash",_,W3DMGTYPE_PHYSICAL);
 
 						W3FlashScreen(victim,RGBA_COLOR_RED);
 						new Float:duration = GetBuffSumFloat(attacker,fBashDuration);

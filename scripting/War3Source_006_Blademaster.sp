@@ -64,7 +64,7 @@ new SKILL_CRITS, SKILL_BERSERK, SKILL_SALVE, ULT_WARCRY;
 
 // Critical Strike
 float BashChance[] = {1.0, 1.0, 1.0, 1.0, 1.0};
-float BashDuration[] = {0.1, 0.1, 0.1, 0.1, 0.15};
+float BashDuration[] = {0.2, 0.225, 0.25, 0.275, 0.3};
 int BashDamage[] = {20, 25, 30, 35, 35};
 
 // Berserker
@@ -87,7 +87,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("blademaster",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Blademaster","blademaster",reloadrace_id,"True melee, crits, tank.");
-		SKILL_CRITS=War3_AddRaceSkill(thisRaceID,"Heavy Impact","+100% bash chance. 0.1s bash duration.\nDeals +20-35 damage on bash.",false,4);
+		SKILL_CRITS=War3_AddRaceSkill(thisRaceID,"Heavy Impact","+100% bash chance. 0.2s-0.3 bash duration.\nDeals +20-35 damage on bash.",false,4);
 		SKILL_BERSERK=War3_AddRaceSkill(thisRaceID,"Berserk","Passive : Gives +60-100 health and +20%-28% movespeed.",false,4);
 		SKILL_SALVE=War3_AddRaceSkill(thisRaceID,"Healing Salve","After 4 seconds of being out of combat, you gain +16-24 regen per second.",false,4);
 		ULT_WARCRY=War3_AddRaceSkill(thisRaceID,"War Cry","Gives damage and movespeed to you and nearby players.\n+30-40% damage boost, +30-35% movespeed, 600-650HU radius, lasts 8 seconds.",true,4,"(voice Jeers)");
