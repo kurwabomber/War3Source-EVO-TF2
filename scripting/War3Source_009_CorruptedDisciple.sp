@@ -33,17 +33,17 @@ new Float:ElectricTideRadius=250.0;
 new Float:AbilityCooldownTime=6.0;
 
 new ConduitPerHit[]={2,3,3,4,4};
-new ConduitDuration=10;
-new ConduitCooldown=12;
+new ConduitDuration=7;
+new ConduitCooldown=7;
 new ConduitMaxHeal[]={10,11,12,13,14};
 
-new Float:StaticHealPercent[]={0.60, 0.63, 0.66, 0.69, 0.72};
+new Float:StaticHealPercent[]={0.25, 0.275, 0.3, 0.325, 0.35};
 new StaticHealRadius=800;
 
-new OverloadDuration=75; //HIT TIMES, DURATION DEPENDS ON TIMER
-new OverloadRadius=500;
-new OverloadDamagePerHit[]={4,4,5,5,6};
-new Float:OverloadDamageIncrease[]={0.01,0.012,0.0124,0.0124,0.0126};
+new OverloadDuration=25; //HIT TIMES, DURATION DEPENDS ON TIMER
+new OverloadRadius=400;
+new OverloadDamagePerHit[]={8,9,10,11,12};
+new Float:OverloadDamageIncrease[]={0.015,0.016,0.017,0.018,0.019};
 ////
 
 
@@ -150,13 +150,11 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("cd",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Corrupted Disciple","cd",reloadrace_id,"Electricity & support");
-		SKILL_TIDE=War3_AddRaceSkill(thisRaceID,"Electric Tide","Expands electric rings around you, deals the most damage at the edge.\nMaximum damage is 140-180. Has a 7.5 second cooldown.",false,4,"(voice Help!)");
-		SKILL_CONDUIT=War3_AddRaceSkill(thisRaceID,"Corrupted Conduit","Your victim will lose damage per attack for a duration.\nAuto activate when not on cooldown. On activation: Heals 2-4 health when you're hit.\nLasts 10 seconds, has a 12 second cooldown.",false,4);
-		SKILL_STATIC=War3_AddRaceSkill(thisRaceID,"Static Discharge","Chance to heal you and your teammates around you when you are damaged.\n50% chance of proc, heals for 60-72% of damage taken. 800HU radius.",false,4);
-		ULT_OVERLOAD=War3_AddRaceSkill(thisRaceID,"Overload","(+ultimate) Shocks the lowest hp enemy around you per second while you gain damage per hit\nHits for 4-6 dmg, has 75 damage ticks. Your damage increases by 1% -> 1.26% per zap. Ticks every 0.1 seconds.",true,4,"(voice Jeers)");
+		SKILL_TIDE=War3_AddRaceSkill(thisRaceID,"Electric Tide","Expands electric rings around you, deals the most damage at the edge.\nMaximum damage is 80-100. Has a 6 second cooldown.",false,4,"(voice Help!)");
+		SKILL_CONDUIT=War3_AddRaceSkill(thisRaceID,"Corrupted Conduit","Your victim will lose damage per attack for a duration.\nAuto activate when not on cooldown. On activation: Heals 2-4 health when you're hit.\nLasts 7 seconds, has a 7 second cooldown.",false,4,"(Autocast)");
+		SKILL_STATIC=War3_AddRaceSkill(thisRaceID,"Static Discharge","Heals teammates and you for 25-35% of damage taken. 800HU radius.",false,4);
+		ULT_OVERLOAD=War3_AddRaceSkill(thisRaceID,"Overload","(+ultimate) Shocks the lowest hp enemy around you per second while you gain damage per hit\nHits for 8-11 dmg, has 25 damage ticks. Your damage increases by 1.5% -> 1.9% per zap. Ticks every 0.3 seconds.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
-
-		W3SkillCooldownOnSpawn(thisRaceID,ULT_OVERLOAD,10.0,_); //translated doesnt use this "Chain Lightning"
 	}
 
 }
@@ -341,9 +339,8 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 			UltimateZapsRemaining[client]=OverloadDuration;
 
 			PlayerDamageIncrease[client]=1.0;
-			//War3_CooldownMGR(client,ultCooldownCvar,thisRaceID,ULT_OVERLOAD,_,_);
 
-			CreateTimer(0.1,UltimateLoop,GetClientUserId(client)); //damage
+			CreateTimer(0.3,UltimateLoop,GetClientUserId(client)); //damage
 
 			War3_EmitSoundToAll(overload1,client);
 			War3_EmitSoundToAll(overload1,client);
@@ -453,7 +450,7 @@ public Action:UltimateLoop(Handle:timer,any:userid)
 			War3_EmitSoundToAll(overloadzap,besttarget);
 			War3_EmitSoundToAll(overloadzap,besttarget);
 		}
-		CreateTimer(0.1,UltimateLoop,GetClientUserId(attacker)); //damage
+		CreateTimer(0.3,UltimateLoop,GetClientUserId(attacker)); //damage
 	}
 	if(UltimateZapsRemaining[attacker]==0)
 	{
@@ -591,7 +588,7 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 		new race_victim=War3_GetRace(victim);
 		if(race_victim==thisRaceID){
 			new skill = War3_GetSkillLevel(victim,thisRaceID,SKILL_STATIC);
-			if(!Hexed(victim,false)&&GetRandomFloat(0.0,1.0)<0.5){
+			if(!Hexed(victim,false)){
 				new heal=RoundFloat(StaticHealPercent[skill]*dmg);
 				new team=GetClientTeam(victim);
 
