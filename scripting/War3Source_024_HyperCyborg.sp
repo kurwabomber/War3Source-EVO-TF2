@@ -74,6 +74,7 @@ public void Load_Hooks()
 	HooksLoaded = true;
 	W3Hook(W3Hook_OnW3TakeDmgBullet, OnW3TakeDmgBullet);
 	W3Hook(W3Hook_OnAbilityCommand, OnAbilityCommand);
+	W3Hook(W3Hook_OnWar3EventSpawn, OnWar3EventSpawn);
 }
 public void UnLoad_Hooks()
 {
@@ -82,6 +83,7 @@ public void UnLoad_Hooks()
 
 	W3Unhook(W3Hook_OnW3TakeDmgBullet, OnW3TakeDmgBullet);
 	W3Unhook(W3Hook_OnAbilityCommand, OnAbilityCommand);
+	W3Unhook(W3Hook_OnWar3EventSpawn, OnWar3EventSpawn);
 }
 public OnWar3RaceEnabled(newrace)
 {
