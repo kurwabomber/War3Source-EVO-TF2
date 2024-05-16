@@ -309,6 +309,7 @@ public Action:SDK_Forwarded_OnTakeDamage(victim,&attacker,&inflictor,&Float:dama
 
 		damagestack++;
 
+		
 		if(g_CurDamageIsWarcraft)
 		{
 			if(!GetBuffHasOneTrue(victim,bArmorMagicDenyAll))
@@ -319,6 +320,13 @@ public Action:SDK_Forwarded_OnTakeDamage(victim,&attacker,&inflictor,&Float:dama
 		}
 		else if((attacker_Owns_item!=1)&&!g_CurDamageIsTrueDamage&&!GetBuffHasOneTrue(victim,bfArmorPhysicalDenyAll))
 		{
+			if(inflictor != -1 && weapon != -1){
+				char weaponName[64];
+				new realWeapon = weapon == -1 ? inflictor : weapon;
+				GetEntityClassname(realWeapon, weaponName, sizeof(weaponName));
+				//Now uses the pre-damage as the reflect.
+				War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,damage,weaponName,view_as<bool>(g_CurDamageIsWarcraft),weapon);
+			}
 			//bullet
 			new Float:theMult=PhysicalArmorMulti(victim, GetBuffSumFloat(attacker, fArmorPenetration));
 			damage=(damage * theMult);
@@ -471,7 +479,6 @@ public Action OnTakeDamageAliveHook(int victim, int& attacker, int& inflictor, f
 		War3Source_Engine_WCX_Engine_Bash_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
 		War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
 		Engine_WCX_Engine_Vampire_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
-		War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft,weapon);
 	}
 	
 	//damage += newdamage;
@@ -535,7 +542,6 @@ public OnTakeDamagePostHook(victim, attacker, inflictor, Float:damage, damagetyp
 			War3Source_Engine_WCX_Engine_Bash_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
 			War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
 			Engine_WCX_Engine_Vampire_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft);
-			War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,damage,weaponName,isWarCraft,weapon);
 		}
 		//damage += newdamage;
 

@@ -37,7 +37,7 @@ new InhumanAmount[]={0,5,10,15,20,22,25,27,30};
 new Float:InhumanRange=800.0;
 
 new Float:ultRange=400.0;
-new Float:ultCooldown[]={25.0,23.0,21.0,19.0,17.0};
+new Float:ultCooldown[]={35.0,33.0,31.0,29.0,27.0};
 
 new String:judgesnd[]="war3source/sr/judgement.mp3";
 new String:ultsnd[]="war3source/SOulBurn.mp3";
@@ -127,7 +127,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_JUDGE=War3_AddRaceSkill(thisRaceID,"Judgement","[+ability] Heals teammates around you, damages enemies around you.\nDamage/heals for 40-60, Cooldown is 10s and radius is 600HU.",false,4,"(voice Help!)");
 		SKILL_PRESENCE=War3_AddRaceSkill(thisRaceID,"Withering Presence","Enemies take non-lethal damage just by being within 200 to 380 HU of you.\nDeals 4 to 5.8 DPS.",false,4);
 		SKILL_INHUMAN=War3_AddRaceSkill(thisRaceID,"Inhuman Nature","Heals for 20-30hp from anyone dying in a 800HU radius.",false,4);
-		ULT_EXECUTE=War3_AddRaceSkill(thisRaceID,"Demonic Execution","(+ultimate)Instantly executes targets below 20% health.\nDeals 100 * (1.5 - cHP/mHP) damage to target.\nCooldown is 25s. Each level red. CD by -2s.",true,4,"(voice Jeers)");
+		ULT_EXECUTE=War3_AddRaceSkill(thisRaceID,"Demonic Execution","(+ultimate)Instantly executes targets below 20% health.\nDeals 80 * (1.5 - cHP/mHP) damage to target.\nCooldown is 35s. Each level red. CD by -2s.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 
 		AuraID=W3RegisterChangingDistanceAura("witheringpresense",true);
@@ -221,7 +221,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 			{
 				if(!W3HasImmunity(target,Immunity_Ultimates))
 				{
-					new dmg=RoundFloat(100.0 * (1.5 - (float(GetClientHealth(target))/War3_GetMaxHP(target)) ) * W3GetBuffStackedFloat(target, fUltimateResistance));
+					new dmg=RoundFloat(80.0 * (1.5 - (float(GetClientHealth(target))/War3_GetMaxHP(target)) ) * W3GetBuffStackedFloat(target, fUltimateResistance));
 
 					if(GetClientHealth(target)/float(War3_GetMaxHP(target)) <= 0.2){
 						PrintHintText(client,"Executed %N!", target);
@@ -341,6 +341,9 @@ public OnW3PlayerAuraStateChanged(client,aura,bool:inAura,level,AuraStack,AuraOw
 
 	if(aura==AuraID)
 	{
+		if(Spying(AuraOwner))
+			return;
+
 		/*
 		if(inAura)
 		{

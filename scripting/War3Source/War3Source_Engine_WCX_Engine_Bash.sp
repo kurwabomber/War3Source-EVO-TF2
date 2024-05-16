@@ -25,7 +25,7 @@ public War3Source_Engine_WCX_Engine_Bash_OnPluginStart()
 //public OnWar3EventPostHurt(victim,attacker,damage,const String:weapon[32],bool:isWarcraft){
 public void War3Source_Engine_WCX_Engine_Bash_OnWar3EventPostHurt(int victim, int attacker,float damage,char weapon[64],bool isWarcraft){
 	//new dmg=RoundToCeil(damage);
-	if(StrEqual(weapon, "weapon_additionaldamage") || StrEqual(weapon, "crit") || StrEqual(weapon, "bash") || StrEqual(weapon, "weapon_crit") || StrEqual(weapon, "weapon_bash"))
+	if(StrEqual(weapon, "weapon_additionaldamage") || StrEqual(weapon, "crit") || StrEqual(weapon, "bash") || StrEqual(weapon, "weapon_crit") || StrEqual(weapon, "weapon_bash") || isWarcraft)
 		return;
 		
 	if(IS_PLAYER(victim)&&IS_PLAYER(attacker)&&victim>0&&attacker>0&&attacker!=victim)

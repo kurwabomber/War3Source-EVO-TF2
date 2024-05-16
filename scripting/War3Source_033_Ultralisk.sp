@@ -72,7 +72,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_ORGAN=War3_AddRaceSkill(thisRaceID,"Organ Redundancy","20% to 30% max ammo per 5 seconds.",false,4);
 		SKILL_REGEN=War3_AddRaceSkill(thisRaceID,"Anabolic Synthesis","Increases health regen by 5 to 7 per second.",false,4);
 		SKILL_PLATING=War3_AddRaceSkill(thisRaceID,"Chitinous Plating","Increase health by 60 to 80.",false,4);
-		ULT_FRENZY=War3_AddRaceSkill(thisRaceID,"Frenzied","Reduce damage by 75% for the next hit taken. Cooldown is 4.5-3.5 seconds.\nPierces through attacker ultimate immunity.",true,4,"READY");
+		ULT_FRENZY=War3_AddRaceSkill(thisRaceID,"Frenzied","Reduce damage by 75% for the next hit taken. Cooldown is 4.5-3.5 seconds.",true,4,"READY");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_REGEN, fHPRegen, SynthesisRegen);
 		War3_AddSkillBuff(thisRaceID, SKILL_PLATING, iAdditionalMaxHealth, PlatingHealth);
@@ -144,9 +144,10 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 		if(!Silenced(victim)&&War3_SkillNotInCooldown(victim,thisRaceID,ULT_FRENZY,true ))
 		{
 			new skill_level = War3_GetSkillLevel(victim,thisRaceID,ULT_FRENZY);
+			float damageReduction = 1.0/(1.0 + 3.0*W3GetBuffStackedFloat(attacker,fUltimateResistance));
 			War3_EmitSoundToAll(ultsnd,victim);
-			PrintHintText(victim, "Frenzy took off %.0f damage!",damage * 0.75);
-			War3_DamageModPercent(0.25);
+			PrintHintText(victim, "Frenzy took off %.0f damage!",damage * 1-damageReduction);
+			War3_DamageModPercent(damageReduction);
 			War3_CooldownMGR(victim,FrenzyCooldown[skill_level],thisRaceID,ULT_FRENZY,_,_);
 		}
 	}

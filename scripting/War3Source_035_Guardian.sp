@@ -62,9 +62,9 @@ new Float:JuggernautHPR[]={3.0,3.5,4.0,4.5,5.0};
 new JuggernautHP[]={50,55,60,65,70};
 new Float:JuggernautMovespeed[]={0.6,0.6,0.6,0.6,0.6};
 new Float:JuggernautArmor[]={6.0,6.0,6.0,6.0,6.0};
-new Float:JuggernautDamage[]={0.15,0.15,0.15,0.15,0.15};
+new Float:JuggernautDamage[]={0.1, 0.1 ,0.1 ,0.1 ,0.1};
 //Cleansing Flame
-new Float:CleasningFlameDamage[]={80.0,85.0,85.0,85.0,85.0};
+new Float:CleasningFlameDamage[]={70.0,72.5,75.0,77.5,80.0};
 new Float:CleansingFlameCooldown[]={25.0,25.0,22.5,20.0,18.5};
 new BeamSprite,HaloSprite;
 
@@ -81,8 +81,8 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual(raceshortname,shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace(racelongname,raceshortname,reloadrace_id,racedescription);
-		SKILL_FIRST=War3_AddRaceSkill(thisRaceID,"Juggernaut","+6 armor. Deal 15% more damage.\n+3 to 5 HPR, +50-70 MaxHP. -40% movespeed. (passive)",false,4);
-		SKILL_SECOND=War3_AddRaceSkill(thisRaceID,"Cleansing Flame","Within a 500HU radius, deal 80 to 85 damage.\n25s to 18.5s cooldown. Using this also adds cooldown to other abilities. (+ability)",false,4,"(voice Help!)");
+		SKILL_FIRST=War3_AddRaceSkill(thisRaceID,"Juggernaut","+6 armor. Deal 10% more damage.\n+3 to 5 HPR, +50-70 MaxHP. -40% movespeed. (passive)",false,4);
+		SKILL_SECOND=War3_AddRaceSkill(thisRaceID,"Cleansing Flame","Within a 500HU radius, deal 70 to 80 damage.\n25s to 18.5s cooldown. Using this also adds cooldown to other abilities. (+ability)",false,4,"(voice Help!)");
 		SKILL_THIRD=War3_AddRaceSkill(thisRaceID,"Chokeslam","Grab a nearby enemy, dealing 75 -> 95 dmg. Stuns for 1.5s.\n30s cooldown.  Using this also adds cooldown to other abilities. (+ability2)",false,4,"(voice Battle Cry)");
 		ULT=War3_AddRaceSkill(thisRaceID,"Steadfast Corruption","Creates a shockwave arc with 400HU length.\nCast time is 2.5s. Deals 130 -> 160 dmg.\n45s cooldown. (+ultimate)",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);

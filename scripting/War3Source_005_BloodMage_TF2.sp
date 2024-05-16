@@ -33,8 +33,9 @@ Handle ClientReviveMessage;
 
 //skill 1
 float MaxRevivalChance[MAXPLAYERSCUSTOM]; //chance for first attempt at revival
-float CurrentRevivalChance[MAXPLAYERSCUSTOM]; //decays by half per revival attempt, will stay at minimum of 10% after decays
+float CurrentRevivalChance[MAXPLAYERSCUSTOM];
 float RevivalChancesArr[]={0.2,0.225,0.25,0.275,0.3};
+float MinRevivalChancesArr[]={0.02,0.0225,0.025,0.0275,0.03};
 int RevivedBy[MAXPLAYERSCUSTOM];
 bool  bRevived[MAXPLAYERSCUSTOM];
 float fLastRevive[MAXPLAYERSCUSTOM];
@@ -43,11 +44,10 @@ float fLastRevive[MAXPLAYERSCUSTOM];
 bool  Can_Player_Revive[MAXPLAYERSCUSTOM+1];
 
 //skill 2
-float BanishChance[MAXPLAYERSCUSTOM];
 float BanishChancesArr[]={0.20,0.25,0.30,0.325,0.35};
 
 //for TF only:
-float CreditStealChanceTF[]={0.08,0.10,0.12,0.13,0.14};   //what are the chances of stealing
+float CreditStealChanceTF[]={0.06,0.065,0.07,0.075,0.08};   //what are the chances of stealing
 // instead of a percent we now base it on the attacker level
 //float TFCreditStealPercent=0.02;  //how much to steal
 
@@ -61,7 +61,8 @@ int BeingBurnedBy[MAXPLAYERSCUSTOM];
 int UltimateUsed[MAXPLAYERSCUSTOM];
 
 new String:reviveSound[]="war3source/reincarnation.mp3";
-char ultSound[] = "war3source/FlameStrike1.mp3";
+char banishSound[] = "war3source/BanishCaster.mp3";
+char ultSound[] = "war3source/FlameStrikeBurst.mp3";
 
 int BeamSprite,HaloSprite;
 int BloodSpray,BloodDrop;
@@ -161,9 +162,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("mage",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Blood Mage","mage",reloadrace_id,"Revive teammates, steal money.");
-		SKILL_REVIVE=War3_AddRaceSkill(thisRaceID,"Phoenix","20-30% chance to revive your teammates that die.\nEach time you revive, chance is reduced by half\nto a minimum of ?%",false,4);
-		SKILL_BANISH=War3_AddRaceSkill(thisRaceID,"Banish","20-35% of making enemy blind and disoriented for 0.2 seconds",false,4);
-		SKILL_MONEYSTEAL=War3_AddRaceSkill(thisRaceID,"Siphon Mana","6-8% chance of stealing gold based on victim's level via damage",false,4,"(Autocast)");
+		SKILL_REVIVE=War3_AddRaceSkill(thisRaceID,"Phoenix","20-30% chance to revive your teammates that die.\nEach time you revive, chance is reduced by half\nto a minimum of 10% of original chance.",false,4);
+		SKILL_BANISH=War3_AddRaceSkill(thisRaceID,"Banish","20-35% of making enemy blind and disoriented for 0.5 seconds",false,4,"(Autocast)");
+		SKILL_MONEYSTEAL=War3_AddRaceSkill(thisRaceID,"Siphon Mana","6-8% chance of gaining 6-9 gold via damage",false,4,"(Autocast)");
 		ULT_FLAMESTRIKE=War3_AddRaceSkill(thisRaceID,"Flame Strike","Shoot out a fireball that deals 70-100 damage.\nCooldown is 15s long.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
@@ -190,6 +191,7 @@ public OnMapStart()
 
 	PrecacheSound(reviveSound);
 	PrecacheSound(ultSound);
+	PrecacheSound(banishSound);
 
 	// Reset Can Player Revive
 	for(int i=1;i<=MaxClients;i++)    // was MAXPLAYERSCUSTOM
@@ -204,6 +206,7 @@ public OnAddSound(sound_priority)
 	{
 		War3_AddSound(reviveSound);
 		War3_AddSound(ultSound);
+		War3_AddSound(banishSound);
 	}
 }
 
@@ -315,10 +318,6 @@ public void OnSkillLevelChanged(int client, int currentrace, int skill, int news
 			{
 				MaxRevivalChance[client]=RevivalChancesArr[newskilllevel];
 			}
-			if(skill==SKILL_BANISH) //2
-			{
-				BanishChance[client]=BanishChancesArr[newskilllevel];
-			}
 		}
 	}
 }
@@ -343,7 +342,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 				if(IsPlayerAlive(attacker)&&IsPlayerAlive(victim))
 				{
 					new skill_level=War3_GetSkillLevel(attacker,thisRaceID,SKILL_BANISH);
-					if(!Hexed(attacker,false)&&GetRandomFloat(0.0,1.0)<=BanishChancesArr[skill_level]*chance_mod)
+					if(!Hexed(attacker,false)&&War3_SkillNotInCooldown(attacker,thisRaceID,SKILL_BANISH)&&GetRandomFloat(0.0,1.0)<=BanishChancesArr[skill_level]*chance_mod)
 					{
 						if(W3HasImmunity(victim,Immunity_Skills))
 						{
@@ -358,9 +357,11 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 							//oldangle[0]+=GetRandomFloat(-20.0,20.0);
 							//oldangle[1]+=GetRandomFloat(-20.0,20.0);
 							//TeleportEntity(victim, NULL_VECTOR, oldangle, NULL_VECTOR);
+							War3_CooldownMGR(attacker, 5.0, thisRaceID, SKILL_BANISH);
+							War3_EmitSoundToAll(banishSound, attacker);
 							W3MsgBanished(victim,attacker);
 							W3FlashScreen(victim,{0,0,0,255},0.4,_,FFADE_STAYOUT);
-							CreateTimer(0.2,Unbanish,GetClientUserId(victim));
+							CreateTimer(0.5,Unbanish,GetClientUserId(victim));
 
 							float effect_vec[3];
 							GetClientAbsOrigin(attacker,effect_vec);
@@ -387,37 +388,13 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 							}
 							else
 							{
-								if(IsFakeClient(victim)){
-									int stolen=War3_GetLevel(attacker, War3_GetRace(attacker))/2;
+								int stolen=GetRandomInt(6,9);
+								if(stolen>0)
+								{
 									War3_SetGold(attacker,War3_GetGold(attacker)+stolen);
-									W3MsgStoleGold(victim,attacker,stolen);
+									PrintHintText(attacker, "Gained +%i gold from siphon!", stolen);
 									W3FlashScreen(attacker,RGBA_COLOR_BLUE);
 									siphonsfx(victim);
-								}
-								else if(War3_GetGold(victim)>0)
-								{
-									//int stolen=RoundFloat(float(War3_GetGold(victim))*TFCreditStealPercent);
-									int stolen=War3_GetLevel(attacker, War3_GetRace(attacker));
-									if(stolen>20)
-									{
-										stolen=20;
-									}
-									if(stolen<=0)
-									{
-										stolen=1;
-									}
-									if(stolen > War3_GetGold(victim))
-									{
-										stolen = War3_GetGold(victim);
-									}
-									if(stolen>0) // no need to do anything otherwise
-									{
-										War3_SetGold(attacker,War3_GetGold(attacker)+stolen);
-										War3_SetGold(victim,War3_GetGold(victim)-stolen);
-										W3MsgStoleGold(victim,attacker,stolen);
-										W3FlashScreen(attacker,RGBA_COLOR_BLUE);
-										siphonsfx(victim);
-									}
 								}
 							}
 						}
@@ -648,8 +625,8 @@ public PlayerDeathEvent(Handle:event,const String:name[],bool:dontBroadcast)
 							if(GetRandomFloat(0.0,1.0)<=CurrentRevivalChance[i])
 							{
 								CurrentRevivalChance[i]/=2.0;
-								if(CurrentRevivalChance[i]<0.020*skillevel){
-									CurrentRevivalChance[i]=0.020*skillevel;
+								if(CurrentRevivalChance[i]<MinRevivalChancesArr[skillevel]){
+									CurrentRevivalChance[i]=MinRevivalChancesArr[skillevel];
 								}
 								RevivedBy[victim]=i;
 								bRevived[victim]=true;

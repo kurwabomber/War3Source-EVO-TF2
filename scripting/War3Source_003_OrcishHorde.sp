@@ -92,7 +92,7 @@ new bool:bOrbActivated[MAXPLAYERS+1];
 new LSMaxDamage[]={60,70,80,90,100};
 new Float:Cooldown[] = {20.0,19.0,18.0,17.0,16.0}; // cooldown
 new String:lightningSound[]="war3source/lightningbolt.mp3";
-char lightningOrbSound[] = "war3source/LightningOrb.wav";
+char lightningOrbSound[] = "war3source/PurgeTarget1.mp3";
 
 new bool:bBeenHit[MAXPLAYERSCUSTOM][MAXPLAYERSCUSTOM];
 new BeamSprite,HaloSprite;
