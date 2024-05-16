@@ -30,7 +30,7 @@ public void War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(int victim, in
 	}
 
 	if(StrEqual(weapon, "crit") || StrEqual(weapon, "bash") || StrEqual(weapon, "weapon_crit") ||
-	 StrEqual(weapon, "weapon_bash") || StrEqual(weapon, "weapon_additionalDamage"))
+	 StrEqual(weapon, "weapon_bash") || StrEqual(weapon, "weapon_additionalDamage") || StrEqual(weapon, "reflect"))
 		return;
 	
 	//PrintToServer("%s | %s", weapon, isWarcraft ? "yes" : "no");
