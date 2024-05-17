@@ -521,7 +521,7 @@ public OnW3PlayerAuraStateChanged(client,tAuraID,bool:inAura,level,AuraStack,Aur
 				War3_SetBuff(client,bInvisibilityDenyAll,thisRaceID,false);
 			}
 #if GGAMETYPE == GGAME_TF2
-			if(ValidPlayer(client,true) && !Spying(client))
+			if(ValidPlayer(client,true))
 			{
 				TF2_RemoveCondition(client, TFCond_Stealthed);
 			}

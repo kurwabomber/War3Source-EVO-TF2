@@ -341,9 +341,6 @@ public OnW3PlayerAuraStateChanged(client,aura,bool:inAura,level,AuraStack,AuraOw
 
 	if(aura==AuraID)
 	{
-		if(Spying(AuraOwner))
-			return;
-
 		/*
 		if(inAura)
 		{
@@ -361,7 +358,7 @@ public OnW3PlayerAuraStateChanged(client,aura,bool:inAura,level,AuraStack,AuraOw
 			GetClientName(client,Strclient,sizeof(Strclient));
 			DP("Client %s is Not in Aura - false - Aura Owner %s",Strclient,StrOwner);
 		}*/
-		if(AuraStack>0 && inAura)
+		if(AuraStack>0 && inAura && !IsInvis(AuraOwner))
 		{
 			if(!W3HasImmunity(client,Immunity_Skills))
 			{

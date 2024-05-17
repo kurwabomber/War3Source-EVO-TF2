@@ -324,8 +324,12 @@ public Action:SDK_Forwarded_OnTakeDamage(victim,&attacker,&inflictor,&Float:dama
 				char weaponName[64];
 				new realWeapon = weapon == -1 ? inflictor : weapon;
 				GetEntityClassname(realWeapon, weaponName, sizeof(weaponName));
-				//Now uses the pre-damage as the reflect.
-				War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,damage,weaponName,view_as<bool>(g_CurDamageIsWarcraft),weapon);
+				//Now uses the pre-damage as the reflect. Backstabs are instead 150 damage.
+				if(damagecustom == TF_CUSTOM_BACKSTAB){
+					War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,150.0,weaponName,view_as<bool>(g_CurDamageIsWarcraft),weapon);
+				}else{
+					War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(victim,attacker,damage,weaponName,view_as<bool>(g_CurDamageIsWarcraft),weapon);
+				}
 			}
 			//bullet
 			new Float:theMult=PhysicalArmorMulti(victim, GetBuffSumFloat(attacker, fArmorPenetration));

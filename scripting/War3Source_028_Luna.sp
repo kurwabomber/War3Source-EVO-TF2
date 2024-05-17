@@ -232,7 +232,7 @@ public OnW3PlayerAuraStateChanged(client,aura,bool:inAura,level,AuraStack,AuraOw
 		}*/
 
 		//Yes, to let mod our damage done
-		if(AuraStack>0)
+		if(AuraStack>0 && !IsInvis(AuraOwner))
 		{
 			new Float:StackBuff = float(AuraStack)*BlessingIncrease[level];
 			CurrentBlessing[client] = StackBuff + 1.0;

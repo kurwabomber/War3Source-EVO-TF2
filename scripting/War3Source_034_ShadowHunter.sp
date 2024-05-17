@@ -66,7 +66,7 @@ new Float:OutrunSpeed[]={1.28,1.3,1.32,1.34,1.35};
 //Hidden Attacks
 new Float:HiddenDamage[]={1.4,1.425,1.45,1.475,1.5};
 //Hidden
-new Float:HiddenDuration[]={4.0,4.25,4.5,4.75,5.0};
+new Float:HiddenDuration[]={3.0,3.25,3.5,3.75,4.0};
 
 public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 {
@@ -76,7 +76,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_BLINK=War3_AddRaceSkill(thisRaceID,"Blink","Teleports you by 1000 to 1400HU. (+ability)",false,4,"(voice Help!)");
 		SKILL_OUTRUN=War3_AddRaceSkill(thisRaceID,"Vision Outrun","Increases movespeed by 28% to 35%.",false,4);
 		SKILL_HIDDENATTACKS=War3_AddRaceSkill(thisRaceID,"Hidden Attacks","Attacks that are from 60 degrees backwards deal 40% to 50% more damage.",false,4);
-		ULT_HIDDEN=War3_AddRaceSkill(thisRaceID,"Hidden","Gives a cloak that you are able to attack in for 4 to 5 seconds. (+ultimate)",true,4,"(voice Jeers)");
+		ULT_HIDDEN=War3_AddRaceSkill(thisRaceID,"Hidden","Gives a cloak that you are able to attack in for 3 to 4 seconds. (+ultimate)",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_OUTRUN, fMaxSpeed, OutrunSpeed);
 	}
