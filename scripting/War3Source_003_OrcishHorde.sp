@@ -89,7 +89,8 @@ new bool:bOrbActivated[MAXPLAYERS+1];
 //					   ^Inflictor	 ^current player
 
 // Lightning Strike
-new LSMaxDamage[]={60,70,80,90,100};
+new LSMaxDamage[]={100,100,100,100,100};
+float LSRange[]={200.0,225.0,250.0,275.0,300.0}
 new Float:Cooldown[] = {20.0,19.0,18.0,17.0,16.0}; // cooldown
 new String:lightningSound[]="war3source/lightningbolt.mp3";
 char lightningOrbSound[] = "war3source/PurgeTarget1.mp3";
@@ -120,7 +121,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_WINDWALKER=War3_AddRaceSkill(thisRaceID,"Windwalker","While not in combat for 2 seconds, you gain movespeed and invisibility.\nUp to 60% invis and 45% movespeed.",false,4);
 		SKILL_CRITS=War3_AddRaceSkill(thisRaceID,"Critical Strike","You have a 10% chance to deal up to 2.5 times damage.",false,4);
 		SKILL_ORB=War3_AddRaceSkill(thisRaceID,"Orb of Lightning","Gain attackspeed and cleave within 150 HU for 6 seconds, Can give to teammates if looking nearby them.\nup to +30% attack speed and 25% cleave.",false,4, "(voice Help!)");
-		ULT_LIGHTNING=War3_AddRaceSkill(thisRaceID,"Lightning Strike","Strike nearby enemies, will chain to other enemies if nearby.\nCooldown 20s to 16s, Damage 60 to 100.",true,4,"(voice Jeers)");
+		ULT_LIGHTNING=War3_AddRaceSkill(thisRaceID,"Lightning Strike","Strike nearest enemy with lightning that chains to nearby enemies.\nCooldown 20s to 16s and deals 100 damage. Upgrading increases range (200-300hu)",true,4,"(voice Jeers)");
 
 		War3_AddSkillBuff(thisRaceID, SKILL_CRITS, fCritChance, CritChance);
 		War3_AddSkillBuff(thisRaceID, SKILL_CRITS, fCritModifier, CritMultiplier);
@@ -334,8 +335,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 			{
 				bBeenHit[client][x]=false;    
 			}
-			new Float:distance=200.0;
-			DoChain(client,distance,LSMaxDamage[skill_level],true,0);		
+			DoChain(client,LSRange[skill_level],LSMaxDamage[skill_level],true,0);		
 		}
 	}
 }
@@ -393,7 +393,10 @@ public DoChain(client,Float:distance,dmg,bool:first_call,last_target)
         TE_SetupBeamPoints(start_pos,target_pos,BeamSprite,HaloSprite,0,35,1.0,25.0,25.0,0,10.0,{255,100,255,255},40);
         TE_SendToAll();
         GetClientEyeAngles(target,vecAngles);
-        War3_EmitSoundToAll(lightningSound , target);
+		if(first_call){
+        	War3_EmitSoundToAll(lightningSound, target);
+			War3_EmitSoundToAll(lightningSound, target);
+		}
 		
         new new_dmg=RoundFloat(float(dmg)*0.80);
         

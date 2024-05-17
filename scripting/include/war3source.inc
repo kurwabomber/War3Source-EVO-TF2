@@ -1829,7 +1829,7 @@ public Action:DOTDamage(Handle:timer,any:data)
 	{
 		if(ValidPlayer(victim,true) && ValidPlayer(attacker,true))
 		{
-			SDKHooks_TakeDamage(victim,attacker,attacker,damage,damagetype,weapon,NULL_VECTOR,NULL_VECTOR);
+			War3_DealDamage(victim,RoundToCeil(damage),attacker,damagetype,"bash", W3DMGORIGIN_SKILL, W3DMGTYPE_MAGIC);
 			repeats--;
 			new Handle:hPack = CreateDataPack();
 			WritePackCell(hPack, victim);
