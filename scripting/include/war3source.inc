@@ -1829,7 +1829,7 @@ public Action:DOTDamage(Handle:timer,any:data)
 	{
 		if(ValidPlayer(victim,true) && ValidPlayer(attacker,true))
 		{
-			War3_DealDamage(victim,RoundToCeil(damage),attacker,damagetype,"bash", W3DMGORIGIN_SKILL, W3DMGTYPE_MAGIC);
+			War3_DealDamage(victim,RoundToCeil(damage),attacker,damagetype,"bash", W3DMGORIGIN_SKILL, W3DMGTYPE_MAGIC,_,true);
 			repeats--;
 			new Handle:hPack = CreateDataPack();
 			WritePackCell(hPack, victim);

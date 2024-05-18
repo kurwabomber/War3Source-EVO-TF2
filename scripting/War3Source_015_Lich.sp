@@ -378,20 +378,23 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 					new damage = DeathDecayAmt[ult_level]/targetsfound;
 					//PrintToChatAll("%i Damage", damage);
 					//PrintToChatAll("%i TargetsFound", targetsfound);
+					int damageDealt;
+					int totalDamage;
 					for(new i=0;i<targetsfound;i++)
 					{
 						new victim=targetlist[i];
 						if(War3_DealDamage(victim,RoundFloat(damage*W3GetBuffStackedFloat(victim, fUltimateResistance)),client,DMG_BULLET,"Death and Decay")) //default magic
 						{
 							//PrintToChatAll("%i Step 1 Damage", damage);
-							damage=War3_GetWar3DamageDealt();
+							damageDealt=War3_GetWar3DamageDealt();
 							W3FlashScreen(victim,RGBA_COLOR_RED);
 							//PrintHintText(victim,"Attacked by Death and Decay");
-							War3_NotifyPlayerTookDamageFromSkill(victim, client, damage, ULT_DEATHDECAY);
+							War3_NotifyPlayerTookDamageFromSkill(victim, client, damageDealt, ULT_DEATHDECAY);
 							//PrintToChatAll("%i Step 2 Damage", damage);
+							totalDamage += damageDealt;
 						}
 					}
-					PrintHintText(client,"Death and Decay attacked for %i total damage!",damage);
+					PrintHintText(client,"Death and Decay attacked for %i total damage!",totalDamage);
 					War3_CooldownMGR(client,GetConVarFloat(ultCooldownCvar),thisRaceID,ULT_DEATHDECAY,false,_);
 					War3_EmitSoundToAll(ultsnd,client);
 				}

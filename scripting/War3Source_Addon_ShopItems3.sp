@@ -18,7 +18,6 @@ public Plugin:myinfo =
 public void OnAllPluginsLoaded()
 {
 	W3Hook(W3Hook_OnW3TakeDmgBulletPre, OnW3TakeDmgBulletPre);
-	W3Hook(W3Hook_OnWar3EventPostHurt, OnWar3EventPostHurt);
 }
 
 public OnPluginStart()
@@ -252,26 +251,6 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 						DOTStock(victim,attacker,2.0+(level*0.25),-1,0,4,0.5,1.0-(level*0.05));
 					}
 				}
-			}
-		}
-	}
-	return Plugin_Changed;
-}
-public Action OnWar3EventPostHurt(int victim, int attacker, float dmgamount, char weapon[32], bool isWarcraft, const float damageForce[3], const float damagePosition[3])
-{
-	if(ValidPlayer(attacker,false) && ValidPlayer(victim,false)&&victim>0&&attacker>0&&attacker!=victim)
-	{
-		int vteam=GetClientTeam(victim);
-		int ateam=GetClientTeam(attacker);
-		if(vteam!=ateam)
-		{
-			//Attacker Checks.
-			if(!Perplexed(attacker,false))
-			{
-				new attackerrace = War3_GetRace(attacker);
-				if(!ValidRace(attackerrace))
-					return Plugin_Continue;
-				//Orange
 				if(War3_GetOwnsItem3(attacker,attackerrace,ItemID[MAGMACHARM]))
 				{
 					new level = War3_GetItemLevel(attacker,attackerrace,ItemID[MAGMACHARM])+1;
@@ -283,8 +262,9 @@ public Action OnWar3EventPostHurt(int victim, int attacker, float dmgamount, cha
 			}
 		}
 	}
-	return Plugin_Continue;
+	return Plugin_Changed;
 }
+
 public Action:SDK_Forwarded_TraceAttack(victim, &attacker, &inflictor, &Float:damage, &damagetype, &ammotype, hitbox, hitgroup)
 {
 	new bool:changed = false;

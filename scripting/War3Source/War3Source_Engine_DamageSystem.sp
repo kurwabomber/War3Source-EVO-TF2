@@ -395,7 +395,7 @@ public Action:SDK_Forwarded_OnTakeDamage(victim,&attacker,&inflictor,&Float:dama
 		Call_PushCell(attacker);
 		Call_PushFloat(damage);
 		Call_Finish(dummyresult); //this will be returned to
-		if(!g_CurDamageIsWarcraft)
+		if(!g_CurDamageIsWarcraft && damagetype != DMG_BURN + DMG_PREVENT_PHYSICS_FORCE)
 		{
 			Call_StartForward(p_OnW3TakeDmgBulletPre);
 			Call_PushCell(victim);
@@ -416,7 +416,7 @@ public Action:SDK_Forwarded_OnTakeDamage(victim,&attacker,&inflictor,&Float:dama
 			Call_PushCell(attacker);
 			Call_PushFloat(damage);
 			Call_Finish(dummyresult); //this will be returned to
-			if(!g_CurDamageIsWarcraft)
+			if(!g_CurDamageIsWarcraft && damagetype != DMG_BURN + DMG_PREVENT_PHYSICS_FORCE)
 			{
 				Call_StartForward(p_OnW3TakeDmgBullet);
 				Call_PushCell(victim);

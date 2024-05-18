@@ -280,6 +280,7 @@ public Action:War3Source_UltimateCommand(client,args)
 		War3_ChatMessage(client,"%s is currently paused, please wait until %s resumes.",W3GAMETITLE,W3GAMETITLE);
 		return Plugin_Continue;
 	}
+	if(IsInvis(client)) return Plugin_Continue;
 
 	char command[32];
 	GetCmdArg(0,command,sizeof(command));
