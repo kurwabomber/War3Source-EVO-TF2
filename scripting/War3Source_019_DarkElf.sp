@@ -161,6 +161,11 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 				GetClientAbsOrigin(target,victimvec);
 				//W3FlashScreen(target,RGBA_COLOR_BLACK,duration,0.5,FFADE_OUT); RGBA_COLOR_etc doesn't work.
 				W3FlashScreen(target,{0,0,0,255},duration,0.5,FFADE_OUT);
+				if(IsFakeClient(target)){
+					War3_SetBuff(target,bDisarm,thisRaceID,true);
+					CreateTimer(duration, UndisarmClient, EntIndexToEntRef(target));
+				}
+
 				War3_EmitSoundToAll(darkorb,target);
 				War3_EmitSoundToAll(darkorb,target);
 
@@ -172,6 +177,13 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 			}
 		}
 	}
+}
+public Action UndisarmClient(Handle timer, int ref){
+	int client = EntRefToEntIndex(ref);
+	if(IS_PLAYER(client)){
+		War3_SetBuff(client,bDisarm,thisRaceID,false);
+	}
+	return Plugin_Stop;
 }
 /*
 public bool:DarkorbFilter(client,target)
