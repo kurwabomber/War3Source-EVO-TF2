@@ -206,7 +206,6 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 public Action:Timer_Ammo_Regen(Handle:timer, any:user)
 {
 	//PrintToChatAll("Timer called, timestamp: %i", GetTime());
-	new iMaxMetal = 200;
 	new iMetalToAdd = 0;
 
 	for (new i=1; i<=MaxClients; i++)
@@ -223,7 +222,9 @@ public Action:Timer_Ammo_Regen(Handle:timer, any:user)
 
 		new iCurrentMetal = GetEntProp(i, Prop_Data, "m_iAmmo", 4, 3);
 		new iNewMetal = iMetalToAdd + iCurrentMetal;
-		if (iNewMetal <= iMaxMetal && GetClientHealth(i)>50)
+
+		int maxMetal = RoundFloat(200*TF2Attrib_HookValueFloat(1.0, "mult_maxammo_metal", i));
+		if (iNewMetal <= maxMetal && GetClientHealth(i)>50)
 		{
 			SetEntProp(i, Prop_Data, "m_iAmmo", iNewMetal, 4, 3);
 			War3_DecreaseHP(i,NANO_decrease_health[Nano_Production_level]);

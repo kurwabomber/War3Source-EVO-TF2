@@ -924,8 +924,10 @@ public Action:event_player_builtobject(Handle:event, const String:name[], bool:d
 					new OldMetal = GetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), 4);
 					SetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), OldMetal+30, 4, true);
 					new Metal = GetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), 4);
-					if(Metal>200)
-						SetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), 200, 4, true);
+
+					int maxMetal = RoundFloat(200*TF2Attrib_HookValueFloat(1.0, "mult_maxammo_metal", owner));
+					if(Metal>maxMetal)
+						SetEntData(owner, FindDataMapInfo(owner, "m_iAmmo") + (3 * 4), maxMetal, 4, true);
 					//}
 					//if((GetEntProp(index, Prop_Send, "m_bBuilding") == 1 ))
 					SetEntProp(index, Prop_Send, "m_iHighestUpgradeLevel", 1);
