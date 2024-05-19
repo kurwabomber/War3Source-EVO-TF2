@@ -170,32 +170,6 @@ public OnW3Denyable(W3DENY:event,client)
 		}
 	}
 }
-//Add support for dmg reduction on sentries.
-public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int damagecustom)
-{
-	if(ValidPlayer(attacker,true) && ValidPlayer(victim,true))
-	{
-		if(GetClientTeam(victim)==GetClientTeam(attacker))
-		{
-			return Plugin_Continue;
-		}
-	}
-	if(IsValidEntity(victim)&&ValidPlayer(attacker,false))
-	{
-		if(HasEntProp(victim,Prop_Send,"m_hBuilder"))
-		{
-			new owner = GetEntPropEnt(victim,Prop_Send,"m_hBuilder");//It's a building
-			if(ValidPlayer(owner,true) && War3_GetRace(owner) == thisRaceID)
-			{
-				if(W3GetPhysicalArmorMulti(owner) != 1.0)
-				{
-					War3_DamageModPercent(W3GetPhysicalArmorMulti(owner));
-				}
-			}
-		}
-	}
-	return Plugin_Changed;
-}
 public OnMapStart()
 {
 	CreateTimer(1.0, Timer_Ammo_Regen, _, TIMER_REPEAT);

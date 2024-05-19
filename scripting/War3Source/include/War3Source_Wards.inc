@@ -50,6 +50,10 @@ native War3_CreateWard(client, Float:location[], radius, Float:duration, Float:p
  */
 native bool:War3_RemoveWard(wardindex);
 
+/*
+// Removes all wards of a client. Returns true if wards were removed.
+*/
+native bool:War3_RemoveWards(int client);
 
 native bool:War3_IsWardDistanceTooClose(client,Float:DistanceCheck);
 

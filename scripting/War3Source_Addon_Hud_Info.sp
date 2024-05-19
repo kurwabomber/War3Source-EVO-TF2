@@ -258,11 +258,14 @@ public Action:HudInfo_Timer(Handle:timer)
                     Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nSpeed: x%.2f",MiniHUD_Text, speedmulti);
                 }
                 
-                if(W3GetBuffMinFloat(client,fLowGravitySkill) != 1.0)
-                {
-                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nGravity: x%.2f",MiniHUD_Text, W3GetBuffMinFloat(client,fLowGravitySkill));
+                float skillGravity = W3GetBuffMinFloat(client,fLowGravitySkill);
+                float itemGravity = W3GetBuffMinFloat(client,fLowGravityItem);
+                if(itemGravity > skillGravity){
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nGravity: x%.2f",MiniHUD_Text, itemGravity);
                 }
-                
+                else if(skillGravity != 1.0){
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nGravity: x%.2f",MiniHUD_Text, skillGravity);
+                }
                 new Float:falpha=1.0;
                 if(!W3GetBuffHasTrue(client,bInvisibilityDenySkill))
                 {

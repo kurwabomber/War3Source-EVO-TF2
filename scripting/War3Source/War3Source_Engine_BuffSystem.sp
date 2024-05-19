@@ -959,22 +959,18 @@ GetBuffMinInt(client,W3Buff:buffindex)
 
 stock Float:PhysicalArmorMulti(client, float penetration=0.0){
 	new Float:armor=Float:GetBuffSumFloat(client,fArmorPhysical)-penetration;
-	//PrintToServer("physical armor=%f",armor);
-	if(armor<0.0){
-		armor=armor*-1.0;
-		return ((armor*0.06)/(1.0+armor*0.06))+1.0;
-	}
-	return (1.0-(armor*0.06)/(1.0+armor*0.06));
+	if(armor<0.0)
+		armor = 0.0;
+	
+	return 1.0/(1.0+0.06*armor);
 }
 stock Float:MagicArmorMulti(client, float penetration=0.0){
 
 	new Float:armor=Float:GetBuffSumFloat(client,fArmorMagic)-penetration;
-	//PrintToServer("magical armor=%f",armor);
-	if(armor<0.0){
-		armor=armor*-1.0;
-		return ((armor*0.06)/(1.0+armor*0.06))+1.0;
-	}
-	return (1.0-(armor*0.06)/(1.0+armor*0.06));
+	if(armor<0.0)
+		armor = 0.0;
+	
+	return 1.0/(1.0+0.06*armor);
 }
 
 //use 0 < limit

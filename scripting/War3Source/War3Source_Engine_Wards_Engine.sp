@@ -77,6 +77,7 @@ public bool:War3Source_Engine_Wards_Engine_InitNatives()
 	CreateNative("War3_GetWardSkill", Native_War3_GetWardSkill);
 	CreateNative("War3_GetWardCount", Native_War3_GetWardCount);
 	CreateNative("War3_RemoveWard", Native_War3_RemoveWard);
+	CreateNative("War3_RemoveWards", Native_War3_RemoveWards);
 
 	// Initialize the data structure arrays
 	g_hWardOwner = CreateArray(1);
@@ -181,7 +182,7 @@ public Native_War3_CreateWard(Handle:plugin, numParams)
 	// EventArg2 - Distance Check Float - max distance ward needs to be away from another ward.
 	internal_W3SetVar(EventArg1,false);
 	new iRadius = GetNativeCell(3);
-	new Float:fDistance = (float(iRadius) + 185.0);
+	new Float:fDistance = (float(iRadius) + 85.0);
 	internal_W3SetVar(EventArg2,fDistance);
 	if(W3Denyable(DN_CanPlaceWard, client))
 	{
@@ -402,6 +403,10 @@ public Native_War3_RemoveWard(Handle:plugin, numParams)
 {
 	return bool:RemoveWard(GetNativeCell(1));
 }
+public Native_War3_RemoveWards(Handle:plugin, numParams)
+{
+	return bool:RemoveWards(GetNativeCell(1));
+}
 
 public bool:RemoveWard(id)
 {
@@ -426,15 +431,17 @@ public bool:RemoveWard(id)
 	return false;
 }
 
-public RemoveWards(client)
+public bool RemoveWards(client)
 {
+	bool hasRemoved;
 	for(new id=0; id < GetArraySize(g_hWardOwner); id++)
 	{
 		if(GetArrayCell(g_hWardOwner, id) == client)
 		{
-			RemoveWard(id);
+			hasRemoved = RemoveWard(id);
 		}
 	}
+	return hasRemoved;
 }
 
 public War3Source_Engine_Wards_Engine_OnWar3EventDeath(victim, attacker)

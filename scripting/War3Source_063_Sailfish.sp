@@ -8,8 +8,8 @@
 
 #define RACE_ID_NUMBER 630
 
-new MaximumWards[]={4,4,5,5,6};
-new PushPower[]={5,6,7,8,8};
+new MaximumWards[]={4,5,6,7,8};
+new PushPower[]={40,42,45,47,50};
 
 new Float:SwimSpeed[]={2.25,2.5,2.65,2.8,3.0};
 
@@ -110,9 +110,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 
 		SKILL_SWIMFAST = War3_AddRaceSkill( thisRaceID, "Swim Uber Fast", "Swim 1.5 to 3 times faster!\nIn Water Only", false, 4 );
 		
-		SKILL_BUGZAP_WARD = War3_AddRaceSkill( thisRaceID, "Bug Zapper", "(+ability) Zaps enemies.\nMaximum of 6 wards 120 HU radius.\n2 to 8 dmg per quarter second", false, 4, "(voice Help!)");
+		SKILL_BUGZAP_WARD = War3_AddRaceSkill( thisRaceID, "Bug Zapper", "(+ability) Zaps enemies.\nMaximum of 8 wards 120 HU radius.\n40 to 50 dmg per second", false, 4, "(voice Help!)");
 
-		SKILL_HYPERSWIM = War3_AddRaceSkill( thisRaceID, "(+ability2) Hyper Swim", "Gives you an extra push of hyper speed\nIn Water Only!", false, 4, "(voice Battle Cry)");
+		SKILL_HYPERSWIM = War3_AddRaceSkill( thisRaceID, "Hyper Swim", "(+ability2) Gives you an extra push of hyper speed\nIn Water Only!", false, 4, "(voice Battle Cry)");
 
 		SKILL_WATERBREATHING = War3_AddRaceSkill( thisRaceID, "Water Breathing", "Stay under water longer.\nLast level is infinite water breathing!\nIn Water Only!", false, 4 );
 
@@ -325,14 +325,15 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 			{
 				new Float:location[3];
 				GetClientAbsOrigin(client, location);
-				if(War3_CreateWardMod(client, location, 120, 120.0, 0.5, "zap", SKILL_BUGZAP_WARD, PushPower, WARD_TARGET_ENEMYS, _, _, _, _, true)>-1)
+				if(War3_CreateWardMod(client, location, 120, 360.0, 1.0, "zap", SKILL_BUGZAP_WARD, PushPower, WARD_TARGET_ENEMYS)>-1)
 				{
 					W3MsgCreatedWard(client, War3_GetWardCount(client), MaximumWards[skill_level]);
 				}
 			}
 			else
 			{
-				W3MsgNoWardsLeft(client);
+				PrintHintText(client, "All of your wards were reset.");
+				War3_RemoveWards(client);
 			}
 		}
 	}

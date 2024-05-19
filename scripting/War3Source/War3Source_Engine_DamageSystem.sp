@@ -353,6 +353,13 @@ public Action:SDK_Forwarded_OnTakeDamage(victim,&attacker,&inflictor,&Float:dama
 				}
 			}
 		}
+		else if(HasEntProp(victim,Prop_Send,"m_hBuilder")){
+			new owner = GetEntPropEnt(victim,Prop_Send,"m_hBuilder");//Damage Reductions for buildings. Does not apply if sentry is wrangled, or if building is disabled.
+			if(ValidPlayer(owner,true) && (!HasEntProp(victim, Prop_Send, "m_nShieldLevel") || GetEntProp(victim, Prop_Send, "m_nShieldLevel") == 0) && !GetEntProp(victim, Prop_Send, "m_bDisabled"))
+			{
+				damage *= PhysicalArmorMulti(owner, GetBuffSumFloat(attacker, fArmorPenetration));
+			}
+		}
 		if(!g_CurDamageIsWarcraft && ValidPlayer(attacker))
 		{
 			new Float:now=GetGameTime();
