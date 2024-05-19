@@ -313,7 +313,7 @@ public OnWar3EventDeath(victim, attacker)
 
 	int race=W3GetVar(DeathRace);
 
-	if(race==thisRaceID && !pVictim.hexed && pVictim.skillnotcooldown(thisRaceID,SKILL_SUICIDE,true))
+	if(race==thisRaceID && !pVictim.hexed && pVictim.skillnotcooldown(thisRaceID,SKILL_SUICIDE,true) && (!GetEntProp(victim, Prop_Send, "m_bUseBossHealthBar") || !GetEntProp(victim, Prop_Send, "m_bIsMiniBoss")))
 	{
 		pVictim.RESwarn = true;
 		float VecPos[3];

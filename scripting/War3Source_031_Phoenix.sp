@@ -104,7 +104,7 @@ public OnWar3EventDeath(victim, attacker)
 		return;
 
 	int race=W3GetVar(DeathRace);
-	if(race==thisRaceID && !Silenced(victim) && War3_SkillNotInCooldown(victim,thisRaceID,SKILL_REVIVE,true))
+	if(race==thisRaceID && !Silenced(victim) && War3_SkillNotInCooldown(victim,thisRaceID,SKILL_REVIVE,true) && (!GetEntProp(victim, Prop_Send, "m_bUseBossHealthBar") || !GetEntProp(victim, Prop_Send, "m_bIsMiniBoss")))
 	{
 		float VecPos[3];
 		float Angles[3];

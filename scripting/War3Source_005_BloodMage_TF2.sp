@@ -613,7 +613,7 @@ public PlayerDeathEvent(Handle:event,const String:name[],bool:dontBroadcast)
 			//find a revival
 
 			// Can_Player_Revive is the team switch checking variable
-			if(CooldownRevive(victim)&&Can_Player_Revive[victim]) {
+			if(CooldownRevive(victim)&&Can_Player_Revive[victim] && (!GetEntProp(victim, Prop_Send, "m_bUseBossHealthBar") || !GetEntProp(victim, Prop_Send, "m_bIsMiniBoss"))) {
 			//if(Can_Player_Revive[victim]) {
 				for(new i=1;i<=MaxClients;i++)
 				{
