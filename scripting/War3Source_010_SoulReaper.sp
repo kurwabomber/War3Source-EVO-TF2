@@ -1,4 +1,5 @@
 #include <war3source>
+#include <tf2utils>
 #assert GGAMEMODE == MODE_WAR3SOURCE
 
 #define RACE_ID_NUMBER 10
@@ -26,8 +27,8 @@ new SKILL_JUDGE, SKILL_PRESENCE,SKILL_INHUMAN, ULT_EXECUTE;
 
 
 // Chance/Data Arrays
-new JudgementAmount[]={40,45,50,55,60};
-new Float:JudgementCooldownTime=10.0;
+new JudgementAmount[]={40,40,40,40,40};
+float JudgementCooldownTime[]= {15.0, 14.0, 13.0, 12.0, 11.0};
 new Float:JudgementRange=600.0;
 
 new Float:PresenseAmount[]={5.0,5.2,5.4,5.6,5.8};
@@ -36,8 +37,8 @@ new Float:PresenceRange[]={305.0,320.0,340.0,360.0,380.0};
 new InhumanAmount[]={0,5,10,15,20,22,25,27,30};
 new Float:InhumanRange=800.0;
 
-new Float:ultRange=400.0;
-new Float:ultCooldown[]={35.0,33.0,31.0,29.0,27.0};
+new Float:ultRange=200.0;
+new Float:ultCooldown[]={35.0,34.0,33.0,32.0,31.0};
 
 new String:judgesnd[]="war3source/sr/judgement.mp3";
 new String:ultsnd[]="war3source/SOulBurn.mp3";
@@ -124,10 +125,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("sr",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Soul Reaper","sr",reloadrace_id,"Execution, magic damage.");
-		SKILL_JUDGE=War3_AddRaceSkill(thisRaceID,"Judgement","[+ability] Heals teammates around you, damages enemies around you.\nDamage/heals for 40-60, Cooldown is 10s and radius is 600HU.",false,4,"(voice Help!)");
+		SKILL_JUDGE=War3_AddRaceSkill(thisRaceID,"Judgement","[+ability] Heals teammates around you, damages enemies around you.\nDamage/heals for 40, Cooldown is 15s and radius is 600HU.\nUpgrading decreases cooldown by -1s.",false,4,"(voice Help!)");
 		SKILL_PRESENCE=War3_AddRaceSkill(thisRaceID,"Withering Presence","Enemies take non-lethal damage just by being within 200 to 380 HU of you.\nDeals 4 to 5.8 DPS.",false,4);
 		SKILL_INHUMAN=War3_AddRaceSkill(thisRaceID,"Inhuman Nature","Heals for 20-30hp from anyone dying in a 800HU radius.",false,4);
-		ULT_EXECUTE=War3_AddRaceSkill(thisRaceID,"Demonic Execution","(+ultimate)Instantly executes targets below 20% health.\nDeals 80 * (1.5 - cHP/mHP) damage to target.\nCooldown is 35s. Each level red. CD by -2s.",true,4,"(voice Jeers)");
+		ULT_EXECUTE=War3_AddRaceSkill(thisRaceID,"Demonic Execution","(+ultimate)Deals 20 + 40% of targets lost health.\nCooldown is 35s. Each level red. CD by -1s.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 
 		AuraID=W3RegisterChangingDistanceAura("witheringpresense",true);
@@ -198,7 +199,7 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 			PrintHintText(client,"+/- %d HP",amount);
 			War3_EmitSoundToAll(judgesnd,client);
 			War3_EmitSoundToAll(judgesnd,client);
-			War3_CooldownMGR(client,JudgementCooldownTime,thisRaceID,SKILL_JUDGE,true,true);
+			War3_CooldownMGR(client,JudgementCooldownTime[skill_level],thisRaceID,SKILL_JUDGE,true,true);
 		}
 	}
 }
@@ -221,13 +222,9 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 			{
 				if(!W3HasImmunity(target,Immunity_Ultimates))
 				{
-					new dmg=RoundFloat(80.0 * (1.5 - (float(GetClientHealth(target))/War3_GetMaxHP(target)) ) * W3GetBuffStackedFloat(target, fUltimateResistance));
+					new dmg=RoundFloat( (20.0 + 0.4 * (TF2Util_GetEntityMaxHealth(target) - GetClientHealth(target))) * W3GetBuffStackedFloat(target, fUltimateResistance));
 
-					if(GetClientHealth(target)/float(War3_GetMaxHP(target)) <= 0.2){
-						PrintHintText(client,"Executed %N!", target);
-						War3_DealDamage(target,GetClientHealth(target)*2,client,_,"demonicexecution")
-					}
-					else if(dmg >= 0 && War3_DealDamage(target,dmg,client,_,"demonicexecution"))
+					if(dmg >= 0 && War3_DealDamage(target,dmg,client,_,"demonicexecution"))
 					{
 						PrintHintText(client,"Dealt %i damage with demonic execution!", War3_GetWar3DamageDealt());
 						War3_NotifyPlayerTookDamageFromSkill(target, client, War3_GetWar3DamageDealt(), ULT_EXECUTE);
