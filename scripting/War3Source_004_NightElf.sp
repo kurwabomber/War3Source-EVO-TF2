@@ -520,7 +520,7 @@ public OnWar3CastingFinished(client, target, W3SpellEffects:spelleffect, String:
 				bIsEntangled[target]=true;
 
 				iTarget.setbuff(bNoMoveMode,thisRaceID,true,client);
-				float entangle_time=EntangleDuration[skill_level] * W3GetBuffStackedFloat(target, fAbilityResistance);
+				float entangle_time=EntangleDuration[skill_level] * W3GetBuffStackedFloat(target, fUltimateResistance);
 				CreateTimer(entangle_time,StopEntangle,target);
 				float effect_vec[3];
 				GetClientAbsOrigin(target,effect_vec);

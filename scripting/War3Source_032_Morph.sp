@@ -89,9 +89,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("morph",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Morphling","morph",reloadrace_id,"Morphling from DOTA");
-		SKILL_STRMORPH=War3_AddRaceSkill(thisRaceID,"Strength Morph","Gives 4 morph points.\nPer each point assigned to strength, you gain 2.4% to 3% damage & 0.5 to 0.7 regeneration.",false,4,"(voice Help!)");
-		SKILL_AGIMORPH=War3_AddRaceSkill(thisRaceID,"Agility Morph","Gives 4 morph points.\nPer each point assigned to agility, you gain 3.5% to 4% movespeed & 0.5 to 0.9 armor.",false,4,"(voice Battle Cry)");
-		SKILL_LIQUID=War3_AddRaceSkill(thisRaceID,"Splishy Splashy (Liquid Form)","Gives 3% to 10% evasion.",false,4);
+		SKILL_STRMORPH=War3_AddRaceSkill(thisRaceID,"Strength Morph","Per each point assigned to strength, you gain 2.4% to 3% damage & 0.5 to 0.7 regeneration.",false,4,"(voice Help!)");
+		SKILL_AGIMORPH=War3_AddRaceSkill(thisRaceID,"Agility Morph","Per each point assigned to agility, you gain 3.5% to 4% movespeed & 0.5 to 0.9 armor.",false,4,"(voice Battle Cry)");
+		SKILL_LIQUID=War3_AddRaceSkill(thisRaceID,"Splishy Splashy (Liquid Form)","Gives 6% to 10% evasion.",false,4);
 		ULT_MORPH=War3_AddRaceSkill(thisRaceID,"Morph","Changes your race & class to your target. Targets whoever is within a cone.\n1050 to 1250HU range, 60s cooldown, and 6 to 7s duration.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_LIQUID, fDodgeChance, Evasion);
@@ -153,7 +153,7 @@ public OnRaceChanged(client,oldrace,newrace)
 	{
 		strPoints[client] = 0;
 		agiPoints[client] = 0;
-		morphPoints[client] = 8;
+		morphPoints[client] = 4;
 	}
 }
 public OnAbilityCommand(client,ability,bool:pressed)
@@ -234,7 +234,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 					
 					isMorphed[client] = true;
 					
-					CreateTimer(MorphDuration[skill_level],ResetMorph,client);
+					CreateTimer(MorphDuration[skill_level]*W3GetBuffStackedFloat(target, fUltimateResistance),ResetMorph,client);
 				}
 				else
 				{
