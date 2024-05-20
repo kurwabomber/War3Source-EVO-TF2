@@ -59,7 +59,7 @@ public OnWar3RaceDisabled(oldrace)
 new SKILL_BLINK, SKILL_OUTRUN, SKILL_HIDDENATTACKS, ULT_HIDDEN;
 
 //Blink
-new Float:BlinkDistance[]={1000.0,1100.0,1200.0,1300.0,1400.0};
+new Float:BlinkDistance[]={650.0,680.0,720.0,760.0,800.0};
 new String:teleportSound[]="war3source/blinkarrival.mp3";
 //Vision Outrun
 new Float:OutrunSpeed[]={1.28,1.3,1.32,1.34,1.35};
@@ -67,16 +67,18 @@ new Float:OutrunSpeed[]={1.28,1.3,1.32,1.34,1.35};
 new Float:HiddenDamage[]={1.4,1.425,1.45,1.475,1.5};
 //Hidden
 new Float:HiddenDuration[]={3.0,3.25,3.5,3.75,4.0};
+char ultSound[]="misc/halloween/merasmus_appear.wav";
+char ultCloakSound[]="player/spy_uncloak_feigndeath.wav";
 
 public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 {
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("shadowhunter",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Shadow Hunter","shadowhunter",reloadrace_id,"Spy Race");
-		SKILL_BLINK=War3_AddRaceSkill(thisRaceID,"Blink","Teleports you by 1000 to 1400HU. (+ability)",false,4,"(voice Help!)");
+		SKILL_BLINK=War3_AddRaceSkill(thisRaceID,"Blink","Teleports you by 650 to 800HU. (+ability)",false,4,"(voice Help!)");
 		SKILL_OUTRUN=War3_AddRaceSkill(thisRaceID,"Vision Outrun","Increases movespeed by 28% to 35%.",false,4);
 		SKILL_HIDDENATTACKS=War3_AddRaceSkill(thisRaceID,"Hidden Attacks","Attacks that are from 60 degrees backwards deal 40% to 50% more damage.",false,4);
-		ULT_HIDDEN=War3_AddRaceSkill(thisRaceID,"Hidden","Gives a cloak that you are able to attack in for 3 to 4 seconds. (+ultimate)",true,4,"(voice Jeers)");
+		ULT_HIDDEN=War3_AddRaceSkill(thisRaceID,"Soulweaver","Gain a 85% invis cloak, +30% damage bonus, and +10 physical armor for 3-5s. (+ultimate)",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_OUTRUN, fMaxSpeed, OutrunSpeed);
 	}
@@ -99,6 +101,8 @@ public OnMapStart()
 {
 	UnLoad_Hooks();
 	PrecacheSound(teleportSound);
+	PrecacheSound(ultSound);
+	PrecacheSound(ultCloakSound);
 }
 public OnAddSound(sound_priority)
 {
@@ -121,6 +125,9 @@ public OnRaceChanged(client,oldrace,newrace)
 	if(newrace!=thisRaceID)
 	{
 		War3_SetBuff(client,fMaxSpeed,thisRaceID,1.0);
+		War3_SetBuff(client,fArmorPhysical, thisRaceID, 0.0);
+		War3_SetBuff(client,fInvisibilitySkill, thisRaceID, 1.0);
+		War3_SetBuff(client,fDamageModifier, thisRaceID, 0.0);
 	}
 }
 public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
@@ -134,9 +141,20 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 		if(!Silenced(client)&&War3_SkillNotInCooldown(client,thisRaceID,ULT_HIDDEN,true ))
 		{
 			War3_CooldownMGR(client,25.0,thisRaceID,ULT_HIDDEN,_,_);
-			TF2_AddCondition(client, TFCond_Stealthed,HiddenDuration[skill_level]);
+			War3_SetBuff(client, fArmorPhysical, thisRaceID, 10.0);
+			War3_SetBuff(client, fInvisibilitySkill, thisRaceID, 0.15);
+			War3_SetBuff(client, fDamageModifier, thisRaceID, 0.3);
+			CreateTimer(HiddenDuration[skill_level], StopSoulweaver, client);
+			War3_EmitSoundToAll(ultCloakSound, client);
 		}
 	}
+}
+public Action StopSoulweaver(Handle timer, int client){
+	War3_SetBuff(client, fArmorPhysical, thisRaceID, 0.0);
+	War3_SetBuff(client, fInvisibilitySkill, thisRaceID, 1.0);
+	War3_SetBuff(client, fDamageModifier, thisRaceID, 0.0);
+	War3_EmitSoundToAll(ultSound, client);
+	return Plugin_Stop;
 }
 public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int damagecustom)
 {

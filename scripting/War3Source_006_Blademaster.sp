@@ -89,7 +89,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace("Blademaster","blademaster",reloadrace_id,"True melee, crits, tank.");
 		SKILL_CRITS=War3_AddRaceSkill(thisRaceID,"Heavy Impact","+100% bash chance. 0.2s-0.3 bash duration.\nDeals +20-35 damage on bash.",false,4);
 		SKILL_BERSERK=War3_AddRaceSkill(thisRaceID,"Berserk","Passive : Gives +60-100 health and +20%-28% movespeed.",false,4);
-		SKILL_SALVE=War3_AddRaceSkill(thisRaceID,"Healing Salve","After 4 seconds of being out of combat, you gain +16-24 regen per second.",false,4);
+		SKILL_SALVE=War3_AddRaceSkill(thisRaceID,"Healing Salve","After 6 seconds of being out of combat, you gain +16-24 regen per second.",false,4);
 		ULT_WARCRY=War3_AddRaceSkill(thisRaceID,"War Cry","Gives damage and movespeed to you and nearby players.\n+30-40% damage boost, +30-35% movespeed, 600-650HU radius, lasts 8 seconds.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		
@@ -164,7 +164,7 @@ public Action:Timer_CheckSalve(Handle:timer)
 	{
 		if(ValidPlayer(i))
 		{
-			if(War3_GetRace(i)==thisRaceID && TimeOutOfCombat[i] >= 4)
+			if(War3_GetRace(i)==thisRaceID && TimeOutOfCombat[i] >= 6)
 			{
 				new skilllvl = War3_GetSkillLevel(i,thisRaceID,SKILL_SALVE);
 				new Float:RegenPerTick = Regeneration[skilllvl];

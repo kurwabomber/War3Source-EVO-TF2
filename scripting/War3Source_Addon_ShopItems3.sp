@@ -70,7 +70,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		
 		//Green - Blue & Yellow
 		ItemID[SPRINGGEM]=War3_CreateShopItem3("Spring Gem","spring","Gives +2/s regen.\nWhile your health is below or equal to 40%%, regen is boosted by 2x.\nUpgrading increases regen. 0.1 regen per level.",60,"Green","Spring Gem",10,"Spring Gem",0);
-		ItemID[SOLARCREST]=War3_CreateShopItem3("Solar Crest","heat","Gives a 20 damage barrier every 10s that gives:\n+1 armor while active. Increases armor bonus by +0.05 per level.",50,"Green","Solar Crest",20,"Solar Crest",0);
+		ItemID[SOLARCREST]=War3_CreateShopItem3("Solar Crest","heat","Gives a 20 damage barrier every 10s that gives:\n+1.5 armor while active. Increases armor bonus by +0.05 per level.",50,"Green","Solar Crest",20,"Solar Crest",0);
 		
 		//Purple - Red & Blue
 		ItemID[MARKSMAN]=War3_CreateShopItem3("Marksman's Sign","marksman","Shots to the head deal 15%% more damage and have 15%% lifesteal.\nLeveling up increases lifesteal. +1%% lifesteal per level.",50,"Purple","Marksman's Sign",10,"Marksman's Sign",0);
@@ -168,9 +168,16 @@ public Action:Timer_QuickTimer(Handle:timer)
 				War3_SetBuffItem3(client,fAttackSpeed,ItemID[RAGE],1.0);
 			}
 
-			if(War3_GetOwnsItem3(client,race,ItemID[SOLARCREST]) && currentBarrier[client] > 0.0){
-				War3_SetBuffItem3(client,fArmorPhysical,ItemID[SOLARCREST],1.0);
-				War3_SetBuffItem3(client,fArmorMagic,ItemID[SOLARCREST],1.0);
+			if(War3_GetOwnsItem3(client,race,ItemID[SOLARCREST])){
+				new level = War3_GetItemLevel(client,race,ItemID[SOLARCREST])+1;
+				if(currentBarrier[client] > 0.0){
+					War3_SetBuffItem3(client,fArmorPhysical,ItemID[SOLARCREST],1.5 + 0.05*level);
+					War3_SetBuffItem3(client,fArmorMagic,ItemID[SOLARCREST],1.5 + 0.05*level);
+				}
+				else{
+					War3_SetBuffItem3(client,fArmorPhysical,ItemID[SOLARCREST],0.0);
+					War3_SetBuffItem3(client,fArmorMagic,ItemID[SOLARCREST],0.0);
+				}
 			}
 		}
 	}
