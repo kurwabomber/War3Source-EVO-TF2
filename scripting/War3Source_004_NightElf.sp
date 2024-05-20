@@ -165,6 +165,8 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		SKILL_THORNS=War3_AddRaceSkill(thisRaceID,"Thorns Aura","You deal up to 30% percent of damage recieved to your attacker. ",false,4);
 		SKILL_TRUESHOT=War3_AddRaceSkill(thisRaceID,"Trueshot Aura","Your attacks deal up to 30% percent more damage",false,4);
 		ULT_ENTANGLE=War3_AddRaceSkill(thisRaceID,"Entangling Roots","Bind enemies to the ground,\nrendering them immobile for up to 6 seconds. Up to 4000HU range.\nHas 2 second casting time.",true,4,"(voice Jeers)");
+
+		War3_AddSkillBuff(thisRaceID, SKILL_EVADE, fDodgeChance, EvadeChance);
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }
@@ -191,6 +193,7 @@ public RemovePassiveSkills(client)
 {
 	ThisRacePlayer player = ThisRacePlayer(client);
 	player.setbuff(fInvisibilitySkill,thisRaceID,1.0);
+	War3_SetBuff(client,fDodgeChance,thisRaceID,0.0);
 }
 
 
@@ -326,44 +329,6 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 	}
 	if(IsValidEntity(victim)&&ValidPlayer(attacker,false))
 	{
-		//evade
-		//if they are not this race thats fine, later check for race
-		if(ValidPlayer(victim,true))
-		{
-			if(iVictim.raceid==thisRaceID &&
-			!(W3GetDamageType()!=262208 //grenade
-			||W3GetDamageType()!=2359360 //rocket
-			||W3GetDamageType()!=16777218 //pyro flare
-			||W3GetDamageType()!=2490432 //sticky
-			||W3GetDamageType()!=2097216 //melee explosive demoman cabor?
-			))
-			{
-				int skill_level_evasion=iVictim.getskilllevel(thisRaceID,SKILL_EVADE);
-				float resistance = W3GetBuffStackedFloat(attacker, fAbilityResistance);
-
-				if(!iVictim.hexed && GetRandomFloat(0.0,1.0)<=EvadeChance[skill_level_evasion]*resistance)
-				{
-					if(!iAttacker.immunity(Immunity_Skills))
-					{
-						iVictim.flashscreen(RGBA_COLOR_BLUE);
-
-						War3_DamageModPercent(0.0); //NO DAMAMGE
-
-						W3MsgEvaded(iVictim.index,iAttacker.index);
-						#if GGAMETYPE == GGAME_TF2
-						float pos[3];
-						GetClientEyePosition(iVictim.index, pos);
-						pos[2] += 4.0;
-						War3_TF_ParticleToClient(0, "miss_text", pos); //to the attacker at the enemy pos
-						#endif
-					}
-					else
-					{
-						iVictim.immunefromskill(iAttacker.index, SKILL_EVADE);
-					}
-				}
-			}
-		}
 		// Trueshot Aura
 		if(iAttacker.raceid==thisRaceID)
 		{

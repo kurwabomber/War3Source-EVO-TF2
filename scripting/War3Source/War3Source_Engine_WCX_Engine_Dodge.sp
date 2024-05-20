@@ -39,7 +39,7 @@ public dodge_internal_OnW3TakeDmgBulletPre(victim,attacker,Float:damage)
 			{
 				char weapon[64];
 				GetClientWeapon(attacker, weapon, sizeof(weapon));
-				EvadeChance += GetBuffSumFloat(victim,fDodgeChance);
+				EvadeChance += GetBuffMaxFloat(victim,fDodgeChance);
 				if(EvadeChance>0.0 && W3IsDamageFromMelee(weapon))
 				{
 					int vteam=GetClientTeam(victim);
@@ -90,7 +90,7 @@ public dodge_internal_OnW3TakeDmgBulletPre(victim,attacker,Float:damage)
 			{
 				char weapon[64];
 				GetClientWeapon(attacker, weapon, sizeof(weapon));
-				EvadeChance += GetBuffSumFloat(victim,fDodgeChanceRanged);
+				EvadeChance += GetBuffMaxFloat(victim,fDodgeChanceRanged);
 				if(EvadeChance>0.0 && !W3IsDamageFromMelee(weapon))
 				{
 					int vteam=GetClientTeam(victim);

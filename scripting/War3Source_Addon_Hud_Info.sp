@@ -221,9 +221,9 @@ public Action:HudInfo_Timer(Handle:timer)
                     observed = GetEntPropEnt(display, Prop_Send, "m_hObserverTarget"); 
                 if(ValidPlayer(observed, true))
                     client = observed;
-            }   
+            }
             new race=War3_GetRace(client);
-            if (race > 0)
+            if (race > 0 && IsPlayerAlive(client) && !IsClientObserver(client))
             {                    
                 new String:HUD_Text[2048];
                 new String:MiniHUD_Text[1024];
@@ -279,16 +279,16 @@ public Action:HudInfo_Timer(Handle:timer)
                     itemalpha=Pow(itemalpha,0.75);
                 }
                 falpha = falpha * itemalpha;
-                float totalHealthRegen = (W3GetBuffSumFloat(client, fHPRegen) + TF2Util_GetEntityMaxHealth(client)*W3GetBuffSumFloat(client, fMaxHealthRegen)) * (1+W3GetBuffSumFloat(client, fSustainEfficiency));
+                float totalHealthRegen = (W3GetBuffSumFloat(client, fHPRegen) + War3_GetMaxHP(client)*W3GetBuffSumFloat(client, fMaxHealthRegen)) * (1+W3GetBuffSumFloat(client, fSustainEfficiency));
                 float totalLifesteal = W3GetBuffSumFloat(client, fVampirePercent) * (1+W3GetBuffSumFloat(client, fSustainEfficiency));
                 if(falpha != 1.0  )
                 {
                     Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nInvis: x%.2f",MiniHUD_Text, falpha);
                 }
                 //PhysicalArmorMulti
-                if(W3GetBuffSumFloat(client, fDodgeChance) != 0.0)
+                if(W3GetBuffMaxFloat(client, fDodgeChance) != 0.0)
                 {
-                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nEvade: %.1f pct", MiniHUD_Text,W3GetBuffSumFloat(client, fDodgeChance) * 100.0);
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nEvade: %.1f pct", MiniHUD_Text,W3GetBuffMaxFloat(client, fDodgeChance) * 100.0);
                 }
                 if(W3GetBuffStackedFloat(client, fAttackSpeed) != 1.0)
                 {

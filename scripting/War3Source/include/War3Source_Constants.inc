@@ -100,7 +100,7 @@ enum SHOPITEMS3{
 	RAGE,
 	UBERHEART,
 	FREEZE,
-	HEATINGPLATES,
+	SOLARCREST,
 	RUNESHARD,
 	SANGE,
 	MAXITEMSCOUNT3
@@ -711,7 +711,7 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 	buffpropertiesarray[ fMaxHealth ].BuffStackType=fStacked;
 
 	buffpropertiesarray[ fDodgeChance ].DefaultValue=0.0;
-	buffpropertiesarray[ fDodgeChance ].BuffStackType=fAbsolute;
+	buffpropertiesarray[ fDodgeChance ].BuffStackType=fMaximum;
 
 	buffpropertiesarray[ bDodgeMode	  ].DefaultValue=0;
 	buffpropertiesarray[ bDodgeMode   ].BuffStackType=bHasOneTrue;
@@ -762,7 +762,7 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 	buffpropertiesarray[ bImmunityPoison ].BuffStackType=bHasOneTrue;
 
 	buffpropertiesarray[ fDodgeChanceRanged ].DefaultValue=0.0;
-	buffpropertiesarray[ fDodgeChanceRanged ].BuffStackType=fAbsolute;
+	buffpropertiesarray[ fDodgeChanceRanged ].BuffStackType=fMaximum;
 
 	buffpropertiesarray[ bImmunityHacks ].DefaultValue=false;
 	buffpropertiesarray[ bImmunityHacks ].BuffStackType=bHasOneTrue;

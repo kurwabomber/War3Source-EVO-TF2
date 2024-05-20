@@ -6,6 +6,8 @@
 #pragma semicolon 1
 
 int ItemID[MAXITEMS3];
+float currentBarrier[MAXPLAYERS+1];
+
 public Plugin:myinfo =
 {
 	name = "War3Evo:Shop items 3",
@@ -26,6 +28,7 @@ public OnPluginStart()
 
 	CreateTimer(0.2, Timer_QuickTimer, _, TIMER_REPEAT);
 	CreateTimer(3.0, Timer_SlowTimer, _, TIMER_REPEAT);
+	CreateTimer(10.0, Timer_Every10s, _, TIMER_REPEAT);
 }
 
 public OnClientPutInServer(client)
@@ -67,7 +70,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		
 		//Green - Blue & Yellow
 		ItemID[SPRINGGEM]=War3_CreateShopItem3("Spring Gem","spring","Gives +2/s regen.\nWhile your health is below or equal to 40%%, regen is boosted by 2x.\nUpgrading increases regen. 0.1 regen per level.",60,"Green","Spring Gem",10,"Spring Gem",0);
-		ItemID[HEATINGPLATES]=War3_CreateShopItem3("Heating Coils","heat","Gives immunity to slowdowns.\nCannot be leveled up.",50,"Green","Heating Coils",0,"Heating Coils",0);
+		ItemID[SOLARCREST]=War3_CreateShopItem3("Solar Crest","heat","Gives a 20 damage barrier every 10s that gives:\n+1 armor while active. Increases armor bonus by +0.05 per level.",50,"Green","Solar Crest",20,"Solar Crest",0);
 		
 		//Purple - Red & Blue
 		ItemID[MARKSMAN]=War3_CreateShopItem3("Marksman's Sign","marksman","Shots to the head deal 15%% more damage and have 15%% lifesteal.\nLeveling up increases lifesteal. +1%% lifesteal per level.",50,"Purple","Marksman's Sign",10,"Marksman's Sign",0);
@@ -81,15 +84,19 @@ public OnWar3LoadRaceOrItemOrdered(num)
 
 public OnRaceChanged(client,oldrace,newrace)
 {
+	War3_SetBuffItem3(client,iDamageBonus,ItemID[STORMHEART],0);
 	War3_SetBuffItem3(client,fDamageModifier,ItemID[REDTEARSTONE],0.0);
 	War3_SetBuffItem3(client,fAttackSpeed,ItemID[RAGE],1.0);
 	War3_SetBuffItem3(client,fHPRegen,ItemID[SPRINGGEM],0.0);
 	War3_SetBuffItem3(client,fBashChance,ItemID[FREEZE],0.0);
 	War3_SetBuffItem3(client,fBashDuration,ItemID[FREEZE],0.0);
 	War3_SetBuffItem3(client,fMaxHealth,ItemID[UBERHEART],1.0);
-	War3_SetBuffItem3(client,bSlowImmunity,ItemID[HEATINGPLATES],false);
 	War3_SetBuffItem3(client,fCooldownReduction,ItemID[RUNESHARD],1.0);
 	War3_SetBuffItem3(client,fMaxSpeed2, ItemID[WINDPEARL], 0.0);
+
+	War3_SetBuffItem3(client,fArmorPhysical,ItemID[SOLARCREST],0.0);
+	War3_SetBuffItem3(client,fArmorMagic,ItemID[SOLARCREST],0.0);
+	currentBarrier[client] = 0.0;
 
 	//Sange
 	War3_SetBuffItem3(client,fSustainEfficiency,ItemID[SANGE],0.0);
@@ -160,6 +167,11 @@ public Action:Timer_QuickTimer(Handle:timer)
 			{
 				War3_SetBuffItem3(client,fAttackSpeed,ItemID[RAGE],1.0);
 			}
+
+			if(War3_GetOwnsItem3(client,race,ItemID[SOLARCREST]) && currentBarrier[client] > 0.0){
+				War3_SetBuffItem3(client,fArmorPhysical,ItemID[SOLARCREST],1.0);
+				War3_SetBuffItem3(client,fArmorMagic,ItemID[SOLARCREST],1.0);
+			}
 		}
 	}
 }
@@ -174,6 +186,9 @@ public Action:Timer_SlowTimer(Handle:timer)
 		if(!ValidRace(race))
 			continue;
 		
+		if(War3_GetOwnsItem3(client,race,ItemID[STORMHEART])){
+			War3_SetBuffItem3(client,iDamageBonus,ItemID[STORMHEART],2);
+		}
 		if(War3_GetOwnsItem3(client,race,ItemID[WINDPEARL])){
 			new level = War3_GetItemLevel(client,race,ItemID[WINDPEARL])+1;
 			War3_SetBuffItem3(client, fMaxSpeed2, ItemID[WINDPEARL], 0.06 + level*0.01);
@@ -189,10 +204,6 @@ public Action:Timer_SlowTimer(Handle:timer)
 			War3_SetBuffItem3(client,fMaxHealth,ItemID[UBERHEART],1.025 + (0.002 * level));
 		}
 		
-		if(War3_GetOwnsItem3(client,race,ItemID[HEATINGPLATES])){
-			War3_SetBuffItem3(client,bSlowImmunity,ItemID[HEATINGPLATES],true);
-		}
-
 		if(War3_GetOwnsItem3(client, race, ItemID[RUNESHARD])){
 			int level = War3_GetItemLevel(client,race,ItemID[RUNESHARD])+1;
 			War3_SetBuffItem3(client,fCooldownReduction,ItemID[RUNESHARD],1.1 + 0.005*level);
@@ -203,6 +214,22 @@ public Action:Timer_SlowTimer(Handle:timer)
 			War3_SetBuffItem3(client,fSustainEfficiency,ItemID[SANGE],0.05+level*0.003);
 			War3_SetBuffItem3(client,fDamageModifier,ItemID[SANGE],0.05);
 			War3_SetBuffItem3(client,fAttackSpeed,ItemID[SANGE],1.0+level*0.003);
+		}
+	}
+}
+public Action:Timer_Every10s(Handle:timer)
+{
+	for(new client = 1; client <= MaxClients; ++client)
+	{
+		if(!ValidPlayer(client, true))
+			continue;
+
+		new race = War3_GetRace(client);
+		if(!ValidRace(race))
+			continue;
+		
+		if(War3_GetOwnsItem3(client,race,ItemID[SOLARCREST])){
+			currentBarrier[client] = 20.0;
 		}
 	}
 }
@@ -229,6 +256,17 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 					if(level > 0 && RoundToNearest(War3_GetMaxHP(attacker) * (0.25 + (level * 0.02))) >= GetClientHealth(victim))
 					{
 						War3_DamageModPercent(0.8);
+					}
+				}
+				if(War3_GetOwnsItem3(victim,victimrace,ItemID[SOLARCREST]) && currentBarrier[victim] > 0.0)
+				{
+					if(damage > currentBarrier[victim]){
+						//jankiest way to subtract damage LOL
+						War3_DamageModPercent((damage - currentBarrier[victim]) / damage);
+						currentBarrier[victim] = 0.0;
+					}else{
+						currentBarrier[victim] -= damage;
+						War3_DamageModPercent(0.0);
 					}
 				}
 			}
@@ -275,16 +313,6 @@ public Action:SDK_Forwarded_TraceAttack(victim, &attacker, &inflictor, &Float:da
 			new attackerrace = War3_GetRace(attacker);
 			if(!ValidRace(attackerrace))
 				return Plugin_Continue;
-			//Red
-			if(War3_GetOwnsItem3(attacker,attackerrace,ItemID[STORMHEART]))
-			{
-				new level = War3_GetItemLevel(attacker,attackerrace,ItemID[STORMHEART])+1;
-				if(level > 0)
-				{
-					damage += RoundFloat(2+(level*0.1));
-					changed = true;
-				}
-			}
 			//PURPLE
 			if(hitgroup == 1)
 			{

@@ -34,7 +34,10 @@ stock bool:nsEntity_SetHealth(entity, health)
 	if (currenthp < health)
 	{
 		int difference = health - currenthp;
-		health = currenthp + RoundFloat(difference*(1+W3GetBuffSumFloat(entity,fSustainEfficiency)));
+		if(difference != 1)
+			health = currenthp + RoundFloat(difference*(1+W3GetBuffSumFloat(entity,fSustainEfficiency)));
+		else
+			health += 1;
 
 		SetEntProp(entity, Prop_Data, "m_iHealth", health);
 		ChangeEdictState(entity, 0);
