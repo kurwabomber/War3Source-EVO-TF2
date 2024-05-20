@@ -75,14 +75,11 @@ new g_HaloSprite;
 
 // Storm Bolt
 new BoltDamage[] = {40,45,50,55,60};
-new Float:BoltRange[]={225.0,250.0,275.0,300.0,325.0};
+new Float:BoltRange[]={300.0,325.0,350.0,375.0,400.0};
 new Float:BoltStunDuration=0.4;
 new Float:StormCooldownTime=15.0;
 
-
 new const StormCol[4] = {255, 255, 255, 155}; // Color of the beacon
-
-
 
 // Cleave Multiplayer
 new Float:CleaveDistance=200.0;
@@ -106,7 +103,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("hammerstorm",shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Hammerstorm","hammerstorm",reloadrace_id,"Lightning, dmg & armor.");
-		SKILL_BOLT=War3_AddRaceSkill(thisRaceID,"Storm Bolt","(+Ability) Stuns enemies in 225 to 325 radius\nfor 0.4 seconds, deals 40 to 60 damage",false,4, "(voice Help!)");
+		SKILL_BOLT=War3_AddRaceSkill(thisRaceID,"Storm Bolt","(+Ability) Stuns enemies in 300 to 400 radius\nfor 0.4 seconds, deals 40 to 60 damage",false,4, "(voice Help!)");
 		SKILL_CLEAVE=War3_AddRaceSkill(thisRaceID,"Great Cleave","Your attacks splash 20 to 28 percent\ndamage to enemys within 200 units",false,4);
 		SKILL_WARCRY=War3_AddRaceSkill(thisRaceID,"Warcry","Gain 1.8 to 2.2 physical armor,\nincreases your speed by 15 to 25 percent",false,4);
 		ULT_STRENGTH=War3_AddRaceSkill(thisRaceID,"Gods Strength","Greatly enhance your damage by 50 to 70 percent for a short amount of time.\nChannels for 0.75 seconds before usage.",true,4,"(voice Jeers)");
