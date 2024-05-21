@@ -544,6 +544,8 @@ enum W3Buff
 	fUltimateResistance,
 	//76
 	fArmorPenetration,
+	//77
+	fCritChanceModifier,
 
 	MaxBuffLoopLimitTemp, //this is a variable that is for loops, this number is automatically generated from the enum.
 }
@@ -799,6 +801,9 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 
 	buffpropertiesarray[ fArmorPenetration ].DefaultValue=0.0;
 	buffpropertiesarray[ fArmorPenetration ].BuffStackType=fAbsolute;
+
+	buffpropertiesarray[ fCritChanceModifier ].DefaultValue=0.0;
+	buffpropertiesarray[ fCritChanceModifier ].BuffStackType=fAbsolute;
 
 	//check that all indexes have been set
 	for(new i=0;i<MaxBuffLoopLimit;i++)

@@ -6,6 +6,8 @@
 //#assert GGAMEMODE == MODE_WAR3SOURCE
 
 new PlayerRace[MAXPLAYERSCUSTOM];
+float lastBashTime[MAXPLAYERSCUSTOM];
+
 /*
 public Plugin:myinfo =
 {
@@ -21,6 +23,10 @@ public War3Source_Engine_WCX_Engine_Bash_OnPluginStart()
 	LoadTranslations("w3s.race.humanally.phrases");
 }
 
+public War3Source_Engine_Bash_OnWar3EventSpawn(int client)
+{
+	lastBashTime[client] = 0.0;
+}
 // modified because W3ChanceModifier() may not work with this:
 //public OnWar3EventPostHurt(victim,attacker,damage,const String:weapon[32],bool:isWarcraft){
 public void War3Source_Engine_WCX_Engine_Bash_OnWar3EventPostHurt(int victim, int attacker,float damage,char weapon[64],bool isWarcraft){
@@ -35,7 +41,7 @@ public void War3Source_Engine_WCX_Engine_Bash_OnWar3EventPostHurt(int victim, in
 		if(vteam!=ateam)
 		{
 			new Float:percent = GetBuffSumFloat(attacker,fBashChance);
-			if((percent > 0.0) && !Hexed(attacker))
+			if((percent > 0.0) && !Hexed(attacker) && lastBashTime[attacker] + (0.5/percent) < GetGameTime())
 			{
 				// Bash
 				if(War3_Chance(percent * fChanceModifier(attacker)) && !GetBuffHasOneTrue(victim,bBashed) && IsPlayerAlive(attacker))
@@ -45,7 +51,7 @@ public void War3Source_Engine_WCX_Engine_Bash_OnWar3EventPostHurt(int victim, in
 						new race=GetRace(victim);
 						PlayerRace[victim] = race;
 						SetBuffRace(victim,bBashed,race,true,attacker);
-						new newdamage = GetBuffSumInt(attacker,iBashDamage);
+						new newdamage = RoundFloat(GetBuffSumInt(attacker,iBashDamage)*GetBuffStackedFloat(victim,fAbilityResistance));
 						if(newdamage>0)
 							DealDamage(victim,newdamage,attacker,_,"weapon_bash",_,W3DMGTYPE_PHYSICAL);
 
@@ -55,6 +61,8 @@ public void War3Source_Engine_WCX_Engine_Bash_OnWar3EventPostHurt(int victim, in
 
 						PrintHintText(victim,"%T","RcvdBash",victim);
 						PrintHintText(attacker,"%T","Bashed",attacker);
+
+						lastBashTime[attacker] = GetGameTime();
 					}
 					else
 					{

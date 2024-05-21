@@ -25,6 +25,8 @@ public bool Internal_OnWar3EventSpawn(client)
 
 	War3Source_Engine_Casting_OnWar3EventSpawn(client);
 
+	War3Source_Engine_Bash_OnWar3EventSpawn(client);
+
 	return true;
 }
 

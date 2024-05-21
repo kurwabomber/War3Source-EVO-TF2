@@ -38,7 +38,7 @@ public void War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(int victim, in
 	//decl String:weapon[64];
 	//GetEventString(internal_W3GetVar(SmEvent),"weapon",weapon,sizeof(weapon));
 
-	float CritChance = GetBuffSumFloat(attacker, fCritChance);
+	float CritChance = GetBuffSumFloat(attacker, fCritChance) * (1.0 + GetBuffSumFloat(attacker, fCritChanceModifier));
 	float CritMultiplier = GetBuffMaxFloat(attacker,fCritModifier);
 	int CritMode = GetBuffLastValue(attacker, iCritMode);
 	//int DamageMode = GetBuffLastValue(attacker, iDamageMode);

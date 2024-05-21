@@ -96,6 +96,7 @@ LeechHP(victim, attacker, float damage, float percentage, bool bBuff)
 				War3_VampirismEffect(victim, attacker, iHealthLeeched);
 				W3FlashScreen(attacker,RGBA_COLOR_GREEN);
 
+				internal_W3SetVar(EventArg1, iHealthLeeched);
 				W3CreateEvent(OnVampireBuff,attacker);
 		}
 }

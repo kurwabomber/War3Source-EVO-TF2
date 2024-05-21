@@ -20,7 +20,7 @@ int thisRaceID;
 #if GGAMETYPE == GGAME_TF2
 float Reincarnation[]={45.0, 44.0, 43.0, 42.0, 40.0};
 float UnholySpeed[]={1.24, 1.26, 1.28, 1.3, 1.32};
-float VampirePercent[]={0.3, 0.325, 0.35, 0.375, 0.4};
+float VampirePercent[]={0.25, 0.275, 0.3, 0.325, 0.35};
 #endif
 bool RESwarn[MAXPLAYERSCUSTOM];
 #if GGAMETYPE == GGAME_TF2
@@ -121,7 +121,7 @@ public OnPluginStart()
 	HookEvent("player_team",PlayerTeamEvent);
 
 	CreateTimer(0.1,ResWarning,_,TIMER_REPEAT);
-
+	CreateTimer(0.5,CritChanceDecay,_,TIMER_REPEAT);
 }
 public OnMapStart()
 {
@@ -142,9 +142,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual(RACE_SHORTNAME,shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace(RACE_LONGNAME,RACE_SHORTNAME,reloadrace_id,"Lifesteal, crits & speed.");
-		SKILL_LEECH=War3_AddRaceSkill(thisRaceID,"Vampiric Aura","Leech Health\nYou recieve up to 40% of your damage dealt as Health\nCan not buy item mask any level",false,4);
+		SKILL_LEECH=War3_AddRaceSkill(thisRaceID,"Vampiric Aura","Leech Health\nYou recieve up to 35% of your damage dealt as Health\nCan not buy item mask any level",false,4);
 		SKILL_SPEED=War3_AddRaceSkill(thisRaceID,"Unholy Aura","You run up to 32% faster",false,4);
-		SKILL_LOWGRAV=War3_AddRaceSkill(thisRaceID,"Blood Lust","When you gain health from Vampiric Aura, your crit chance by +1%.\nCrit Chance resets on death and is capped to 20%.\nCrits count as 100% damage increase.",false,4);
+		SKILL_LOWGRAV=War3_AddRaceSkill(thisRaceID,"Blood Lust","When you gain health from vampire effects, a portion is converted into crit chance boost.\nCrit Chance resets on death and is capped to 20%.\nCrits count as 100% damage increase.\nBonus slowly decays over time.",false,4);
 		SKILL_SUICIDE=War3_AddRaceSkill(thisRaceID,"Reincarnation","When you die, you revive on the spot.\nHas a base 60 second cooldown.\nDecreases cooldown by -5s each upgrade. After 4 upgrades, reduces to -1s.",true,4, "READY");
 		War3_CreateRaceEnd(thisRaceID);
 
@@ -163,6 +163,27 @@ public OnPluginEnd()
 	if(LibraryExists("RaceClass"))
 		War3_RaceOnPluginEnd(RACE_SHORTNAME);
 }
+
+public Action CritChanceDecay(Handle timer){
+	for (int i = 1; i<= MaxClients; ++i){
+		if(!IsClientConnected(i))
+			continue;
+		if(!IsPlayerAlive(i))
+			continue;
+		if(War3_GetRace(i) != thisRaceID)
+			continue;
+		
+		if(CurrentCritChance[i]>0.0)
+		{
+			CurrentCritChance[i] -= 0.004;
+			if(CurrentCritChance[i] < 0.0)
+				CurrentCritChance[i] = 0.0;
+
+			War3_SetBuff(i, fCritChance,thisRaceID,CurrentCritChance[i]);
+		}
+	}
+	return Plugin_Continue;
+}
 /* ***************************  OnRaceChanged *************************************/
 
 public OnRaceChanged(client,oldrace,newrace)
@@ -179,6 +200,7 @@ public OnRaceChanged(client,oldrace,newrace)
 /* ****************************** InitPassiveSkills ************************** */
 public InitPassiveSkills(client)
 {
+	War3_SetBuff(client, iAdditionalMaxHealth, thisRaceID, 20);
 }
 /* ****************************** RemovePassiveSkills ************************** */
 public RemovePassiveSkills(client)
@@ -187,6 +209,7 @@ public RemovePassiveSkills(client)
 	player.setbuff(fCritChance, thisRaceID, 0.0,client);
 	player.setbuff(fVampirePercent, thisRaceID, 0.0,client);
 	player.setbuff(fMaxSpeed,thisRaceID,1.0,client);
+	War3_SetBuff(client, iAdditionalMaxHealth, thisRaceID, 0);
 	player.RESwarn = false;
 	CurrentCritChance[client] = 0.0;
 }
@@ -237,13 +260,17 @@ public OnW3Denyable(W3DENY:event,client)
 	if(RaceDisabled)
 		return;
 
-	if((event == DN_CanBuyItem1) && (W3GetVar(EventArg1) == War3_GetItemIdByShortname("mask")))
+	if((event == DN_CanBuyItem1) && War3_GetRace(client) == thisRaceID)
 	{
-		ThisRacePlayer player = ThisRacePlayer(client);
-		if(player.raceid==thisRaceID)
+		if(W3GetVar(EventArg1) == War3_GetItemIdByShortname("mask"))
 		{
 			W3Deny();
-			player.message("{lightgreen}The mask would suffocate me!");
+			War3_ChatMessage(client, "{lightgreen}The mask would suffocate me!");
+		}
+		else if(W3GetVar(EventArg1) == War3_GetItemIdByShortname("boot"))
+		{
+			W3Deny();
+			War3_ChatMessage(client, "{lightgreen}The boots don't improve my speed!");
 		}
 	}
 }
@@ -270,13 +297,16 @@ public void OnWar3Event(W3EVENT event,int client)
 		{
 			if(player.raceid==thisRaceID)
 			{
+				int healthLeeched = W3GetVar(EventArg1);
+				
 				int skill_level=player.getskilllevel( thisRaceID, SKILL_LOWGRAV );
 				if(CurrentCritChance[client]<0.2)
 				{
-					CurrentCritChance[client] += 0.01 + 0.002*skill_level;
+					CurrentCritChance[client] += healthLeeched*(0.01 + 0.001*skill_level)*0.03;
 					War3_SetBuff(client, fCritChance,thisRaceID,CurrentCritChance[client]);
 				}
-				else if(CurrentCritChance[client]>0.2)
+
+				if(CurrentCritChance[client]>0.2)
 				{
 					CurrentCritChance[client]=0.2;
 					War3_SetBuff(client, fCritChance,thisRaceID,CurrentCritChance[client]);

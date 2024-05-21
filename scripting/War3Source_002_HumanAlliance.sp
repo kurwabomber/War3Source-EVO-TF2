@@ -30,8 +30,8 @@ float TeleportDistance[]={900.0, 950.0, 1000.0, 1150.0, 1200.0};
 //#endif
 
 
-new DevotionHealth[]={40,42,45,47,50};
-
+float DevotionArmor[]={2.0, 2.25, 2.5, 2.75, 3.0};
+int AuraID
 
 // Effects
 new BeamSprite,HaloSprite;
@@ -104,12 +104,17 @@ public OnW3Denyable(W3DENY:event,client)
 	if(RaceDisabled)
 		return;
 
-	if(War3_GetRace(client)==thisRaceID)
+	if(event == DN_CanBuyItem1 && War3_GetRace(client)==thisRaceID)
 	{
-		if((event == DN_CanBuyItem1) && (W3GetVar(EventArg1) == War3_GetItemIdByShortname("gauntlet")))
+		if(W3GetVar(EventArg1) == War3_GetItemIdByShortname("gauntlet"))
 		{
 			W3Deny();
 			War3_ChatMessage(client, "The gauntlet is too heavy ...");
+		}
+		else if(W3GetVar(EventArg1) == War3_GetItemIdByShortname("boot"))
+		{
+			W3Deny();
+			War3_ChatMessage(client, "The boots don't improve my speed!");
 		}
 	}
 }
@@ -127,11 +132,12 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 
 		thisRaceID=War3_CreateNewRace(RACE_LONGNAME,RACE_SHORTNAME,reloadrace_id,"Teleport,Invis,+hp");
 		SKILL_SPEED=War3_AddRaceSkill(thisRaceID,"Whisk","Increases movement speed by 16->20%.",false,4);
-		SKILL_HEALTH=War3_AddRaceSkill(thisRaceID,"Devotion Aura","Gives you additional 40->50 health.",false,4);
+		SKILL_HEALTH=War3_AddRaceSkill(thisRaceID,"Devotion Aura","Gives you and all nearby teammates +2 to 3 armor within 600HU.",false,4);
 		SKILL_BASH=War3_AddRaceSkill(thisRaceID,"Bash","7/13/19/25% chance to bash the enemy.\nRenders the enemy immobile for 0.2->0.3 seconds.\nInitial bash hit deals +30 damage.",false,4);
-		ULT_TELEPORT=War3_AddRaceSkill(thisRaceID,"Teleport","Teleport toward where you aim.\nUp to 1200 HU range. Ultimate Immunity has 350 blocking radius.",true,4, "(voice Jeers)");
+		ULT_TELEPORT=War3_AddRaceSkill(thisRaceID,"Teleport","Teleport toward where you aim.\nUp to 1200 HU range. Ultimate Immunity has 700hu blocking radius.",true,4, "(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		War3_AddSkillBuff(thisRaceID, SKILL_SPEED, fMaxSpeed, WhiskSpeed);
+		AuraID=W3RegisterChangingDistanceAura("human_devotion");
 	}
 }
 public OnAllPluginsLoaded()
@@ -169,6 +175,7 @@ public OnRaceChanged(client,oldrace,newrace)
 	else
 	{
 		//War3_SetBuff(client,fInvisibilitySkill,thisRaceID,1.0); // if we aren't their race anymore we shouldn't be controlling their alpha
+		W3RemovePlayerAura(AuraID,client);
 		War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,0);
 		War3_SetBuff(client,fBashChance,thisRaceID,0.0);
 		War3_SetBuff(client,iBashDamage,thisRaceID,0);
@@ -194,12 +201,27 @@ public OnWar3EventPostHurt(victim,attacker,float dmgamount,const String:weapon[3
 		}
 	}
 } */
+public OnW3PlayerAuraStateChanged(client,tAuraID,bool:inAura,level,AuraStack,AuraOwner){
+	if(RaceDisabled)
+		return;
 
+	if(tAuraID==AuraID)
+	{
+		if(AuraStack>0)
+		{
+			War3_SetBuff(client,fArmorPhysical,thisRaceID,DevotionArmor[level],AuraOwner);
+			War3_SetBuff(client,fArmorMagic,thisRaceID,DevotionArmor[level],AuraOwner);
+		}
+		else
+		{
+			War3_SetBuff(client,fArmorPhysical,thisRaceID,0.0);
+			War3_SetBuff(client,fArmorMagic,thisRaceID,0.0);
+		}
+	}
+}
 public ActivateSkills(client)
 {
-	new skill_devo=War3_GetSkillLevel(client,thisRaceID,SKILL_HEALTH);
 	// Devotion Aura
-	new hpadd=DevotionHealth[skill_devo];
 	float vec[3];
 	GetClientAbsOrigin(client,vec);
 	vec[2]+=20.0;
@@ -221,7 +243,8 @@ public ActivateSkills(client)
 	SetEntityHealth(client,old_health+hpadd);
 #endif
 
-	War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,hpadd);
+	War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,50);
+	W3SetPlayerAura(AuraID,client,600.0,War3_GetSkillLevel(client, thisRaceID, SKILL_HEALTH));
 
 	//new skilllevel=War3_GetSkillLevel(client,thisRaceID,SKILL_INVIS);
 	//float alpha=InvisibilityAlphaTF[skilllevel];
@@ -299,14 +322,14 @@ public Action:OnW3TeleportLocationChecking(client,Float:playerVec[3])
 				float resistance = W3GetBuffStackedFloat(i, fUltimateResistance);
 
 				if(W3HasImmunity(i,Immunity_Ultimates)){
-					if(GetVectorDistance(playerVec,otherVec)<350)
+					if(GetVectorDistance(playerVec,otherVec)<700)
 					{
 						War3_NotifyPlayerImmuneFromSkill(client, i, ULT_TELEPORT);
 						return Plugin_Handled;
 					}
 				}
 				else if(resistance != 1.0){
-					if(GetVectorDistance(playerVec,otherVec)<350*(1-resistance))
+					if(GetVectorDistance(playerVec,otherVec)<700*(1-resistance))
 					{
 						War3_NotifyPlayerImmuneFromSkill(client, i, ULT_TELEPORT);
 						return Plugin_Handled;
@@ -330,30 +353,8 @@ public void OnSkillLevelChanged(int client, int currentrace, int skill, int news
 		{
 			if(skill==SKILL_HEALTH) //1
 			{
-				// Devotion Aura
-				new hpadd=DevotionHealth[newskilllevel];
-				float vec[3];
-				GetClientAbsOrigin(client,vec);
-				vec[2]+=20.0;
-				new ringColor[4]={0,0,0,0};
-				new team=GetClientTeam(client);
-				if(team==2)
-				{
-					ringColor={255,0,0,255};
-				}
-				else if(team==3)
-				{
-					ringColor={0,0,255,255};
-				}
-				TE_SetupBeamRingPoint(vec,40.0,10.0,BeamSprite,HaloSprite,0,15,1.0,15.0,0.0,ringColor,10,0);
-				TE_SendToAll();
-
-#if (GGAMETYPE == GGAME_CSS || GGAMETYPE == GGAME_CSGO)
-				new old_health=GetClientHealth(client);
-				SetEntityHealth(client,old_health+hpadd);
-#endif
-
-				War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,hpadd);
+				W3RemovePlayerAura(AuraID,client);
+				W3SetPlayerAura(AuraID,client,600.0,newskilllevel);
 			}
 			else if(skill==SKILL_BASH) //1
 			{

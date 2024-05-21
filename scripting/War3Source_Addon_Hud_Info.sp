@@ -328,7 +328,7 @@ public Action:HudInfo_Timer(Handle:timer)
                 }
                 if(W3GetBuffSumFloat(client, fCritChance) != 0.0)
                 {
-                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nCrit Chance: %.1fpct",MiniHUD_Text, W3GetBuffSumFloat(client, fCritChance)*100.0);
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nCrit Chance: %.1fpct",MiniHUD_Text, W3GetBuffSumFloat(client, fCritChance)*100.0*(1+W3GetBuffSumFloat(client, fCritChanceModifier)));
                 }
                 if(W3GetBuffMaxFloat(client, fCritModifier) != 1.0)
                 {
