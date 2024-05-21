@@ -361,6 +361,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 							War3_EmitSoundToAll(banishSound, attacker);
 							W3MsgBanished(victim,attacker);
 							W3FlashScreen(victim,{0,0,0,255},0.4,_,FFADE_STAYOUT);
+							War3_SetBuff(victim,bDisarm,thisRaceID,true);
 							CreateTimer(0.5,Unbanish,GetClientUserId(victim));
 
 							float effect_vec[3];
@@ -651,6 +652,7 @@ public Action Unbanish(Handle timer,any userid)
 	if(client>0)
 	{
 		W3FlashScreen(client,{0,0,0,0},0.1,_,(FFADE_IN|FFADE_PURGE));
+		War3_SetBuff(client,bDisarm,thisRaceID,false);
 	}
 	return Plugin_Stop;
 }
