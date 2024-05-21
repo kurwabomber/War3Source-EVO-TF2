@@ -63,6 +63,8 @@ int UltimateUsed[MAXPLAYERSCUSTOM];
 new String:reviveSound[]="war3source/reincarnation.mp3";
 char banishSound[] = "war3source/BanishCaster.mp3";
 char ultSound[] = "war3source/FlameStrikeBurst.mp3";
+char ultExplosionSound[] = "items/pumpkin_explode1.wav";
+
 
 int BeamSprite,HaloSprite;
 int BloodSpray,BloodDrop;
@@ -192,6 +194,7 @@ public OnMapStart()
 	PrecacheSound(reviveSound);
 	PrecacheSound(ultSound);
 	PrecacheSound(banishSound);
+	PrecacheSound(ultExplosionSound);
 
 	// Reset Can Player Revive
 	for(int i=1;i<=MaxClients;i++)    // was MAXPLAYERSCUSTOM
@@ -300,9 +303,63 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 				SetEntDataFloat(iEntity, FindSendPropInfo("CTFProjectile_Rocket", "m_iDeflected") + 4, UltimateMaxDamage[ult_level], true); 
 				TeleportEntity(iEntity, fOrigin, fAngles, fVelocity);
 				DispatchSpawn(iEntity);
+
+				SDKHook(iEntity, SDKHook_StartTouch, OnStartTouchFireball);
 			}
 		}
 	}
+}
+public Action:OnStartTouchFireball(entity, other)
+{
+	int owner = GetEntPropEnt(entity, Prop_Send, "m_hOwnerEntity")
+	if(!ValidPlayer(owner))
+		return Plugin_Continue;
+
+	SDKHook(entity, SDKHook_Touch, OnTouchFireball);
+	return Plugin_Handled;
+}
+public Action:OnTouchFireball(entity, other)
+{
+	int owner = GetEntPropEnt(entity, Prop_Send, "m_hOwnerEntity")
+	if(ValidPlayer(owner))
+	{
+		float vOrigin[3];
+		GetEntPropVector(entity, Prop_Data, "m_vecOrigin", vOrigin);
+		CreateW3SParticle("heavy_ring_of_fire", vOrigin);
+		vOrigin[2]+= 30.0;
+		
+		int i = -1;
+
+		float damage = UltimateMaxDamage[War3_GetSkillLevel(owner, thisRaceID, ULT_FLAMESTRIKE)];
+		while ((i = FindEntityByClassname(i, "*")) != -1)
+		{
+			if(IsValidForDamage(i) && IsOnDifferentTeams(owner,i) && i != entity) 
+			{
+				float targetvec[3];
+				float distance;
+				GetEntPropVector(i, Prop_Data, "m_vecOrigin", targetvec);
+				distance = GetVectorDistance(vOrigin, targetvec)
+				if(distance <= 300.0 && IsPointVisible(vOrigin,targetvec))
+				{
+					float ratio = (1.0-(distance/300.0)*0.25);
+					if(ratio < 0.5)
+						ratio = 0.5;
+					if(ratio >= 0.95)
+						ratio = 1.0;
+					damage *= ratio
+					
+					if(War3_DealDamage(i,RoundFloat(W3GetBuffStackedFloat(i,fUltimateResistance)*damage),owner,_,"flamestrike",W3DMGORIGIN_ULTIMATE))
+					{
+						War3_NotifyPlayerTookDamageFromSkill(i, owner, War3_GetWar3DamageDealt(), ULT_FLAMESTRIKE);
+					}
+				}
+			}
+		}
+		War3_EmitSoundToAll(ultExplosionSound, entity);
+		RemoveEntity(entity);
+	}
+	SDKUnhook(entity, SDKHook_Touch, OnTouchFireball);
+	return Plugin_Handled;
 }
 
 public void OnSkillLevelChanged(int client, int currentrace, int skill, int newskilllevel, int oldskilllevel)
