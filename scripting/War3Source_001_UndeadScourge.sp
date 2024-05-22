@@ -175,7 +175,7 @@ public Action CritChanceDecay(Handle timer){
 		
 		if(CurrentCritChance[i]>0.0)
 		{
-			CurrentCritChance[i] -= 0.004;
+			CurrentCritChance[i] -= 0.001;
 			if(CurrentCritChance[i] < 0.0)
 				CurrentCritChance[i] = 0.0;
 
