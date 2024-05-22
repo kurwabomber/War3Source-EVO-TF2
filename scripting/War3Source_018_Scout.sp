@@ -389,7 +389,7 @@ public Action OnWar3EventPostHurt(int victim, int attacker, float dmgamount, cha
 			if(!Hexed(attacker,false))
 			{
 				if(!bDisarmed[victim]){
-					if(War3_SkillNotInCooldown(SKILL_DISARM) && W3Chance(DisarmChance[skill_level]*W3ChanceModifier(attacker))){
+					if(War3_SkillNotInCooldown(attacker, thisRaceID, SKILL_DISARM) && W3Chance(DisarmChance[skill_level]*W3ChanceModifier(attacker))){
 						if(!W3HasImmunity(victim,Immunity_Skills))
 						{
 							War3_SetBuff(victim,bDisarm,thisRaceID,true);

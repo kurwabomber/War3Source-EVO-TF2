@@ -23,7 +23,7 @@ new ownerOffset;
 // Ultimate
 //new bool:Sentry_Toggle[MAXPLAYERSCUSTOM];
 
-new SKILL_ACP_SENTRY, SKILL_AUTO_DISPENSER,SKILL_NANO_PRODUCTION;
+new SKILL_ACP_SENTRY, SKILL_AUTO_DISPENSER,SKILL_NANO_PRODUCTION,ULTIMATE_OVERCLOCK;
 
 // ACP SENTRY ROUNDS
 new Float:ACP[]={0.225,0.2375,0.25,0.2625,0.275};
@@ -45,6 +45,8 @@ new SentryShellRefillRateByDispenserLevel[3] = { 1, 2, 4 };
 new SentryRocketRefillRateByDispenserLevel[3] = { 0, 0, 0 };
 
 new Float:WrenchRateOfFire[] = { 1.65, 1.7, 1.75, 1.8, 1.85};
+
+float OverclockBoost[] = { 1.75, 1.8, 1.85, 1.9, 2.0};
 
 //// Global Constants
 
@@ -74,6 +76,7 @@ public void Load_Hooks()
 	HooksLoaded = true;
 	W3Hook(W3Hook_OnW3TakeDmgBullet, OnW3TakeDmgBullet);
 	W3Hook(W3Hook_OnAbilityCommand, OnAbilityCommand);
+	W3Hook(W3Hook_OnUltimateCommand, OnUltimateCommand);
 	W3Hook(W3Hook_OnWar3EventSpawn, OnWar3EventSpawn);
 }
 public void UnLoad_Hooks()
@@ -83,6 +86,7 @@ public void UnLoad_Hooks()
 
 	W3Unhook(W3Hook_OnW3TakeDmgBullet, OnW3TakeDmgBullet);
 	W3Unhook(W3Hook_OnAbilityCommand, OnAbilityCommand);
+	W3Unhook(W3Hook_OnUltimateCommand, OnUltimateCommand);
 	W3Unhook(W3Hook_OnWar3EventSpawn, OnWar3EventSpawn);
 }
 public OnWar3RaceEnabled(newrace)
@@ -138,9 +142,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual(RACE_SHORTNAME,shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace("Hyper Cyborg",RACE_SHORTNAME,reloadrace_id,"Engineer race");
-		SKILL_NANO_PRODUCTION=War3_AddRaceSkill(thisRaceID,"Nano Production","Regenerates 13-17 metal per second.\nNano requires 4-3 health/second to rebuild metal.\nMust have at least 50 or more health to regen metal.\n(+ability)",false,4);
+		SKILL_NANO_PRODUCTION=War3_AddRaceSkill(thisRaceID,"Nano Production","Regenerates 13-17 metal per second.\nNano requires 4-3 health/second to rebuild metal.\nMust have at least 50 or more health to regen metal.\n(+ability)",false,4,"(voice Help!)");
 		SKILL_AUTO_DISPENSER=War3_AddRaceSkill(thisRaceID,"Auto Dispenser","Dispenser repairs and refills nearby buildings.\nIncreases fire rate for melee by 65 to 85% percent.",false,4);
 		SKILL_ACP_SENTRY=War3_AddRaceSkill(thisRaceID,"ACP Sentry Rounds","Sentry's Damage Increased by 22.5 to 27.5% and Victim Slowed by 42.5 to 50%.",false,4);
+		ULTIMATE_OVERCLOCK=War3_AddRaceSkill(thisRaceID,"Overclock","Gives 1.75-2.0x firerate in return for\ndisabling all your sentry in a shielded state for 6s.\nCooldown is 30s.",false,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }
@@ -202,6 +207,47 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 			IsUsingNano[client] = false;
 		}
 	}
+}
+public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
+{
+	new userid=GetClientUserId(client);
+	if(race==thisRaceID && pressed && userid>1 && IsPlayerAlive(client) )
+	{
+		new ult_level=War3_GetSkillLevel(client,race,ULTIMATE_OVERCLOCK);
+		if(!Silenced(client)&&(bypass||War3_SkillNotInCooldown(client,thisRaceID,ULTIMATE_OVERCLOCK,true)))
+		{
+			War3_CooldownMGR(client, 30.0, thisRaceID, ULTIMATE_OVERCLOCK);
+
+			int iEnt;
+			while ((iEnt = FindEntityByClassname(iEnt, "obj_sentrygun")) != INVALID_ENT_REFERENCE)
+			{
+				if (GetEntPropEnt(iEnt, Prop_Send, "m_hBuilder") == client)
+				{
+					SetEntProp(iEnt, Prop_Send, "m_bDisabled", 1);
+					SetEntProp(iEnt, Prop_Send, "m_nShieldLevel", 1);
+
+					CreateTimer(6.0, ReEnableSentry, EntIndexToEntRef(iEnt));
+				}
+			}
+			War3_SetBuff(client, fAttackSpeed, thisRaceID, OverclockBoost[ult_level]);
+			CreateTimer(6.0, StopOverclock, EntIndexToEntRef(client));
+		}
+	}
+}
+public Action ReEnableSentry(Handle timer, int ref){
+	int entity = EntRefToEntIndex(ref);
+	if(IsValidEntity(entity)){
+		SetEntProp(entity, Prop_Send, "m_bDisabled", 0);
+		SetEntProp(entity, Prop_Send, "m_nShieldLevel", 0);
+	}
+	return Plugin_Stop;
+}
+public Action StopOverclock(Handle timer, int ref){
+	int entity = EntRefToEntIndex(ref);
+	if(IsValidEntity(entity)){
+		War3_SetBuff(entity, fAttackSpeed, thisRaceID, 1.0);
+	}
+	return Plugin_Stop;
 }
 public Action:Timer_Ammo_Regen(Handle:timer, any:user)
 {
@@ -322,6 +368,7 @@ public InitPassiveSkills(client)
 		if(IsValidEntity(weapon))
 			TF2Attrib_SetByName(weapon, "fire rate penalty HIDDEN", 1.0/WrenchRateOfFire[AutoDispenser_level]);
 	}
+	War3_SetBuff(client, fAttackSpeed, thisRaceID, 1.0);
 }
 
 /* ****************************** RemovePassiveSkills ************************** */
@@ -331,6 +378,8 @@ public RemovePassiveSkills(client)
 	new weapon = GetPlayerWeaponSlot(client, 2);
 	if(IsValidEntity(weapon))
 		TF2Attrib_RemoveByName(weapon, "fire rate penalty HIDDEN");
+
+	War3_SetBuff(client, fAttackSpeed, thisRaceID, 1.0);
 }
 
 public Action:OnW3TakeDmgBullet(victim,attacker,Float:damage)

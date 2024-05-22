@@ -66,11 +66,11 @@ new Float:HeadshotDMG[] = {1.24,1.265,1.29,1.315,1.34};
 
 // On The Move
 new Float:MoveMultiplier[] = {1.2,1.225,1.25,1.275,1.3};
-new Float:ScopeMoveMultiplier[] = {1.16,1.2,1.22,1.24,1.26};
+new Float:ScopeMoveMultiplier[] = {1.3,1.325,1.35,1.375,1.4};
 
 // Adrenaline
 new Float:AdrenalineRegen[]={3.0,3.25,3.5,3.75,4.0};
-new Float:AdrenalineAttackspeed[]={1.1,1.1125,1.125,1.13375,1.15};
+new Float:AdrenalineAttackspeed[]={1.15,1.1625,1.175,1.1875,1.2};
 
 // UAV Scan
 new Float:UAVCooldown[]={38.0,36.0,34.0,32.0,30.0};
@@ -81,8 +81,8 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID=War3_CreateNewRace("Sniper Commando","commando",reloadrace_id,"Sniper Race");
 		SKILL_COMBAT=War3_AddRaceSkill(thisRaceID,"Combat Experience","All headshots (hits to the head) deal 24% to 34% more damage.",false,4);
-		SKILL_MOVE=War3_AddRaceSkill(thisRaceID,"On The Move","Increases movepseed by 20% to 30% and scope speed by 16% to 26%.",false,4);
-		SKILL_ADRENALINE=War3_AddRaceSkill(thisRaceID,"Adrenaline","You regenerate health & increase attackspeed.\nRegenerates 3 to 4 HP per second and increases attackspeed by 10% to 15%.",false,4);
+		SKILL_MOVE=War3_AddRaceSkill(thisRaceID,"On The Move","Increases movepseed by 20% to 30% and scope speed by 30% to 40%.",false,4);
+		SKILL_ADRENALINE=War3_AddRaceSkill(thisRaceID,"Adrenaline","You regenerate health & increase attackspeed.\nRegenerates 3 to 4 HP per second and increases attackspeed by 15% to 20%.",false,4);
 		ULT_SCAN=War3_AddRaceSkill(thisRaceID,"UAV Scan","You and teammates gain the ability to see targets anywhere. Lasts 7 seconds.\nCooldown is 38 to 30 seconds.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 

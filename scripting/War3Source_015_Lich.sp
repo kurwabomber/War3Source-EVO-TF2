@@ -40,9 +40,7 @@ new DarkRitualAmt[]={10,11,12,13,14};
 
 //ultimate
 new Handle:ultCooldownCvar;
-new Handle:ultRangeCvar;
-bool isUltimateActive;
-new DeathDecayAmt[]={100,110,120,130,140};
+bool isUltimateActive[MAXPLAYERSCUSTOM];
 new String:ultsnd[]="war3source/DeathAndDecayTarget2.wav";
 new String:novasnd[]="npc/combine_gunship/ping_patrol.wav";
 new BeamSprite,HaloSprite;
@@ -98,10 +96,7 @@ public OnWar3RaceDisabled(oldrace)
 
 public OnPluginStart()
 {
-
 	ultCooldownCvar=CreateConVar("war3_lich_deathdecay_cooldown","35","Cooldown between ultimate usage");
-	ultRangeCvar=CreateConVar("war3_lich_deathdecay_range","999999","Range of death and decay ultimate");
-
 	//LoadTranslations("w3s.race.lich_o.phrases");
 }
 public OnAllPluginsLoaded()
@@ -386,7 +381,6 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 	new userid=GetClientUserId(client);
 	if(race==thisRaceID && pressed && userid>1 && IsPlayerAlive(client) )
 	{
-		new ult_level=War3_GetSkillLevel(client,race,ULT_DEATHDECAY);
 		if(bypass||War3_SkillNotInCooldown(client,thisRaceID,ULT_DEATHDECAY,true))
 		{
 			if(!Silenced(client))
@@ -407,7 +401,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 				CreateTimer(10.0, Timer_KillTEParticle, EntIndexToEntRef(client));
 
 				float fOffset[3];
-				GetEntPropVector(iEntity, Prop_Data, "m_vecOrigin", fOffset);
+				GetEntPropVector(client, Prop_Data, "m_vecOrigin", fOffset);
 				TE_WriteFloat("m_vecOrigin[0]", fOffset[0]);
 				TE_WriteFloat("m_vecOrigin[1]", fOffset[1]);
 				TE_WriteFloat("m_vecOrigin[2]", fOffset[2]);
