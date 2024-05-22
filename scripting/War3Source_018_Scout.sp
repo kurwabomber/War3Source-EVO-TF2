@@ -74,14 +74,12 @@ new bool:InFade[MAXPLAYERSCUSTOM];
 new Float:FadeCoolDown[]={4.0,4.0,3.0,2.0,1.0};
 new FadeDurationREQ[]={4,4,3,3,3};
 
-
 new Float:EyeRadius[]={800.0,900.0,1000.0,1100.0,1200.0};
 
 new Float:DisarmChance[]={0.15,0.16,0.17,0.18,0.19};
 new Float:DisarmSeconds[]={1.0,1.05,1.1,1.15,1.2};
 
-new Float:MarksmanCrit[]={0.8,0.825,0.85,0.875,0.9};
-new const STANDSTILLREQ=3;
+new Float:MarksmanCrit[]={0.4,0.425,0.45,0.475,0.5};
 
 
 new bool:bDisarmed[MAXPLAYERSCUSTOM];
@@ -159,8 +157,8 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace("Scout","scout_o",reloadrace_id,"Sniper styled race");
 		SKILL_TRUESIGHT=War3_AddRaceSkill(thisRaceID,"TrueSight","Enemies cannot be invisible or partially invisible around you. \n800-1100 units.\nDoes not affect spy cloak",false,4);
 		SKILL_FADE=War3_AddRaceSkill(thisRaceID,"Blink","If standing still for 4 to 3 seconds, you go completely invisible.\nAny movement or damage (to or from you) makes you visible.",false,4);
-		SKILL_DISARM=War3_AddRaceSkill(thisRaceID,"Disarm","15 to 19% chance to disarm the enemy on hit\n1 to 1.2 seconds to disarm victim.",false,4);
-		ULT_MARKSMAN=War3_AddRaceSkill(thisRaceID,"Marksman","Standing still for 3 seconds, scout is able to deal 1.8-1.9x damage the further the target.\n1024 units or more deals maximum damage",true,4);
+		SKILL_DISARM=War3_AddRaceSkill(thisRaceID,"Disarm","15 to 19% chance to disarm the enemy on hit\n1 to 1.2 seconds to disarm victim.\nHas a cooldown of 8s.",false,4,"(Autocast)");
+		ULT_MARKSMAN=War3_AddRaceSkill(thisRaceID,"Marksman","You deal up to 1.4-1.5x damage based on distance to target.\n1400 units or more deals maximum damage",true,4);
 		War3_CreateRaceEnd(thisRaceID);
 
 		AuraID =W3RegisterChangingDistanceAura("scout_reveal",true);
@@ -360,23 +358,18 @@ public Action OnW3TakeDmgBulletPre(int victim, int attacker, float damage, int d
 	{
 		if(War3_GetRace(attacker)==thisRaceID){
 			new lvl=War3_GetSkillLevel(attacker,thisRaceID,ULT_MARKSMAN);
-			if(standStillCount[attacker]>=STANDSTILLREQ){ //stood still for 1 second
-				new Float:vicpos[3];
-				new Float:attpos[3];
-				GetEntPropVector(victim, Prop_Send, "m_vecOrigin", vicpos);
-				GetClientAbsOrigin(attacker,attpos);
-				new Float:distance=GetVectorDistance(vicpos,attpos);
+			new Float:vicpos[3];
+			new Float:attpos[3];
+			GetEntPropVector(victim, Prop_Send, "m_vecOrigin", vicpos);
+			GetClientAbsOrigin(attacker,attpos);
+			new Float:distance=GetVectorDistance(vicpos,attpos);
 
-				if(distance>=1024.0){ //0-512 normal damage 512-1024 linear increase, 1024-> maximum
-					distance=2048.0;
-				}
-				new Float:multi=distance*MarksmanCrit[lvl]/2048.0;
-				War3_DamageModPercent(multi*W3GetBuffStackedFloat(victim,fUltimateResistance)+1.0);
-				//W3ForceDamageIsBullet();
-				//icount++;
-				PrintToConsole(attacker,"[War3Source:EVO] %.2fX dmg by marksman shot",multi);
-				//DP("[War3Source:EVO] %.2fX dmg by marksman shot (DamageStack %d) (DamageType %d) (Damage Inflictor %d) count = %d",multi,W3GetDamageStack(),W3GetDamageType(),W3GetDamageInflictor(),icount);
-			}
+			if(distance>1400.0)
+				distance=1400.0;
+			
+			new Float:multi=1.0 + (distance*MarksmanCrit[lvl]/1400.0*W3GetBuffStackedFloat(victim,fUltimateResistance));
+			War3_DamageModPercent(multi);
+			PrintToConsole(attacker,"[War3Source:EVO] %.2fX dmg by marksman shot",multi);
 		}
 	}
 	return Plugin_Changed;
@@ -396,11 +389,12 @@ public Action OnWar3EventPostHurt(int victim, int attacker, float dmgamount, cha
 			if(!Hexed(attacker,false))
 			{
 				if(!bDisarmed[victim]){
-					if(  W3Chance(DisarmChance[skill_level]*W3ChanceModifier(attacker))  ){
+					if(War3_SkillNotInCooldown(SKILL_DISARM) && W3Chance(DisarmChance[skill_level]*W3ChanceModifier(attacker))){
 						if(!W3HasImmunity(victim,Immunity_Skills))
 						{
 							War3_SetBuff(victim,bDisarm,thisRaceID,true);
 							CreateTimer(DisarmSeconds[skill_level],Undisarm,victim);
+							War3_CooldownMGR(attacker, 8.0, thisRaceID, SKILL_DISARM);
 						}
 						else
 						{
@@ -430,11 +424,6 @@ public Action:DeciSecondTimer(Handle:t){
 			GetClientAbsOrigin(client,vec);
 			if(GetVectorDistance(vec,lastvec[client])>5.0)
 			{
-				//DP("TRIGGER");
-				if(standStillCount[client] >= STANDSTILLREQ)
-				{
-					W3Hint(client,HINT_SKILL_STATUS,5.0,"Marksman disabled.");
-				}
 				standStillCount[client]=0;
 				if(ValidPlayer(client) && InFade[client])
 				{
@@ -453,11 +442,6 @@ public Action:DeciSecondTimer(Handle:t){
 				new skilllvl = War3_GetSkillLevel(client,thisRaceID,SKILL_FADE);
 				if(InFade[client])
 					standStillCount[client]=FadeDurationREQ[skilllvl];
-					
-				if(standStillCount[client] >= STANDSTILLREQ)
-				{
-					W3Hint(client,HINT_SKILL_STATUS,5.0,"Marksman activated.");
-				}
 				//if(InFade[client] && standStillCount[client]>600)
 					//standStillCount[client]=600;
 			}
