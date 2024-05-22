@@ -80,7 +80,6 @@ public void Load_Hooks()
 
 	W3Hook(W3Hook_OnW3TakeDmgBulletPre, OnW3TakeDmgBulletPre);
 	W3Hook(W3Hook_OnWar3EventPostHurt, OnWar3EventPostHurt);
-	W3Hook(W3Hook_OnW3TakeDmgAll, OnW3TakeDmgAll);
 	W3Hook(W3Hook_OnUltimateCommand, OnUltimateCommand);
 	//W3Hook(W3Hook_OnAbilityCommand, OnAbilityCommand);
 	W3Hook(W3Hook_OnWar3EventSpawn, OnWar3EventSpawn);
@@ -92,7 +91,6 @@ public void UnLoad_Hooks()
 
 	W3Unhook(W3Hook_OnW3TakeDmgBulletPre, OnW3TakeDmgBulletPre);
 	W3Unhook(W3Hook_OnWar3EventPostHurt, OnWar3EventPostHurt);
-	W3Unhook(W3Hook_OnW3TakeDmgAll, OnW3TakeDmgAll);
 	W3Unhook(W3Hook_OnUltimateCommand, OnUltimateCommand);
 	//W3Unhook(W3Hook_OnAbilityCommand, OnAbilityCommand);
 	W3Unhook(W3Hook_OnWar3EventSpawn, OnWar3EventSpawn);
@@ -424,49 +422,6 @@ public Action OnWar3EventPostHurt(int victim, int attacker, float dmgamount, cha
 			{
 				damagestackcritmatch=-1;
 				iVictim.flashscreen(RGBA_COLOR_RED);
-			}
-		}
-	}
-	return Plugin_Continue;
-}
-
-//public OnWar3EventPostHurt(victim,attacker,damage){
-public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
-{
-	if(RaceDisabled)
-		return Plugin_Continue;
-
-	ThisRacePlayer iVictim = ThisRacePlayer(victim);
-	ThisRacePlayer iAttacker = ThisRacePlayer(attacker);
-
-	if(W3GetDamageIsBullet()
-	&&iVictim.alive
-	&&iAttacker.alive
-	&&iVictim.team!=iAttacker.team)
-	{
-
-		if(iVictim.raceid==thisRaceID)
-		{
-			int skill_level=iVictim.getskilllevel(thisRaceID,SKILL_THORNS);
-			if(!iVictim.hexed)
-			{
-				if(!iAttacker.immunity(Immunity_Skills) && W3Chance(W3ChanceModifier(iAttacker.index)) ) //added chance modifier to fix double proc issue - Dagothur 1/7/2014
-				{
-					int damage_i=RoundToFloor(damage*ThornsReturnDamage[skill_level]);
-					if(damage_i>0)
-					{
-						if(damage_i>10) damage_i=10; // lets not be too unfair ;]
-
-						if(War3_DealDamage(iAttacker.index,damage_i,iVictim.index,_,"thorns",_,W3DMGTYPE_PHYSICAL))
-						{
-							War3_EffectReturnDamage(iVictim.index, iAttacker.index, damage_i, SKILL_THORNS);
-						}
-					}
-				}
-				else
-				{
-					iAttacker.immunefromskill(victim, SKILL_THORNS);
-				}
 			}
 		}
 	}
