@@ -133,13 +133,14 @@ public Native_War3_CooldownMGR(Handle:plugin,numParams)
 		new skillNum = GetNativeCell(4); ///can use skill numbers
 		new bool:resetOnSpawn = GetNativeCell(5);
 		new bool:printMsgOnExpireByTime = GetNativeCell(6);
+		new bool:additive = GetNativeCell(7);
 
 		internal_W3SetVar(EventArg1,cooldownTime); //float
 		DoFwd_War3_Event(OnWar3_CooldownMGR,client); //fire event
 
 		cooldownTime=Float:internal_W3GetVar(EventArg1);
 
-		Internal_CreateCooldown(client,cooldownTime,raceid,skillNum,resetOnSpawn,printMsgOnExpireByTime);
+		Internal_CreateCooldown(client,cooldownTime,raceid,skillNum,resetOnSpawn,printMsgOnExpireByTime,additive);
 }
 public Native_War3_CooldownRMN(Handle:plugin,numParams) //cooldown remaining time
 {
@@ -222,7 +223,7 @@ ClearAllCooldowns()
 }
 
 
-Internal_CreateCooldown(client,Float:cooldownTime,raceid,skillNum,bool:resetOnSpawn,bool:printMsgOnExpireByTime){
+Internal_CreateCooldown(client,Float:cooldownTime,raceid,skillNum,bool:resetOnSpawn,bool:printMsgOnExpireByTime,bool:additive=false){
 
 	new indextouse=-1;
 	new bool:createlinks=true;
@@ -251,7 +252,11 @@ Internal_CreateCooldown(client,Float:cooldownTime,raceid,skillNum,bool:resetOnSp
 			Cooldown[indextouse-1].cnext=indextouse; //previous guy points to you
 		}
 
-		Cooldown[indextouse].cexpiretime=GetEngineTime()+cooldownTime/W3GetBuffStackedFloat(client, fCooldownReduction);
+		if(additive){
+			Cooldown[indextouse].cexpiretime+=cooldownTime;
+		}else{
+			Cooldown[indextouse].cexpiretime=GetEngineTime()+cooldownTime/W3GetBuffStackedFloat(client, fCooldownReduction);
+		}
 		Cooldown[indextouse].cclient=client;
 		Cooldown[indextouse].crace=raceid;
 		Cooldown[indextouse].cskill=skillNum;

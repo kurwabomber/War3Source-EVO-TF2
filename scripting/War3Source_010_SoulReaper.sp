@@ -323,6 +323,8 @@ public PlayerDeathEvent(Handle:event,const String:name[],bool:dontBroadcast)
 					new skilllevel=War3_GetSkillLevel(client,thisRaceID,SKILL_INHUMAN);
 					if(!Hexed(client)){
 						War3_HealToMaxHP(client,InhumanAmount[skilllevel]);
+						War3_CooldownMGR(client,-1.0, thisRaceID, SKILL_JUDGE,_,_,true);
+						War3_CooldownMGR(client,-1.0, thisRaceID, ULT_EXECUTE,_,_,true);
 					}
 				}
 			}

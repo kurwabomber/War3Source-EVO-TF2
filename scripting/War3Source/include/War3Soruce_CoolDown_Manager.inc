@@ -14,7 +14,7 @@
  *
  * Usually the first 4 parameters are enough
  */
-native War3_CooldownMGR(client,Float:cooldownTime,raceid,skillNum, bool:resetOnSpawn=true,bool:printMsgOnExpireByTime=true);
+native War3_CooldownMGR(client,Float:cooldownTime,raceid,skillNum, bool:resetOnSpawn=true,bool:printMsgOnExpireByTime=true,bool additive=false);
 
 /**
  * Item3 Cooldown Manager
