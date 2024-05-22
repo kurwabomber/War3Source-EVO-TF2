@@ -352,6 +352,9 @@ public Action:OnTouchFireball(entity, other)
 					{
 						War3_NotifyPlayerTookDamageFromSkill(i, owner, War3_GetWar3DamageDealt(), ULT_FLAMESTRIKE);
 					}
+
+					if(IS_PLAYER(i))
+						TF2_IgnitePlayer(i, owner, 10.0);
 				}
 			}
 		}

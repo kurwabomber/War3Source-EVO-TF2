@@ -29,12 +29,16 @@ int SKILL_EVADE, SKILL_THORNS, SKILL_TRUESHOT, ULT_ENTANGLE; //, SKILL_SHADOWMEL
 //float Shadowmeld[7]={0.0,0.80,0.70,0.60,0.50,0.50,0.50};
 
 float EvadeChance[]={0.10,0.11,0.12,0.13,0.14};
-float ThornsReturnDamage[]={0.20,0.22,0.25,0.27,0.3};
-float TrueshotDamagePercent[]={0.20,0.22,0.25,0.27,0.3};
-float EntangleDistance[]={2000.0,2500.0,3000.0,3500.0,4000.0};
-float EntangleDuration[]={5.0, 5.25, 5.5, 5.75, 6.0};
+float ThornsReturnDamage[]={0.30,0.35,0.4,0.45,0.5};
+float TrueshotDamagePercent[]={0.15,0.16,0.175,0.18,0.2};
+float EntangleDistance[]={600.0,650.0,700.0,750.0,800.0};
+float EntangleDuration[]={1.5, 1.55, 1.6, 1.65, 1.7};
+
+int ThornsAura,TrueshotAura;
 
 char entangleSound[]="war3source/entanglingrootsdecay1.mp3";
+
+
 //char entangleSound[256]; //="war3source/entanglingrootsdecay1.mp3";
 
 // Effects
@@ -162,12 +166,43 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID=War3_CreateNewRace(RACE_LONGNAME,RACE_SHORTNAME,reloadrace_id,"Evasion, roots, damage.");
 		SKILL_EVADE=War3_AddRaceSkill(thisRaceID,"Evasion","Up to 14 percent chance of evading a shot",false,4);
-		SKILL_THORNS=War3_AddRaceSkill(thisRaceID,"Thorns Aura","You deal up to 30% percent of damage recieved to your attacker. ",false,4);
-		SKILL_TRUESHOT=War3_AddRaceSkill(thisRaceID,"Trueshot Aura","Your attacks deal up to 30% percent more damage",false,4);
-		ULT_ENTANGLE=War3_AddRaceSkill(thisRaceID,"Entangling Roots","Bind enemies to the ground,\nrendering them immobile for up to 6 seconds. Up to 4000HU range.\nHas 2 second casting time.",true,4,"(voice Jeers)");
+		SKILL_THORNS=War3_AddRaceSkill(thisRaceID,"Thorns Aura","Gives 30% to 50% melee reflect in a 500 HU aura to teammates.",false,4);
+		SKILL_TRUESHOT=War3_AddRaceSkill(thisRaceID,"Trueshot Aura","Gives +15% to +20% ranged damage bonus in a 700 HU aura to teammates.",false,4);
+		ULT_ENTANGLE=War3_AddRaceSkill(thisRaceID,"Entangling Roots","Bind enemies to the ground, rendering them immobile for 1.5s to 1.75s.\nMax distance of 600-800HU and has a cast time of 0.5s.",true,4,"(voice Jeers)");
 
 		War3_AddSkillBuff(thisRaceID, SKILL_EVADE, fDodgeChance, EvadeChance);
 		War3_CreateRaceEnd(thisRaceID);
+
+		TrueshotAura=W3RegisterChangingDistanceAura("nightelf_trueshot");
+		ThornsAura=W3RegisterChangingDistanceAura("nightelf_thorns");
+	}
+}
+
+public OnW3PlayerAuraStateChanged(client,tAuraID,bool:inAura,level,AuraStack,AuraOwner){
+	if(RaceDisabled)
+		return;
+
+	if(tAuraID==ThornsAura)
+	{
+		if(AuraStack>0)
+		{
+			War3_SetBuff(client,fMeleeThorns,thisRaceID,ThornsReturnDamage[level],AuraOwner);
+		}
+		else
+		{
+			War3_SetBuff(client,fMeleeThorns,thisRaceID,0.0);
+		}
+	}
+	else if(tAuraID==TrueshotAura)
+	{
+		if(AuraStack>0)
+		{
+			War3_SetBuff(client,fDamageModifierRanged,thisRaceID,TrueshotDamagePercent[level],AuraOwner);
+		}
+		else
+		{
+			War3_SetBuff(client,fDamageModifierRanged,thisRaceID,0.0);
+		}
 	}
 }
 
@@ -187,6 +222,8 @@ public OnRaceChanged(client,oldrace,newrace)
 /* ****************************** InitPassiveSkills ************************** */
 public InitPassiveSkills(client)
 {
+	W3SetPlayerAura(TrueshotAura,client,700.0,War3_GetSkillLevel(client, thisRaceID, SKILL_TRUESHOT));
+	W3SetPlayerAura(ThornsAura,client,500.0,War3_GetSkillLevel(client, thisRaceID, SKILL_THORNS));
 }
 /* ****************************** RemovePassiveSkills ************************** */
 public RemovePassiveSkills(client)
@@ -194,6 +231,10 @@ public RemovePassiveSkills(client)
 	ThisRacePlayer player = ThisRacePlayer(client);
 	player.setbuff(fInvisibilitySkill,thisRaceID,1.0);
 	War3_SetBuff(client,fDodgeChance,thisRaceID,0.0);
+	War3_SetBuff(client,fDamageModifierRanged,thisRaceID,0.0);
+	War3_SetBuff(client,fMeleeThorns,thisRaceID,0.0);
+	W3RemovePlayerAura(TrueshotAura,client);
+	W3RemovePlayerAura(ThornsAura,client);
 }
 
 

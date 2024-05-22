@@ -37,8 +37,8 @@ new Float:PresenceRange[]={305.0,320.0,340.0,360.0,380.0};
 new InhumanAmount[]={0,5,10,15,20,22,25,27,30};
 new Float:InhumanRange=800.0;
 
-new Float:ultRange=200.0;
-new Float:ultCooldown[]={35.0,34.0,33.0,32.0,31.0};
+new Float:ultRange=450.0;
+new Float:ultCooldown[]={45.0,44.0,43.0,42.0,41.0};
 
 new String:judgesnd[]="war3source/sr/judgement.mp3";
 new String:ultsnd[]="war3source/SOulBurn.mp3";
@@ -127,10 +127,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace("Soul Reaper","sr",reloadrace_id,"Execution, magic damage.");
 		SKILL_JUDGE=War3_AddRaceSkill(thisRaceID,"Judgement","[+ability] Heals teammates around you, damages enemies around you.\nDamage/heals for 40, Cooldown is 15s and radius is 600HU.\nUpgrading decreases cooldown by -1s.",false,4,"(voice Help!)");
 		SKILL_PRESENCE=War3_AddRaceSkill(thisRaceID,"Withering Presence","Enemies take non-lethal damage just by being within 200 to 380 HU of you.\nDeals 4 to 5.8 DPS.",false,4);
-		SKILL_INHUMAN=War3_AddRaceSkill(thisRaceID,"Inhuman Nature","Heals for 20-30hp from anyone dying in a 800HU radius.",false,4);
-		ULT_EXECUTE=War3_AddRaceSkill(thisRaceID,"Demonic Execution","(+ultimate)Deals 20 + 40% of targets lost health.\nCooldown is 35s. Each level red. CD by -1s.",true,4,"(voice Jeers)");
+		SKILL_INHUMAN=War3_AddRaceSkill(thisRaceID,"Inhuman Nature","Heals for 20-30hp from anyone dying in a 800HU radius.\nAlso decreases the cooldown of abilities by -1s.",false,4);
+		ULT_EXECUTE=War3_AddRaceSkill(thisRaceID,"Demonic Execution","(+ultimate)Deals 40 + 40% of targets lost health.\nCooldown is 45s. Each level red. CD by -1s.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
-
 		AuraID=W3RegisterChangingDistanceAura("witheringpresense",true);
 
 		// Possible replacement if needed?
@@ -217,29 +216,35 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 		new skill=War3_GetSkillLevel(client,race,ULT_EXECUTE);
 		if(!Silenced(client)&&(bypass||War3_SkillNotInCooldown(client,thisRaceID,ULT_EXECUTE,true)))
 		{
-			new target=War3_GetTargetInViewCone(client,ultRange,false);
-			if(ValidPlayer(target,true))
-			{
-				if(!W3HasImmunity(target,Immunity_Ultimates))
+			bool foundTarget;
+			for(int target = 1; target <= MaxClients; ++target){
+				if(ValidPlayer(target,true))
 				{
-					new dmg=RoundFloat( (20.0 + 0.4 * (TF2Util_GetEntityMaxHealth(target) - GetClientHealth(target))) * W3GetBuffStackedFloat(target, fUltimateResistance));
+					if(GetPlayerDistance(client, target) <= ultRange){
+						if(!W3HasImmunity(target,Immunity_Ultimates))
+						{
+							new dmg=RoundFloat( (40.0 + 0.4 * (TF2Util_GetEntityMaxHealth(target) - GetClientHealth(target))) * W3GetBuffStackedFloat(target, fUltimateResistance));
 
-					if(dmg >= 0 && War3_DealDamage(target,dmg,client,_,"demonicexecution"))
-					{
-						PrintHintText(client,"Dealt %i damage with demonic execution!", War3_GetWar3DamageDealt());
-						War3_NotifyPlayerTookDamageFromSkill(target, client, War3_GetWar3DamageDealt(), ULT_EXECUTE);
+							if(dmg >= 0 && War3_DealDamage(target,dmg,client,_,"demonicexecution"))
+							{
+								PrintHintText(client,"Dealt %i damage with demonic execution!", War3_GetWar3DamageDealt());
+								War3_NotifyPlayerTookDamageFromSkill(target, client, War3_GetWar3DamageDealt(), ULT_EXECUTE);
+								foundTarget = true;
+							}
+						}
+						else
+						{
+							War3_NotifyPlayerImmuneFromSkill(client, target, ULT_EXECUTE);
+						}
 					}
-					War3_CooldownMGR(client,ultCooldown[skill],thisRaceID,ULT_EXECUTE,true,true);
-					War3_EmitSoundToAll(ultsnd,client);
-					War3_EmitSoundToAll(ultsnd,target);
-				}
-				else
-				{
-					War3_NotifyPlayerImmuneFromSkill(client, target, ULT_EXECUTE);
 				}
 			}
-			else
-			{
+
+			if(foundTarget){
+				War3_CooldownMGR(client,ultCooldown[skill],thisRaceID,ULT_EXECUTE,true,true);
+				War3_EmitSoundToAll(ultsnd,client);
+				War3_EmitSoundToAll(ultsnd,client);
+			}else{
 				W3MsgNoTargetFound(client,ultRange);
 			}
 		}
@@ -270,6 +275,7 @@ public InitPassiveSkills(client)
 	// Natural Armor Buff
 	//War3_SetBuff(client,fArmorPhysical,thisRaceID,3.0);
 	CheckAura(client);
+	War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,30);
 }
 
 public RemovePassiveSkills(client)
@@ -277,6 +283,7 @@ public RemovePassiveSkills(client)
 	//War3_SetBuff(client,fArmorPhysical,thisRaceID,0.0);
 	ResetDecay();
 	W3RemovePlayerAura(AuraID,client);
+	War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,0);
 }
 
 public void OnSkillLevelChanged(int client, int currentrace, int skill, int newskilllevel, int oldskilllevel)

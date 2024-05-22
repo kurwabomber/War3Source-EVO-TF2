@@ -182,6 +182,8 @@ public OnRaceChanged(client,oldrace,newrace)
 		War3_SetBuff(client,fBashDuration,thisRaceID,0.0);
 		War3_SetBuff(client,fHPDecay,thisRaceID,0.0);
 		War3_SetBuff(client,fMaxSpeed,thisRaceID,1.0);
+		War3_SetBuff(client,fArmorPhysical,thisRaceID,0.0);
+		War3_SetBuff(client,fArmorMagic,thisRaceID,0.0);
 	}
 }
 

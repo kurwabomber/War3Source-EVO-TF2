@@ -68,7 +68,7 @@ float BashDuration[] = {0.2, 0.225, 0.25, 0.275, 0.3};
 int BashDamage[] = {20, 25, 30, 35, 35};
 
 // Berserker
-new BerserkHP[] = {60,70,80,90,100};
+new BerserkHP[] = {55,60,65,70,75};
 new Float:BerserkSpeed[] = {0.2,0.22,0.24,0.26,0.28};
 
 // Healing Salve
@@ -76,8 +76,8 @@ new Float:Regeneration[]={16.0,18.0,20.0,22.0,24.0};
 new Float:TimeOutOfCombat[MAXPLAYERS+1] = {0.0,...};
 
 // War Cry
-new Float:WarCryMult[] = {0.3,0.325,0.35,0.375,0.4};
-new Float:WarCrySpeed[] = {1.31,1.32,1.33,1.34,1.35};
+new Float:WarCryMult[] = {0.12,0.14,0.16,0.18,0.2};
+new Float:WarCrySpeed[] = {1.2,1.22,1.24,1.26,1.28};
 new Float:WarCryRange[] = {600.0,613.0,625.0,638.0,650.0};
 new Float:CurrentMultiplier[MAXPLAYERS+1] = {0.0,...};
 char ultSound[] = "war3source/WarCry2.wav";
@@ -88,9 +88,9 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID=War3_CreateNewRace("Blademaster","blademaster",reloadrace_id,"True melee, crits, tank.");
 		SKILL_CRITS=War3_AddRaceSkill(thisRaceID,"Heavy Impact","+100% bash chance. 0.2s-0.3 bash duration.\nDeals +20-35 damage on bash.",false,4);
-		SKILL_BERSERK=War3_AddRaceSkill(thisRaceID,"Berserk","Passive : Gives +60-100 health and +20%-28% movespeed.",false,4);
+		SKILL_BERSERK=War3_AddRaceSkill(thisRaceID,"Berserk","Passive : Gives +55-75 health and +20%-28% movespeed.",false,4);
 		SKILL_SALVE=War3_AddRaceSkill(thisRaceID,"Healing Salve","After 6 seconds of being out of combat, you gain +16-24 regen per second.",false,4);
-		ULT_WARCRY=War3_AddRaceSkill(thisRaceID,"War Cry","Gives damage and movespeed to you and nearby players.\n+30-40% damage boost, +30-35% movespeed, 600-650HU radius, lasts 8 seconds.",true,4,"(voice Jeers)");
+		ULT_WARCRY=War3_AddRaceSkill(thisRaceID,"War Cry","Gives damage and movespeed to you and nearby players.\n+12-20% damage boost, +20-28% movespeed, 600-650HU radius, lasts 8 seconds.\nDuration is 1.5x longer on teammates.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 		
 		War3_AddSkillBuff(thisRaceID, SKILL_BERSERK, fMaxSpeed2, BerserkSpeed);
@@ -130,8 +130,8 @@ GiveBlademasterPerks(client)
 	TF2_AddCondition(client, TFCond_RestrictToMelee, 9999999.0);
 	TF2Attrib_SetByName(client,"cancel falling damage", 1.0);
 	TF2Attrib_SetByName(weapon,"is_a_sword", 1.0);
-	TF2Attrib_SetByName(client,"damage force reduction", 0.0);
-	TF2Attrib_SetByName(client,"airblast vulnerability multiplier", 0.0);
+	TF2Attrib_SetByName(client,"damage force reduction", 0.25);
+	TF2Attrib_SetByName(client,"airblast vulnerability multiplier", 0.25);
 }
 RemoveBlademasterPerks(client)
 {
@@ -304,14 +304,13 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 					if(GetVectorDistance(AttackerPos,VictimPos)<Range && VictimTeam == AttackerTeam)
 					{
 						GetClientAbsOrigin(i,VictimPos);
-						CreateTimer(8.0,WarCryOff,i);
+						CreateTimer(client != i ? 12.0 : 8.0,WarCryOff,i);
 						
 						TF2Attrib_SetByName(i,"major move speed bonus",WarCrySpeed[skill_level]);
 						CurrentMultiplier[i] = WarCryMult[skill_level];
 						TF2_AddCondition(client, TFCond_SpeedBuffAlly, 0.2);
 						TF2_AddCondition(i, TFCond_SpeedBuffAlly, 0.2);
 						W3Hint(i,HINT_SKILL_STATUS,3.0,"You were inspired! Increased damage and movespeed.");
-
 					}
 				}
 			}

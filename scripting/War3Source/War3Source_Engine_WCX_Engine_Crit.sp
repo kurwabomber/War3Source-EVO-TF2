@@ -15,7 +15,7 @@ public Plugin:myinfo =
 	url = "http://0xf.org"
 }
 */
-public void War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(int victim, int attacker,float damage,char weapon[64],bool isWarcraft)
+public void War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(int victim, int attacker,float damage,char weapon[64],bool isWarcraft,int weaponID)
 {
 	if((victim == attacker) || (!IsValidEntity(victim) || !ValidPlayer(attacker)))
 	{
@@ -42,7 +42,7 @@ public void War3Source_Engine_WCX_Engine_Crit_OnWar3EventPostHurt(int victim, in
 	float CritMultiplier = GetBuffMaxFloat(attacker,fCritModifier);
 	int CritMode = GetBuffLastValue(attacker, iCritMode);
 	//int DamageMode = GetBuffLastValue(attacker, iDamageMode);
-	float DamageMultiplier = GetBuffSumFloat(attacker, fDamageModifier);
+	float DamageMultiplier = GetBuffSumFloat(attacker, fDamageModifier) + ((IsValidEntity(weaponID) && HasEntProp(weaponID, Prop_Send, "m_iItemDefinitionIndex") && TF2Util_GetWeaponSlot(weaponID) != TFWeaponSlot_Melee) ? GetBuffSumFloat(attacker, fDamageModifierRanged) : 0.0);
 	int BonusDamage = GetBuffSumInt(attacker,iDamageBonus);
 
 	float PercentIncrease = 0.0;

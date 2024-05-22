@@ -298,6 +298,10 @@ public Action:HudInfo_Timer(Handle:timer)
                 {
                     Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Damage: x%.2f",MiniHUD_Text, W3GetBuffSumFloat(client, fDamageModifier)+1.0);
                 }
+                if(W3GetBuffSumFloat(client, fDamageModifierRanged) != 0.0)
+                {
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Ranged Damage: x%.2f",MiniHUD_Text, W3GetBuffSumFloat(client, fDamageModifierRanged)+1.0);
+                }
                 if(W3GetBuffSumInt(client, iDamageBonus) != 0.0)
                 {
                     Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Damage: +%i",MiniHUD_Text, W3GetBuffSumInt(client, iDamageBonus));
@@ -333,6 +337,10 @@ public Action:HudInfo_Timer(Handle:timer)
                 if(W3GetBuffMaxFloat(client, fCritModifier) != 1.0)
                 {
                     Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nCrit Modifier: x%.1f",MiniHUD_Text, W3GetBuffMaxFloat(client, fCritModifier));
+                }
+                if(W3GetBuffSumFloat(client, fMeleeThorns) != 0.0)
+                {
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nMelee Thorns: x%.2f",MiniHUD_Text, W3GetBuffSumFloat(client, fMeleeThorns));
                 }
                 if(W3GetPhysicalArmorMulti(client) != 1.0)
                 {

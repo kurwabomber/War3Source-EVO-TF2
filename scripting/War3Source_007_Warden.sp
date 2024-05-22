@@ -53,7 +53,7 @@ new StrikesRemaining[MAXPLAYERSCUSTOM];
 //ultimate
 new Handle:ultCooldownCvar;
 
-new Float:VengenceTFHealHPPercent[]={0.75,0.8,0.85,0.9,0.95};
+new Float:VengenceTFHealHPPercent[]={0.8,0.9,1.0,1.1,1.2};
 
 #define IMMUNITYBLOCKDISTANCE 900.0
 
@@ -92,7 +92,7 @@ public OnWar3RaceDisabled(oldrace)
 public OnPluginStart()
 {
 	
-	ultCooldownCvar=CreateConVar("war3_warden_vengence_cooldown","32","Cooldown between Warden Vengence (ultimate)");
+	ultCooldownCvar=CreateConVar("war3_warden_vengence_cooldown","35","Cooldown between Warden Vengence (ultimate)");
 	
 	CreateTimer(0.2,CalcBlink,_,TIMER_REPEAT);
 
@@ -104,10 +104,10 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual(RACE_SHORTNAME,shortname,false)))
 	{
 		thisRaceID=War3_CreateNewRace(RACE_LONGNAME,RACE_SHORTNAME,reloadrace_id,"Ult Immunity, healing.");
-		SKILL_FANOFKNIVES=War3_AddRaceSkill(thisRaceID,"Fan Of Knives","Deals 50 damage to attacker. 20-40% chance to proc.\n7s cooldown on proc.",false,4,"(Autocast)");
+		SKILL_FANOFKNIVES=War3_AddRaceSkill(thisRaceID,"Fan Of Knives","Deals 50 damage to attacker. 20-40% chance to proc.\n5s cooldown on proc.",false,4,"(Autocast)");
 		SKILL_BLINK=War3_AddRaceSkill(thisRaceID,"Immunity","50% to 65% immunity vs ultimates.",false,4);
 		SKILL_SHADOWSTRIKE=War3_AddRaceSkill(thisRaceID,"Shadow Strike","Chance to deal initial 20 damage and 5 aftertime damage.\nDOT attacks 5-7 times and has a 20-35% chance to proc.",false,4);
-		ULT_VENGENCE=War3_AddRaceSkill(thisRaceID,"Vengence","When used: Heals for 75% to 95% of your max health. Cooldown is 32 seconds.",true,4,"(voice Jeers)");
+		ULT_VENGENCE=War3_AddRaceSkill(thisRaceID,"Vengence","When used: Heals for 80% to 120% of your max health. Cooldown is 35 seconds.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	
 	}
@@ -242,7 +242,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 					}
 				}
 				War3_EmitSoundToAll(fanSound, victim);
-				War3_CooldownMGR(victim, 7.0, thisRaceID, SKILL_FANOFKNIVES);
+				War3_CooldownMGR(victim, 5.0, thisRaceID, SKILL_FANOFKNIVES);
 			}
 			
 		}
