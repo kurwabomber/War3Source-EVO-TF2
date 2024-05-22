@@ -171,7 +171,6 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		shopItem[GLIMMERCAPE]=War3_CreateShopItem("Glimmer Cape", "cape", "+3 magic armor and 1.1x faster ability cooldown", "+3 magic dmg reductionand 1.1x faster ability cooldown", 7, 10000);
 		//shopItem[AGHANIMSCEPTRE]=War3_CreateShopItem("Aghanim's Sceptre", "sceptre", "WIP:NOT WORKING upgrades all ultimates", "WIP:NOT WORKING upgrades all ultimates", 25, 10000);
 		shopItem[ORBOFVENOM]=War3_CreateShopItem("Orb of Venom", "venom", "attacks apply venom dot (4dps)", "attacks apply venom dot (4dps)", 1, 10000);
-		shopItem[RINGOFPROTECTION]=War3_CreateShopItem("Ring of Protection", "protection", "+2 dmg reduction", "+2 dmg reduction", 4, 10000);
 		shopItem[TALISMANOFEVASION]=War3_CreateShopItem("Talisman of Evasion", "evasion", "+10% evasion", "+10% evasion", 4, 10000);
 		shopItem[BLADEMAIL]=War3_CreateShopItem("Blade Mail", "blademail", "+4 dmg reduction & 40% melee reflect", "+4 dmg reduction & 40% melee reflect", 12, 10000);
 		shopItem[ASSAULTCUIRASS]=War3_CreateShopItem("Assault Cuirass", "cuirass", "+2 dmg reduction & +10% attack speed", "+2 dmg reduction & +10% attack speed", 6, 10000);
@@ -218,7 +217,6 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		War3_AddItemBuff(shopItem[REFRESHERORB],fCooldownReduction,1.4);
 		War3_AddItemBuff(shopItem[GLIMMERCAPE],fArmorMagic,3.0);
 		War3_AddItemBuff(shopItem[GLIMMERCAPE],fCooldownReduction,1.1);
-		War3_AddItemBuff(shopItem[RINGOFPROTECTION],fArmorPhysical,2.0);
 		War3_AddItemBuff(shopItem[TALISMANOFEVASION],fDodgeChance,0.1);
 		War3_AddItemBuff(shopItem[BLADEMAIL],fArmorPhysical,4.0);
 		War3_AddItemBuff(shopItem[BLADEMAIL],fMeleeThorns,0.4);

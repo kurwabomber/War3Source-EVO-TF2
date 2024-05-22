@@ -73,7 +73,6 @@ public War3Source_Engine_Regen_OnGameFrame()
 #endif
 					if(GetClientHealth(client)>1){
 						SetEntityHealth(client,GetClientHealth(client)-1);
-
 					}
 					else{
 #if GGAMETYPE == GGAME_TF2

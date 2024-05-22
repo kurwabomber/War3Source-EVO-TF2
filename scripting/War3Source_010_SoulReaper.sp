@@ -295,6 +295,7 @@ public void OnSkillLevelChanged(int client, int currentrace, int skill, int news
 	{
 		if(skill==SKILL_PRESENCE) //1
 		{
+			W3RemovePlayerAura(AuraID,client);
 			W3SetPlayerAura(AuraID,client,PresenceRange[newskilllevel],newskilllevel);
 		}
 	}

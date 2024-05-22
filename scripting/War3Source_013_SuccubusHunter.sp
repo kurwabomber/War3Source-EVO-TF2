@@ -133,7 +133,7 @@ public OnW3Denyable(W3DENY:event,client)
 		if(W3GetVar(EventArg1) == War3_GetItemIdByShortname("claw"))
 		{
 			W3Deny();
-			War3_ChatMessage(client, "The gauntlet is too heavy ...");
+			War3_ChatMessage(client, "The claws interfere with your hands ...");
 		}
 	}
 }

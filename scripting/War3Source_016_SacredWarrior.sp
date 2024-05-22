@@ -80,7 +80,7 @@ float lastSoundTime[MAXPLAYERSCUSTOM];
 
 // Buffs that berserker applys
 //new Float:BerserkerBuffDamage[]={0.0,0.005,0.01,0.015,0.02};  // each 7% you add one of these
-new Float:BerserkerBuffASPD[]={0.04, 0.045, 0.05, 0.055, 0.06};      // to get the total buff...
+new Float:BerserkerBuffASPD[]={0.04, 0.0425, 0.045, 0.0475, 0.05};      // to get the total buff...
 
 new Float:ultmaxdistance = 600.0;
 float ultCooldown[] = {35.0, 33.0, 31.0, 29.0, 27.0};
@@ -118,8 +118,8 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID=War3_CreateNewRace("Sacred Warrior","sacredw",reloadrace_id,"Rage & regeneration");
 		SKILL_VITALITY=War3_AddRaceSkill(thisRaceID,"Inner Vitality","Passively recover 4 to 6HP per second.\nWhen below 40% you heal twice as fast.",false,4);
-		SKILL_SPEAR=War3_AddRaceSkill(thisRaceID,"Burning Spear","(+ability) Passively lose 5% maxHP, but set enemies ablaze.\nDeals 4 to 8 DPS for next 3 seconds.\nStacks 5 times.",false,4,"(voice Help!)");
-		SKILL_BLOOD=War3_AddRaceSkill(thisRaceID,"Berserkers Blood","Gain 4 to 6 percent attack speed for each 7 percent of your health missing",false,4);
+		SKILL_SPEAR=War3_AddRaceSkill(thisRaceID,"Burning Spear","(+ability) Passively lose 5% maxHP + 4 HP, but set enemies ablaze.\nDeals 4 to 8 DPS for next 3 seconds.\nStacks 5 times.",false,4,"(voice Help!)");
+		SKILL_BLOOD=War3_AddRaceSkill(thisRaceID,"Berserkers Blood","Gain 4 to 5 percent attack speed for each 7 percent of your health missing",false,4);
 		ULT_BREAK=War3_AddRaceSkill(thisRaceID,"Life Break","(+ultimate) Damage yourself and target for 60 damage. Target takes +15% current health damage.\nCooldown of 35s, every level decreases cd by -2s.",true,4,"(voice Jeers");
 		War3_CreateRaceEnd(thisRaceID); ///DO NOT FORGET THE END!!!
 	}
@@ -276,7 +276,7 @@ public void OnSkillLevelChanged(int client, int currentrace, int skill, int news
 
 			if(bSpearActivated[client])
 			{
-				War3_SetBuff(client,fHPDecay,thisRaceID,VictimMaxHP*0.05);
+				War3_SetBuff(client,fHPDecay,thisRaceID,4.0 + VictimMaxHP*0.05);
 			}
 			else
 			{
@@ -331,7 +331,7 @@ CheckSkills(client)
 
 		if(bSpearActivated[client]){
 			War3_SetBuff(client,fHPRegen,thisRaceID,0.0);
-			War3_SetBuff(client,fHPDecay,thisRaceID,VictimMaxHP*0.05);
+			War3_SetBuff(client,fHPDecay,thisRaceID,4.0 + VictimMaxHP*0.05);
 		}
 		else
 		{
