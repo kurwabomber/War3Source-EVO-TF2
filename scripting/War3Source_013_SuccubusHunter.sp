@@ -123,9 +123,14 @@ public OnW3Denyable(W3DENY:event,client)
 	if(RaceDisabled)
 		return;
 
-	if(War3_GetRace(client)==thisRaceID)
+	if(War3_GetRace(client)==thisRaceID && event == DN_CanBuyItem1)
 	{
-		if((event == DN_CanBuyItem1) && (W3GetVar(EventArg1) == War3_GetItemIdByShortname("gauntlet")))
+		if(W3GetVar(EventArg1) == War3_GetItemIdByShortname("gauntlet"))
+		{
+			W3Deny();
+			War3_ChatMessage(client, "The gauntlet is too heavy ...");
+		}
+		if(W3GetVar(EventArg1) == War3_GetItemIdByShortname("claw"))
 		{
 			W3Deny();
 			War3_ChatMessage(client, "The gauntlet is too heavy ...");

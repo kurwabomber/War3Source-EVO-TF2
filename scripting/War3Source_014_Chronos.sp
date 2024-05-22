@@ -43,7 +43,7 @@ new Float:leapPower[]={500.0, 500.0, 500.0, 500.0, 500.0};
 new Float:leapPowerTF[]={650.0, 675.0, 700.0, 725.0, 750.0};
 
 //rewind
-new Float:RewindChance[]={0.25, 0.275, 0.3, 0.325, 0.35};
+new Float:RewindChance[]={0.15, 0.175, 0.2, 0.225, 0.25};
 new RewindHPAmount[MAXPLAYERSCUSTOM];
 
 //bash
@@ -91,6 +91,7 @@ public void Load_Hooks()
 #if GGAMETYPE == GGAME_TF2
 	W3Hook(W3Hook_OnW3TakeDmgBulletPre, OnW3TakeDmgBulletPre);
 #endif
+	W3Hook(W3Hook_OnWar3EventPostHurt, OnWar3EventPostHurt);
 	W3Hook(W3Hook_OnW3TakeDmgBullet, OnW3TakeDmgBullet);
 	W3Hook(W3Hook_OnUltimateCommand, OnUltimateCommand);
 }
@@ -105,6 +106,7 @@ public void UnLoad_Hooks()
 #if GGAMETYPE == GGAME_TF2
 	W3Unhook(W3Hook_OnW3TakeDmgBulletPre, OnW3TakeDmgBulletPre);
 #endif
+	W3Unhook(W3Hook_OnWar3EventPostHurt, OnWar3EventPostHurt);
 	W3Unhook(W3Hook_OnW3TakeDmgBullet, OnW3TakeDmgBullet);
 	W3Unhook(W3Hook_OnUltimateCommand, OnUltimateCommand);
 }
@@ -219,11 +221,15 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID=War3_CreateNewRace("Chronos","chronos",reloadrace_id,"Chronosphere forces melee.");
 		SKILL_LEAP=War3_AddRaceSkill(thisRaceID,"Time Leap","Leap in the direction you are moving (auto on jump.)\n650 to 750 HU boost.",false,4,"READY");
-		SKILL_REWIND=War3_AddRaceSkill(thisRaceID,"Rewind","Chance to regain the damage you took.\nHas a 25 to 35% chance to proc.",false,4);
-		SKILL_TIMELOCK=War3_AddRaceSkill(thisRaceID,"Time Lock","Chance to stun your enemy.\nHas a 25 to 35% chance to proc.",false,4);
-		ULT_SPHERE=War3_AddRaceSkill(thisRaceID,"Chronosphere","Rip space and time to trap enemy.\nTrapped victims cannot move and can only deal/receive melee damage,\nSphere protects chronos from outside damage.\nIt lasts 4.5 to 5.5 seconds. Radius is 200 HU.",true,4,"(voice Jeers)");
+		SKILL_REWIND=War3_AddRaceSkill(thisRaceID,"Rewind","Slowly regain a portion of the damage you took.\nRanges from 15% to 25% of damage.",false,4);
+		SKILL_TIMELOCK=War3_AddRaceSkill(thisRaceID,"Time Lock","Chance to stun your enemy.\nHas a 25 to 35% chance to proc.",false,4,"(Autocast)");
+		ULT_SPHERE=War3_AddRaceSkill(thisRaceID,"Chronosphere","Rip space and time to trap enemy.\nTrapped victims move 75% slower and can only deal/receive melee damage,\nSphere protects chronos from outside damage.\nIt lasts 4.5 to 5.5 seconds. Radius is 200 HU.",true,4,"(voice Jeers)");
 		War3_CreateRaceEnd(thisRaceID);
 	}
+}
+public OnRaceChanged(client,oldrace,newrace)
+{
+	War3_SetBuff(client,fSlow,thisRaceID,1.0);
 }
 public OnW3Denyable(W3DENY:event,client)
 {
@@ -449,21 +455,13 @@ public Action:sphereLoop(Handle:h,any:data)
 							if(!W3HasImmunity(i,Immunity_Ultimates))
 							{
 								// if not on ground, stop velocity!
-								if (!(GetEntityFlags(i) & FL_ONGROUND) )
-								{
+								if (!(GetEntityFlags(i) & FL_ONGROUND) ){
 									TeleportEntity(i, NULL_VECTOR, NULL_VECTOR, velocity);
 								}
 								CreateTimer(SphereEndTime[client]-GetGameTime(),unBashUlt,i);
-								War3_SetBuff(i,bBashed,thisRaceID,true,client);
-
-								//War3_SetBuff(i,fAttackSpeed,thisRaceID,0.33);
-
-								War3_SetBuff(i,bImmunitySkills,thisRaceID,false);
-								War3_SetBuff(i,bImmunityUltimates,thisRaceID,false);
+								War3_SetBuff(i,fSlow,thisRaceID,1.0/(4.0*W3GetBuffStackedFloat(i, fUltimateResistance)),client);
 								bTrapped[i]=true;
 								PrintHintText(i,"You have been trapped by a Chronosphere! You can only receive Melee damage");
-
-								//War3_EmitSoundToClient(i,spheresnd);
 							}
 							else
 							{
@@ -488,11 +486,8 @@ public Action:sphereLoop(Handle:h,any:data)
 
 
 public Action:unBashUlt(Handle:h,any:client){
-	War3_SetBuff(client,bBashed,thisRaceID,false);
-	//War3_SetBuff(client,fAttackSpeed,thisRaceID,1.0);
+	War3_SetBuff(client,fSlow,thisRaceID,1.0);
 	bTrapped[client]=false;
-	War3_SetBuff(client,bImmunitySkills,thisRaceID,false);
-	War3_SetBuff(client,bImmunityUltimates,thisRaceID,false);
 	return Plugin_Stop;
 }
 public Action:sphereend(Handle:h,any:client){
@@ -514,7 +509,7 @@ public Action OnW3TakeDmgAllPre(int victim, int attacker, float damage)
 				if(StrContains(WeaponName,"weapon_knife",false)<0&&!W3IsDamageFromMelee(WeaponName)){
 
 					//PrintToChatAll("block");
-					War3_DamageModPercent(1-W3GetBuffStackedFloat(victim, fUltimateResistance) );
+					War3_DamageModPercent(0.0);
 				}
 			}
 			else{
@@ -535,10 +530,7 @@ public Action OnW3TakeDmgAllPre(int victim, int attacker, float damage)
 				decl String:WeaponName2[32];
 				GetEdictClassname(wpnent2, WeaponName2, 32);
 				if(StrContains(WeaponName2,"weapon_knife",false)<0&&!W3IsDamageFromMelee(WeaponName2)){ //and the attacker isn't dealing melee damage...
-
-					//PrintToChatAll("block");
-					PrintToServer("attacker in sphere tried to deal ranged damage!");
-					War3_DamageModPercent(0.0); //then no damage for the attacker.
+					War3_DamageModPercent(1.0-W3GetBuffStackedFloat(victim, fUltimateResistance)); //then no damage for the attacker.
 				}
 		}
 	}
@@ -572,13 +564,35 @@ IsInOwnSphere(client){
 	}
 	return false;
 }
-//public OnWar3EventPostHurt(victim,attacker,dmgamount)
+public Action OnWar3EventPostHurt(int victim, int attacker, float dmgamount, char weapon[32], bool isWarcraft, const float damageForce[3], const float damagePosition[3])
+{
+	if(!ValidPlayer(victim,true) || !ValidPlayer(attacker,true))
+		return Plugin_Continue;
+
+	new skilllevel=War3_GetSkillLevel(victim,thisRaceID,SKILL_REWIND);
+	if(victim!=attacker && GetClientTeam(victim)!=GetClientTeam(attacker) && War3_GetRace(victim)==thisRaceID && !Hexed(victim)) //chance roll, and attacker isnt immune to skills
+	{
+		if(!W3HasImmunity(attacker,Immunity_Skills))
+		{
+			int RewindHealing = RoundFloat(dmgamount * W3GetBuffStackedFloat(attacker, fAbilityResistance) * RewindChance[skilllevel]);
+			PrintToConsole(victim,"Rewind +%i HP!",RewindHealing);
+			RewindHPAmount[victim]+=RewindHealing;//we create this variable
+			PrintHintText(victim,"Rewind +%i HP!",RewindHealing);
+			W3FlashScreen(victim,RGBA_COLOR_GREEN);
+		}
+		else
+		{
+			War3_NotifyPlayerImmuneFromSkill(victim, attacker, SKILL_REWIND);
+		}
+	}
+
+	return Plugin_Continue;
+}
 public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 {
 	if(RaceDisabled)
 		return Plugin_Continue;
 
-	new dmgamount=RoundToFloor(damage);
 	//PrintToChatAll("Damage: %i",dmgamount);
 	//PrintToChatAll("Post Damage Triggered!");
 	//PrintToChatAll("Post Damage Triggered!");
@@ -588,36 +602,8 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 	if(ValidPlayer(victim,true)&&ValidPlayer(attacker,true))
 #endif
 	{
-
-		new skilllevel=War3_GetSkillLevel(victim,thisRaceID,SKILL_REWIND);
-		//we do a chance roll here, and if its less than our limit (RewindChance) we proceede i a with u
-		// allow self damage rewind
-		if(victim!=attacker && GetClientTeam(victim)!=GetClientTeam(attacker) && War3_GetRace(victim)==thisRaceID && War3_Chance(RewindChance[skilllevel]) && !Hexed(victim)) //chance roll, and attacker isnt immune to skills
-		{
-			if(!W3HasImmunity(attacker,Immunity_Skills))
-			{
-#if GGAMETYPE == GGAME_TF2
-				if(TF2_IsPlayerInCondition(victim,TFCond_DeadRingered))
-				{
-					new Float:mathx=float(dmgamount)*0.10;
-					dmgamount=RoundToNearest(mathx);
-				}
-#endif
-				dmgamount = RoundFloat(dmgamount * W3GetBuffStackedFloat(attacker, fAbilityResistance));
-				PrintToConsole(victim,"Rewind +%i HP!",dmgamount);
-				RewindHPAmount[victim]+=dmgamount;//we create this variable
-				PrintHintText(victim,"Rewind +%i HP!",dmgamount);
-				W3FlashScreen(victim,RGBA_COLOR_GREEN);
-			}
-			else
-			{
-				War3_NotifyPlayerImmuneFromSkill(victim, attacker, SKILL_REWIND);
-			}
-		}
-
-
 		new race_attacker=War3_GetRace(attacker);
-		skilllevel=War3_GetSkillLevel(attacker,thisRaceID,SKILL_TIMELOCK);
+		int skilllevel=War3_GetSkillLevel(attacker,thisRaceID,SKILL_TIMELOCK);
 		if(race_attacker==thisRaceID && skilllevel > 0 && victim!=attacker)
 		{
 			if(War3_SkillNotInCooldown(attacker, thisRaceID, SKILL_TIMELOCK, false) && War3_Chance(TimeLockChance[skilllevel] * W3GetBuffStackedFloat(victim, fAbilityResistance)) && !Stunned(victim)&&!Hexed(attacker))
@@ -629,10 +615,10 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 
 
 					W3FlashScreen(victim,RGBA_COLOR_BLUE);
-					CreateTimer(0.15,UnfreezeStun,victim);
+					CreateTimer(0.15*W3GetBuffStackedFloat(victim, fAbilityResistance),UnfreezeStun,victim);
 
 					War3_SetBuff(victim,bStunned,thisRaceID,true);
-					War3_CooldownMGR( attacker, 5.0, thisRaceID, SKILL_TIMELOCK, true, true);
+					War3_CooldownMGR( attacker, 7.0, thisRaceID, SKILL_TIMELOCK, true, true);
 				}
 				else
 				{
@@ -660,7 +646,6 @@ public OnGameFrame() //this is a sourcemod forward?, every game frame it is call
 		return;
 
 	if(skip==0){
-
 		for(new i=1;i<=MaxClients;i++){
 			if(ValidPlayer(i,true))//valid (in game and shit) and alive (true parameter)k
 			{
@@ -672,7 +657,7 @@ public OnGameFrame() //this is a sourcemod forward?, every game frame it is call
 			}
 
 		}
-		skip=2;
+		skip=4;
 	}
 	skip--;
 	/*

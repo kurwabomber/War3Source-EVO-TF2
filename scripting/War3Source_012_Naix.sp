@@ -26,12 +26,12 @@ public W3ONLY(){} //unload this?
 new Float:HPPercentHealPerKill[] = {0.15 , 0.16, 0.17, 0.18, 0.20}; //SKILL_INFEST settings
 //Skill 1_1 really has 5 settings, so it's not a mistake
 new HPIncrease[]       = { 35, 40, 45, 50, 55};     //Increases Maximum health
+float SustainIncrease[] = {0.15, 0.165, 0.18, 0.185, 0.2};     //Increases Maximum health
 
 new Float:feastPercent[] = {0.1, 0.12, 0.135, 0.15, 0.16};   //Feast ratio (leech based on current victim hp
 
-
-new Float:RageAttackSpeed[] = {1.45, 1.55, 1.65, 1.75, 1.85};   //Rage Attack Rate
-new Float:RageDuration[] = {  4.5, 4.75, 5.0, 5.25, 5.5};   //Rage duration
+new Float:RageAttackSpeed[] = {1.55, 1.55, 1.55, 1.55, 1.55};   //Rage Attack Rate
+new Float:RageDuration[] = { 5.0, 5.5, 6.0, 6.5, 7.0};   //Rage duration
 
 new bool:bDucking[MAXPLAYERSCUSTOM];
 //End of skill Settings
@@ -157,20 +157,23 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 	{
 		thisRaceID=War3_CreateNewRace("Naix - Lifestealer","naix",reloadrace_id,"Lifesteal, tank, rage.");
 
-		SKILL_INFEST = War3_AddRaceSkill(thisRaceID, "Infest","Regains 15-20% health upon killing an enemy.\nYou teleport to victim location if you are ducking\n(only once per 10s if heavy)", false,4);
-		SKILL_BLOODBATH = War3_AddRaceSkill(thisRaceID, "Blood Bath","Increases health of the Naix by 35-55.",false,4);
+		SKILL_INFEST = War3_AddRaceSkill(thisRaceID, "Infest","Regains 15-20% health upon killing an enemy (1.5x effective in PvP).\nYou teleport to victim location if you are ducking\n(only once per 10s if heavy)", false,4);
+		SKILL_BLOODBATH = War3_AddRaceSkill(thisRaceID, "Blood Bath","Increases health of the Naix by 35-55.\nAlso increases sustain efficiency by 15%-20%.",false,4);
 		SKILL_FEAST = War3_AddRaceSkill(thisRaceID, "Feast","Regenerates 10-16% percent of enemy's current HP chance on hit.",false,4);
-		ULT_RAGE = War3_AddRaceSkill(thisRaceID, "Rage","Naix goes into a maddened Rage, gaining 45-85% attack speed for 4-5.5 seconds", true,4,"(voice Jeers)");
+		ULT_RAGE = War3_AddRaceSkill(thisRaceID, "Rage","Naix goes into a maddened Rage, gaining 55% attack speed for 5-7 seconds", true,4,"(voice Jeers)");
 
 		War3_AddSkillBuff(thisRaceID, SKILL_BLOODBATH, iAdditionalMaxHealth, HPIncrease);
+		War3_AddSkillBuff(thisRaceID, SKILL_BLOODBATH, fSustainEfficiency, SustainIncrease);
 		War3_CreateRaceEnd(thisRaceID);
 	}
 }
 
 public OnRaceChanged(client,oldrace,newrace)
 {
-	if(newrace != thisRaceID)
+	if(newrace != thisRaceID){
 		War3_SetBuff(client,iAdditionalMaxHealth,thisRaceID,0);
+		War3_SetBuff(client,fSustainEfficiency,thisRaceID,0.0);
+	}
 }
 
 public OnW3Denyable(W3DENY:event,client)
@@ -192,6 +195,14 @@ public OnW3Denyable(W3DENY:event,client)
 		{
 			W3Deny();
 			War3_ChatMessage(client, "{lightgreen}The mask would suffocate me!");
+		}
+	}
+	if((event == DN_CanBuyItem1) && (W3GetVar(EventArg1) == War3_GetItemIdByShortname("bloodbound")))
+	{
+		if(War3_GetRace(client)==thisRaceID)
+		{
+			W3Deny();
+			War3_ChatMessage(client, "{lightgreen}I already have one!");
 		}
 	}
 }
@@ -313,7 +324,7 @@ public OnWar3EventDeath(victim,attacker){
 				//War3_CooldownMGR(attacker,10.0,thisRaceID,SKILL_INFEST,true,true);
 			}
 
-			new addHealth = RoundFloat((float(War3_GetMaxHP(victim)) * HPPercentHealPerKill[iSkillLevel] * W3GetBuffStackedFloat(victim, fAbilityResistance) ));
+			new addHealth = RoundFloat((float(War3_GetMaxHP(victim)) * HPPercentHealPerKill[iSkillLevel] * W3GetBuffStackedFloat(victim, fAbilityResistance) * (IsMvM() ? 1.0 : 1.5) ));
 
 			War3HealToHP(attacker,addHealth,War3_GetMaxHP(attacker)+HPIncrease[War3_GetSkillLevel(attacker,thisRaceID,SKILL_BLOODBATH)]);
 			//War3_ChatMessage(attacker,"{default}You leeched [{green}+%d{default}] health!", addHealth);
