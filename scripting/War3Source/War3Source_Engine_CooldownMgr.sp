@@ -252,8 +252,11 @@ Internal_CreateCooldown(client,Float:cooldownTime,raceid,skillNum,bool:resetOnSp
 			Cooldown[indextouse-1].cnext=indextouse; //previous guy points to you
 		}
 
-		if(additive){
+		if(additive && Cooldown[indextouse].cexpiretime > GetEngineTime()){
 			Cooldown[indextouse].cexpiretime+=cooldownTime;
+
+			if(Cooldown[indextouse].cexpiretime < GetEngineTime())
+				Cooldown[indextouse].cexpiretime=GetEngineTime();
 		}else{
 			Cooldown[indextouse].cexpiretime=GetEngineTime()+cooldownTime/W3GetBuffStackedFloat(client, fCooldownReduction);
 		}

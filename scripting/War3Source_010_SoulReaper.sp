@@ -34,8 +34,8 @@ new Float:JudgementRange=600.0;
 new Float:PresenseAmount[]={5.0,5.2,5.4,5.6,5.8};
 new Float:PresenceRange[]={305.0,320.0,340.0,360.0,380.0};
 
-new InhumanAmount[]={0,5,10,15,20,22,25,27,30};
-new Float:InhumanRange=800.0;
+new InhumanAmount[]={20, 22, 25, 27, 30};
+new Float:InhumanRange=1600.0;
 
 new Float:ultRange=450.0;
 new Float:ultCooldown[]={45.0,44.0,43.0,42.0,41.0};
@@ -220,6 +220,9 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 			for(int target = 1; target <= MaxClients; ++target){
 				if(ValidPlayer(target,true))
 				{
+					if(!IsOnDifferentTeams(client, target))
+						continue;
+
 					if(GetPlayerDistance(client, target) <= ultRange){
 						if(!W3HasImmunity(target,Immunity_Ultimates))
 						{

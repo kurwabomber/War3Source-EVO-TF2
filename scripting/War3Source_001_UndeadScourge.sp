@@ -166,7 +166,7 @@ public OnPluginEnd()
 
 public Action CritChanceDecay(Handle timer){
 	for (int i = 1; i<= MaxClients; ++i){
-		if(!IsClientConnected(i))
+		if(!IsClientInGame(i))
 			continue;
 		if(!IsPlayerAlive(i))
 			continue;
