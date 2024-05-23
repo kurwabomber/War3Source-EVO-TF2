@@ -24,20 +24,20 @@ new SKILL_CRAZY, SKILL_FEAST,SKILL_SENSE,ULT_RUPTURE; //,ULT_IMPROVED_RUPTURE;
 
 
 // Chance/Data Arrays
-new Float:CrazyDuration[9]={0.0,2.0,3.0,4.0,5.0,5.5,6.0,6.5,7.0};
+new Float:CrazyDuration[5]={5.0,5.5,6.0,6.5,7.0};
 new Float:CrazyUntil[MAXPLAYERSCUSTOM];
 new bool:bCrazyDot[MAXPLAYERSCUSTOM];
 new CrazyBy[MAXPLAYERSCUSTOM];
 
-new Float:FeastAmount[9]={0.0,0.05,0.1,0.15,0.20,0.22,0.24,0.26,0.28};
+new Float:FeastAmount[5]={0.20,0.22,0.24,0.26,0.28};
 
-new Float:BloodSense[9]={0.0,0.15,0.20,0.25,0.30,0.32,0.35,0.37,0.4};
+new Float:BloodSense[5]={0.30,0.32,0.35,0.37,0.4};
 
 new Float:ultRange=300.0;
 // was new Float:ultiDamageMultiPerDistance[5]={0.0,0.06,0.073,0.086,0.10};
-new Float:ultiDamageMultiPerDistance[9]={0.0,0.03,0.0365,0.043,0.05,0.05,0.05,0.05,0.05};
+new Float:ultiDamageMultiPerDistance[5]={0.1,0.105,0.11,0.115,0.12};
 new Float:lastRuptureLocation[MAXPLAYERSCUSTOM][3];
-new Float:RuptureDuration[9]={0.0,4.0,5.0,6.0,7.0,7.25,7.75,8.25,8.5};
+new Float:RuptureDuration[5]={7.0,7.25,7.75,8.25,8.5};
 new Float:RuptureUntil[MAXPLAYERSCUSTOM];
 new bool:bRuptured[MAXPLAYERSCUSTOM];
 new RupturedBy[MAXPLAYERSCUSTOM];
@@ -124,13 +124,13 @@ public OnPluginEnd()
 
 public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 {
-	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("bh",shortname,false))){
-
+	if(num==RACE_ID_NUMBER||(reloadrace_id>0&&StrEqual("bh",shortname,false)))
+	{
 		thisRaceID=War3_CreateNewRace("Blood Hunter","bh",reloadrace_id,"Bleed, sustain & crits.");
-		SKILL_CRAZY=War3_AddRaceSkill(thisRaceID,"Blood Crazy","Those damaged by you will bleed for 2 HP per second for 4 - 7 seconds.",false,4);
+		SKILL_CRAZY=War3_AddRaceSkill(thisRaceID,"Blood Crazy","Those damaged by you will bleed for 4 HP per second for 4 - 7 seconds.",false,4);
 		SKILL_FEAST=War3_AddRaceSkill(thisRaceID,"Feast","Heal 20-28 percent of the victim's max HP on kill",false,4);
 		SKILL_SENSE=War3_AddRaceSkill(thisRaceID,"Blood Sense","Those who are below 30-40% max HP take critical damage",false,4);
-		ULT_RUPTURE=War3_AddRaceSkill(thisRaceID,"Hemorrhage","The target will take damage if he moves.\nDuration Scales 6 to 8.5 seconds.",true,4,"(voice Jeers)");
+		ULT_RUPTURE=War3_AddRaceSkill(thisRaceID,"Hemorrhage","The target will take damage if he moves.\nHas a duration of 7-8.5s and deals 0.1-0.12 damage per hammerunit.",true,4,"(voice Jeers)");
 		//ULT_IMPROVED_RUPTURE=War3_AddRaceSkill(thisRaceID,"Improved Hemorrhage","You heal 10/20 percent of the damage rupture deals.",false,2);
 		War3_CreateRaceEnd(thisRaceID);
 		//War3_SetDependency(thisRaceID, ULT_IMPROVED_RUPTURE, ULT_RUPTURE, 4);
@@ -299,7 +299,7 @@ public Action:BloodCrazyDOTLoop(Handle:h,any:data)
 				{
 					if(!W3HasImmunity(i,Immunity_Skills))
 					{
-						new damage=GetRandomInt(1, 3);
+						new damage=2
 						if(War3_DealDamage(i,damage,attacker,_,"bleed_kill"))
 						{
 							War3_NotifyPlayerTookDamageFromSkill(i, attacker, damage, SKILL_CRAZY);
