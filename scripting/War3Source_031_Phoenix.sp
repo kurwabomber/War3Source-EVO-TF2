@@ -121,9 +121,9 @@ public Action:DoDeathReject(Handle:timer,any:userid)
 	if(ValidPlayer(client))
 	{
 		int skilllevel=War3_GetSkillLevel(client,thisRaceID,SKILL_REVIVE);
+		War3_RestoreItemsFromDeath(client,false);
 		War3_SpawnPlayer(client);
 		TeleportEntity(client, djPos[client], djAngle[client], NULL_VECTOR);
-		War3_RestoreItemsFromDeath(client,false);
 		War3_CooldownMGR(client,Reincarnation[skilllevel],thisRaceID,SKILL_REVIVE,false,true);
 		War3_EmitSoundToAll(reviveSound,client);
 	}

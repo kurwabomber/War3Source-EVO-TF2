@@ -390,8 +390,8 @@ public Action:DoDeathReject(Handle:timer,any:userid)
 			return Plugin_Handled;
 		}
 		int skilllevel=player.getskilllevel(thisRaceID,SKILL_SUICIDE);
-		player.respawn();
 		War3_RestoreItemsFromDeath(client,false);
+		player.respawn();
 		//nsEntity_SetHealth(client, death_reject_health[skilllevel]);
 		//War3_EmitSoundToAll(DeathRejectSound,client);
 		TeleportEntity(client, djPos[client], djAngle[client], NULL_VECTOR);

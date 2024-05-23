@@ -554,6 +554,7 @@ public Action:DoRevival(Handle:timer,any:userid)
 			{
 				//PrintToChatAll("omfg remove true");
 				//SetEntityMoveType(client, MOVETYPE_NOCLIP);
+				War3_RestoreItemsFromDeath(client,false);
 				War3_SpawnPlayer(client);
 				War3_EmitSoundToAll(reviveSound,client);
 
@@ -577,7 +578,6 @@ public Action:DoRevival(Handle:timer,any:userid)
 
 
 				fLastRevive[client]=GetGameTime();
-				War3_RestoreItemsFromDeath(client,false);
 				//test noclip method
 
 				//SetEntityMoveType(client, MOVETYPE_WALK);

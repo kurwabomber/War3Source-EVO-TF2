@@ -54,7 +54,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 			DP("Shopitems 3 | Something went wrong while generating IDs for items.");
 		}
 
-		ItemID[STORMHEART]=War3_CreateShopItem3("Heart of the Storm","stormheart","Adds +2 damage to all hits.\nLeveling up increases additive damage. Adds 0.1 damage per level.",80,"Red","Heart of the Storm",10,"Heart of the Storm",0);
+		ItemID[STORMHEART]=War3_CreateShopItem3("Heart of the Storm","stormheart","Adds +2 damage to all hits.\nLeveling up increases magic damage. Adds 0.5%% damage per level.",80,"Red","Heart of the Storm",10,"Heart of the Storm",0);
 
 		//Yellow - Modifiers
 		ItemID[WINDPEARL]=War3_CreateShopItem3("Cloudy Pearl","windpearl","Gives +6%% movespeed.\nLeveling increases movespeed. 1%% increase per level.",30,"Yellow","Cloudy Pearl",10,"Cloudy Pearl",0);
@@ -85,6 +85,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 public OnRaceChanged(client,oldrace,newrace)
 {
 	War3_SetBuffItem3(client,iDamageBonus,ItemID[STORMHEART],0);
+	War3_SetBuffItem3(client,fMagicDamageModifier,ItemID[STORMHEART],0.0);
 	War3_SetBuffItem3(client,fDamageModifier,ItemID[REDTEARSTONE],0.0);
 	War3_SetBuffItem3(client,fAttackSpeed,ItemID[RAGE],1.0);
 	War3_SetBuffItem3(client,fHPRegen,ItemID[SPRINGGEM],0.0);
@@ -194,7 +195,9 @@ public Action:Timer_SlowTimer(Handle:timer)
 			continue;
 		
 		if(War3_GetOwnsItem3(client,race,ItemID[STORMHEART])){
+			new level = War3_GetItemLevel(client,race,ItemID[STORMHEART])+1;
 			War3_SetBuffItem3(client,iDamageBonus,ItemID[STORMHEART],2);
+			War3_SetBuffItem3(client,fMagicDamageModifier,ItemID[STORMHEART],0.005*level);
 		}
 		if(War3_GetOwnsItem3(client,race,ItemID[WINDPEARL])){
 			new level = War3_GetItemLevel(client,race,ItemID[WINDPEARL])+1;

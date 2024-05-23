@@ -575,10 +575,12 @@ public Action OnWar3EventPostHurt(int victim, int attacker, float dmgamount, cha
 		if(!W3HasImmunity(attacker,Immunity_Skills))
 		{
 			int RewindHealing = RoundFloat(dmgamount * W3GetBuffStackedFloat(attacker, fAbilityResistance) * RewindChance[skilllevel]);
-			PrintToConsole(victim,"Rewind +%i HP!",RewindHealing);
-			RewindHPAmount[victim]+=RewindHealing;//we create this variable
-			PrintHintText(victim,"Rewind +%i HP!",RewindHealing);
-			W3FlashScreen(victim,RGBA_COLOR_GREEN);
+			if(RewindHealing > 0){
+				PrintToConsole(victim,"Rewind +%i HP!",RewindHealing);
+				RewindHPAmount[victim]+=RewindHealing;//we create this variable
+				PrintHintText(victim,"Rewind +%i HP!",RewindHealing);
+				W3FlashScreen(victim,RGBA_COLOR_GREEN);
+			}
 		}
 		else
 		{
