@@ -144,7 +144,7 @@ public OnWar3LoadRaceOrItemOrdered2(num,reloadrace_id,String:shortname[])
 		thisRaceID=War3_CreateNewRace(RACE_LONGNAME,RACE_SHORTNAME,reloadrace_id,"Lifesteal, crits & speed.");
 		SKILL_LEECH=War3_AddRaceSkill(thisRaceID,"Vampiric Aura","Leech Health\nYou recieve up to 35% of your damage dealt as Health\nCan not buy item mask any level",false,4);
 		SKILL_SPEED=War3_AddRaceSkill(thisRaceID,"Unholy Aura","You run up to 32% faster",false,4);
-		SKILL_LOWGRAV=War3_AddRaceSkill(thisRaceID,"Blood Lust","When you gain health from vampire effects, a portion is converted into crit chance boost.\nCrit Chance resets on death and is capped to 20%.\nCrits count as 100% damage increase.\nBonus slowly decays over time.",false,4);
+		SKILL_LOWGRAV=War3_AddRaceSkill(thisRaceID,"Blood Lust","When you gain health from vampire effects, a portion is converted into crit chance boost.\nCrit Chance resets on death and is capped to 10%.\nCrits count as 100% damage increase.\nBonus slowly decays over time.",false,4);
 		SKILL_SUICIDE=War3_AddRaceSkill(thisRaceID,"Reincarnation","When you die, you revive on the spot.\nHas a base 60 second cooldown.\nDecreases cooldown by -5s each upgrade. After 4 upgrades, reduces to -1s.",true,4, "READY");
 		War3_CreateRaceEnd(thisRaceID);
 
@@ -175,7 +175,7 @@ public Action CritChanceDecay(Handle timer){
 		
 		if(CurrentCritChance[i]>0.0)
 		{
-			CurrentCritChance[i] -= 0.001;
+			CurrentCritChance[i] -= 0.0012;
 			if(CurrentCritChance[i] < 0.0)
 				CurrentCritChance[i] = 0.0;
 
@@ -300,15 +300,15 @@ public void OnWar3Event(W3EVENT event,int client)
 				int healthLeeched = W3GetVar(EventArg1);
 				
 				int skill_level=player.getskilllevel( thisRaceID, SKILL_LOWGRAV );
-				if(CurrentCritChance[client]<0.2)
+				if(CurrentCritChance[client]<0.1)
 				{
 					CurrentCritChance[client] += healthLeeched*(0.01 + 0.001*skill_level)*0.03;
 					War3_SetBuff(client, fCritChance,thisRaceID,CurrentCritChance[client]);
 				}
 
-				if(CurrentCritChance[client]>0.2)
+				if(CurrentCritChance[client]>0.1)
 				{
-					CurrentCritChance[client]=0.2;
+					CurrentCritChance[client]=0.1;
 					War3_SetBuff(client, fCritChance,thisRaceID,CurrentCritChance[client]);
 				}
 				//DP("Crit after %f",CurrentCritChance);
