@@ -2495,6 +2495,7 @@ public __pl_War3Source_SetNTVOptional()
 	MarkNativeAsOptional("W3GetBuffMaxFloat");
 	MarkNativeAsOptional("W3GetBuffLastValue");
 	MarkNativeAsOptional("W3GetBuffMinInt");
+	MarkNativeAsOptional("W3GetBuffInverseStackedFloat");
 	MarkNativeAsOptional("War3_RegisterDelayTracker");
 	MarkNativeAsOptional("War3_TrackDelay");
 	MarkNativeAsOptional("War3_TrackDelayExpired");

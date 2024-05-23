@@ -318,6 +318,15 @@ native W3GetBuffSumInt(client,W3Buff:buffindex);
 native Float:W3GetBuffStackedFloat(client,W3Buff:buffindex);
 
 /**
+ * W3GetBuffInverseStackedFloat
+ *
+ * @param client						client index
+ * @param buffindex						W3Buff property found in constants.inc
+ * @return 								get buff stacked value of an buff, use appropriately
+ */
+native float W3GetBuffInverseStackedFloat(client, W3Buff:buffindex);
+
+/**
  * W3GetBuffSumFloat
  *
  * @param client						client index

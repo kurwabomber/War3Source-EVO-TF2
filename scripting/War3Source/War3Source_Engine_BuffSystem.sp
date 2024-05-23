@@ -59,6 +59,7 @@ public bool:War3Source_Engine_BuffSystem_InitNatives()
 
 	CreateNative("W3GetBuffMinInt",NW3GetBuffMinInt);
 	CreateNative("W3GetBuffLastValue",NW3GetBuffLastValue);
+	CreateNative("W3GetBuffInverseStackedFloat",NW3GetBuffInverseStackedFloat);
 
 	CreateNative("W3ResetAllBuffRace",NW3ResetAllBuffRace);
 	CreateNative("W3ResetBuffRace",NW3ResetBuffRace);
@@ -276,6 +277,10 @@ public NW3GetBuffHasTrue(Handle:plugin,numParams)
 public NW3GetBuffStackedFloat(Handle:plugin,numParams)
 {
 	return _:GetBuffStackedFloat(GetNativeCell(1),GetNativeCell(2)); //returns float usually
+}
+public NW3GetBuffInverseStackedFloat(Handle:plugin,numParams)
+{
+	return _:GetBuffInverseStackedFloat(GetNativeCell(1),GetNativeCell(2)); //returns float usually
 }
 public NW3GetBuffSumFloat(Handle:plugin,numParams)
 {
@@ -682,6 +687,7 @@ DoCalculateBuffCache(client,W3Buff:buffindex,particularraceitemindex){
 		case fMinimum: BuffCached[client][buffindex]=CalcBuffMin(client,buffindex);
 		case iMinimum: BuffCached[client][buffindex]=CalcBuffMinInt(client,buffindex);
 		case iLastValue: BuffCached[client][buffindex]=CalcBuffRecentValue(client,buffindex,particularraceitemindex);
+		case fInverseStacked: BuffCached[client][buffindex]=CalcBuffInverseStackedFloat(client,buffindex);
 	}
 }
 
@@ -784,6 +790,22 @@ stock Float:CalcBuffStackedFloat(client,W3Buff:buffindex)
 	return -1.0;
 }
 
+//multiplied all the values together , only for floats
+stock Float:CalcBuffInverseStackedFloat(client,W3Buff:buffindex)
+{
+	if(ValidBuff(buffindex))
+	{
+		float value=buffdebuff[client][buffindex][0];
+		int loop = ItemsPlusRacesPlusSkillsLoaded();
+		for(int i=1;i<=loop;++i)
+		{
+			value = FloatMul(value, 1.0-buffdebuff[client][buffindex][i]);
+		}
+		return 1.0-value;
+	}
+	LogError("invalid buff index");
+	return -1.0;
+}
 
 //all values added!
 stock CalcBuffSumInt(client,W3Buff:buffindex)
@@ -871,6 +893,21 @@ stock Float:GetBuffStackedFloat(client,W3Buff:buffindex)
 	if(ValidBuff(buffindex))
 	{
 		if(BuffCacheType(buffindex)!=fStacked){
+			ThrowError("Tried to get cached value when buff index (%d) should not cache this type (%d)",buffindex,BuffCacheType(buffindex));
+		}
+		if(!ValidPlayer(client))
+			return BuffProperties[buffindex].DefaultValue;
+
+		return BuffCached[client][buffindex];
+	}
+	LogError("invalid buff index");
+	return 0.0;
+}
+stock Float:GetBuffInverseStackedFloat(client,W3Buff:buffindex)
+{
+	if(ValidBuff(buffindex))
+	{
+		if(BuffCacheType(buffindex)!=fInverseStacked){
 			ThrowError("Tried to get cached value when buff index (%d) should not cache this type (%d)",buffindex,BuffCacheType(buffindex));
 		}
 		if(!ValidPlayer(client))

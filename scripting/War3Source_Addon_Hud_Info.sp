@@ -286,9 +286,9 @@ public Action:HudInfo_Timer(Handle:timer)
                     Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nInvis: x%.2f",MiniHUD_Text, falpha);
                 }
                 //PhysicalArmorMulti
-                if(W3GetBuffMaxFloat(client, fDodgeChance) != 0.0)
+                if(W3GetBuffInverseStackedFloat(client, fDodgeChance) != 0.0)
                 {
-                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nEvade: %.1f pct", MiniHUD_Text,W3GetBuffMaxFloat(client, fDodgeChance) * 100.0);
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nEvade: %.1f pct", MiniHUD_Text,W3GetBuffInverseStackedFloat(client, fDodgeChance) * 100.0);
                 }
                 if(W3GetBuffStackedFloat(client, fAttackSpeed) != 1.0)
                 {
@@ -296,11 +296,11 @@ public Action:HudInfo_Timer(Handle:timer)
                 }
                 if(W3GetBuffSumFloat(client, fDamageModifier) != 0.0)
                 {
-                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Damage: x%.2f",MiniHUD_Text, W3GetBuffSumFloat(client, fDamageModifier)+1.0);
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Damage: +%.2fpct",MiniHUD_Text, 100.0*W3GetBuffSumFloat(client, fDamageModifier));
                 }
                 if(W3GetBuffSumFloat(client, fDamageModifierRanged) != 0.0)
                 {
-                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Ranged Damage: x%.2f",MiniHUD_Text, W3GetBuffSumFloat(client, fDamageModifierRanged)+1.0);
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Ranged Damage: +%.2fpct",MiniHUD_Text, 100.0*W3GetBuffSumFloat(client, fDamageModifierRanged));
                 }
                 if(W3GetBuffSumInt(client, iDamageBonus) != 0.0)
                 {
@@ -336,7 +336,7 @@ public Action:HudInfo_Timer(Handle:timer)
                 }
                 if(W3GetBuffMaxFloat(client, fCritModifier) != 1.0)
                 {
-                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nCrit Modifier: x%.1f",MiniHUD_Text, W3GetBuffMaxFloat(client, fCritModifier));
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nCrit Modifier: +%.0fpct",MiniHUD_Text, 100.0*W3GetBuffMaxFloat(client, fCritModifier));
                 }
                 if(W3GetBuffSumFloat(client, fMeleeThorns) != 0.0)
                 {
@@ -357,6 +357,10 @@ public Action:HudInfo_Timer(Handle:timer)
                 if(W3GetBuffStackedFloat(client, fUltimateResistance) != 1.0)
                 {
                     Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nIncoming Ultimates: x%.2f",MiniHUD_Text, W3GetBuffStackedFloat(client, fUltimateResistance));
+                }
+                if(W3GetBuffSumFloat(client, fExperienceBonus) != 0.0)
+                {
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nExperience Multiplier: x%.2f",MiniHUD_Text, 1.0+W3GetBuffSumFloat(client, fExperienceBonus));
                 }
                 if(W3GetBuffHasTrue(client,bSlowImmunity) || W3GetBuffHasTrue(client,bImmunitySkills) || W3GetBuffHasTrue(client,bImmunityUltimates) || W3GetBuffHasTrue(client,bImmunityWards))
                 {

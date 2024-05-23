@@ -81,10 +81,9 @@ enum SHOPITEMS2{
 	LIFETUBE,
 	SNAKE_BRACELET,
 	FORTIFIED_BRACER,
-	CASH_REGEN,
-	SCROLL_OF_ESSENCE,
 	LIGHTARMORPLATES,
 	ENHANCEDWEAPONRY,
+	SCROLLOFGROWTH,
 	MAXITEMSCOUNT2
 };
 
@@ -392,11 +391,11 @@ enum BuffStackCacheType
 	iAbsolute, //sum
 	fAbsolute, //sum
 	fStacked, /// all float multiplied
-
 	fMaximum,
 	fMinimum,
 	iMinimum,
 	iLastValue,
+	fInverseStacked,
 	ERRUNDEFINED=-99,
 }
 
@@ -548,6 +547,8 @@ enum W3Buff
 	fCritChanceModifier,
 	//78
 	fDamageModifierRanged,
+	//79
+	fExperienceBonus,
 
 	MaxBuffLoopLimitTemp, //this is a variable that is for loops, this number is automatically generated from the enum.
 }
@@ -715,7 +716,7 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 	buffpropertiesarray[ fMaxHealth ].BuffStackType=fStacked;
 
 	buffpropertiesarray[ fDodgeChance ].DefaultValue=0.0;
-	buffpropertiesarray[ fDodgeChance ].BuffStackType=fMaximum;
+	buffpropertiesarray[ fDodgeChance ].BuffStackType=fInverseStacked;
 
 	buffpropertiesarray[ bDodgeMode	  ].DefaultValue=0;
 	buffpropertiesarray[ bDodgeMode   ].BuffStackType=bHasOneTrue;
@@ -766,7 +767,7 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 	buffpropertiesarray[ bImmunityPoison ].BuffStackType=bHasOneTrue;
 
 	buffpropertiesarray[ fDodgeChanceRanged ].DefaultValue=0.0;
-	buffpropertiesarray[ fDodgeChanceRanged ].BuffStackType=fMaximum;
+	buffpropertiesarray[ fDodgeChanceRanged ].BuffStackType=fInverseStacked;
 
 	buffpropertiesarray[ bImmunityHacks ].DefaultValue=false;
 	buffpropertiesarray[ bImmunityHacks ].BuffStackType=bHasOneTrue;
@@ -809,6 +810,9 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 
 	buffpropertiesarray[ fDamageModifierRanged ].DefaultValue=0.0;
 	buffpropertiesarray[ fDamageModifierRanged ].BuffStackType=fAbsolute;
+
+	buffpropertiesarray[ fExperienceBonus ].DefaultValue=0.0;
+	buffpropertiesarray[ fExperienceBonus ].BuffStackType=fAbsolute;
 
 	//check that all indexes have been set
 	for(new i=0;i<MaxBuffLoopLimit;i++)

@@ -53,7 +53,7 @@ public War3Source_Engine_XPGold_OnPluginStart()
 #if GGAMETYPE_JAILBREAK == JAILBREAK_OFF
 	BotIgnoreXPCvar=CreateConVar("war3_ignore_bots_xp","0","Set to 1 to not award XP for killing bots");
 	HeadshotXPCvar=CreateConVar("war3_percent_headshotxp","0","Percent of kill XP awarded additionally for headshots");
-	MeleeXPCvar=CreateConVar("war3_percent_meleexp","100","Percent of kill XP awarded additionally for melee/knife kills");
+	MeleeXPCvar=CreateConVar("war3_percent_meleexp","0","Percent of kill XP awarded additionally for melee/knife kills");
 	AssistKillXPCvar=CreateConVar("war3_percent_assistkillxp","100","Percent of kill XP awarded for an assist kill.");
 #endif
 	RoundWinXPCvar=CreateConVar("war3_percent_roundwinxp","100","Percent of kill XP awarded for being on the winning team");
@@ -602,6 +602,10 @@ TryToGiveXPGold(client,W3XPAwardedBy:awardedfromevent,xp,gold,String:awardedprin
 
 		if(addxp<0&&GetXP(client,GetRace(client)) +addxp<0){ //negative xp?
 			addxp=-1*GetXP(client,GetRace(client));
+		}
+
+		if(addxp > 0){
+			addxp = RoundFloat(addxp * (1.0 + GetBuffSumFloat(client, fExperienceBonus)));
 		}
 
 
