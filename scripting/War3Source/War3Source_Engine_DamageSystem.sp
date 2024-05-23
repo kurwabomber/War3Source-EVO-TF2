@@ -282,7 +282,6 @@ public Action:SDK_Forwarded_OnTakeDamage(victim,&attacker,&inflictor,&Float:dama
 		new old_IsTrueDamage = g_CurDamageIsTrueDamage;
 
 		new attacker_Owns_item = 0;
-
 		if(ValidPlayer(attacker,true))
 		{
 			if(!W3HasImmunity(victim,Immunity_ArmorPiercing))
