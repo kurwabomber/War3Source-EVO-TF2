@@ -154,11 +154,10 @@ InternalTriedToBuyItem2(client,item,bool:reshowmenu=true){
 		}
 		//if its use instantly then let them buy it
 		//items maxed out
-		if(canbuy&&!War3_GetItemProperty(item,ITEM_USED_ON_BUY)&&GetClientItems2Owned(client)>=GetMaxShopitems2PerPlayer(client)){
+		if(canbuy&&GetClientItems2Owned(client)>=GetMaxShopitems2PerPlayer(client)){
 			canbuy=false;
 			WantsToBuy2[client]=item;
 			InternalExceededMaxItemsMenuBuy(client);
-
 		}
 
 

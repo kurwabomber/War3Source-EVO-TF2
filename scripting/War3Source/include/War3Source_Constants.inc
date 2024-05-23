@@ -826,7 +826,6 @@ stock InitiateBuffPropertiesArray(W3BuffProperties buffpropertiesarray[W3Buff])
 			SetFailState("Buff index %d .BuffStackType was not set properly!",i);
 		}
 	}
-
 }
 
 ///not yet used  and not sure if we ever will.. an Ownz unfinished project, good idea though.

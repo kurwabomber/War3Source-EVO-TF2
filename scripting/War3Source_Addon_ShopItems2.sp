@@ -50,7 +50,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 		ItemID[FORTIFIED_BRACER]=War3_CreateShopItem2T("fbracer","+15 max HP",25);
 		ItemID[LIGHTARMORPLATES]=War3_CreateShopItem2T("lplates","+5% defense",20);
 		ItemID[ENHANCEDWEAPONRY]=War3_CreateShopItem2T("eweapon","+3% damage",20);
-		ItemID[SCROLLOFGROWTH]=War3_CreateShopItem2T("eweapon","+100% exp bonus",300);
+		ItemID[SCROLLOFGROWTH]=War3_CreateShopItem2("Scroll of Growth","scrollgrowth","+100% exp bonus","+100% exp bonus",300);
 	}
 }
 

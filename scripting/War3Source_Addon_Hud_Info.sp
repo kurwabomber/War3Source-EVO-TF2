@@ -296,11 +296,11 @@ public Action:HudInfo_Timer(Handle:timer)
                 }
                 if(W3GetBuffSumFloat(client, fDamageModifier) != 0.0)
                 {
-                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Damage: +%.2fpct",MiniHUD_Text, 100.0*W3GetBuffSumFloat(client, fDamageModifier));
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Damage: +%.0fpct",MiniHUD_Text, 100.0*W3GetBuffSumFloat(client, fDamageModifier));
                 }
                 if(W3GetBuffSumFloat(client, fDamageModifierRanged) != 0.0)
                 {
-                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Ranged Damage: +%.2fpct",MiniHUD_Text, 100.0*W3GetBuffSumFloat(client, fDamageModifierRanged));
+                    Format(MiniHUD_Text, sizeof(MiniHUD_Text), "%s\nBonus Ranged Damage: +%.0fpct",MiniHUD_Text, 100.0*W3GetBuffSumFloat(client, fDamageModifierRanged));
                 }
                 if(W3GetBuffSumInt(client, iDamageBonus) != 0.0)
                 {

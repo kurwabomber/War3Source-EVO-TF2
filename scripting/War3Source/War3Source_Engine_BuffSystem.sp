@@ -782,7 +782,7 @@ stock Float:CalcBuffStackedFloat(client,W3Buff:buffindex)
 		int loop = ItemsPlusRacesPlusSkillsLoaded();
 		for(int i=1;i<=loop;++i)
 		{
-			value = FloatMul(value, buffdebuff[client][buffindex][i]);
+			value *= view_as<float>(buffdebuff[client][buffindex][i]);
 		}
 		return value;
 	}
@@ -795,11 +795,11 @@ stock Float:CalcBuffInverseStackedFloat(client,W3Buff:buffindex)
 {
 	if(ValidBuff(buffindex))
 	{
-		float value=buffdebuff[client][buffindex][0];
+		new Float:value=1.0;
 		int loop = ItemsPlusRacesPlusSkillsLoaded();
-		for(int i=1;i<=loop;++i)
+		for(int i=0;i<=loop;++i)
 		{
-			value = FloatMul(value, 1.0-buffdebuff[client][buffindex][i]);
+			value *= 1.0-view_as<float>(buffdebuff[client][buffindex][i]);
 		}
 		return 1.0-value;
 	}

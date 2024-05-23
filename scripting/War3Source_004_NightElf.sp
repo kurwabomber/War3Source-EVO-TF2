@@ -120,7 +120,7 @@ public OnWar3RaceDisabled(oldrace)
 
 public OnPluginStart()
 {
-	EntangleCooldownCvar=CreateConVar("war3_nightelf_entangle_cooldown","20","Cooldown timer.");
+	EntangleCooldownCvar=CreateConVar("war3_nightelf_entangle_cooldown","25","Cooldown timer.");
 
 	//LoadTranslations("w3s.race.nightelf.phrases");
 }
@@ -302,10 +302,10 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 						{
 #endif
 							//War3_CastSpell(client, target, SpellEffectsLight, SPELLCOLOR_YELLOW, thisRaceID, ULT_ENTANGLE, 3.0);
-							player.castspell(iTarget.index, SpellEffectsLight, SPELLCOLOR_YELLOW, ULT_ENTANGLE, 2.0);
+							player.castspell(iTarget.index, SpellEffectsLight, SPELLCOLOR_YELLOW, ULT_ENTANGLE, 0.5);
 
 							//War3_CooldownMGR(client,15.0,thisRaceID,ULT_ENTANGLE,false,true);
-							player.setcooldown(15.0,thisRaceID,ULT_ENTANGLE,false,true);
+							player.setcooldown(25.0,thisRaceID,ULT_ENTANGLE,false,true);
 
 #if GGAMETYPE == GGAME_TF2
 						}
