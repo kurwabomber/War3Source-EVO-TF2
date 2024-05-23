@@ -604,7 +604,7 @@ public Action OnW3TakeDmgBullet(int victim, int attacker, float damage)
 	{
 		new race_attacker=War3_GetRace(attacker);
 		int skilllevel=War3_GetSkillLevel(attacker,thisRaceID,SKILL_TIMELOCK);
-		if(race_attacker==thisRaceID && skilllevel > 0 && victim!=attacker)
+		if(race_attacker==thisRaceID && victim!=attacker)
 		{
 			if(War3_SkillNotInCooldown(attacker, thisRaceID, SKILL_TIMELOCK, false) && War3_Chance(TimeLockChance[skilllevel] * W3GetBuffStackedFloat(victim, fAbilityResistance)) && !Stunned(victim)&&!Hexed(attacker))
 			{

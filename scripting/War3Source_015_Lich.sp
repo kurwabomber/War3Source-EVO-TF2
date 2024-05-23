@@ -394,7 +394,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 					table = FindStringTable("ParticleEffectNames");
 
 				TE_Start("TFParticleEffect");
-				TE_WriteNum("m_iParticleSystemIndex", FindStringIndex(table, "utaunt_hellpit_parent"));
+				TE_WriteNum("m_iParticleSystemIndex", FindStringIndex(table, "utaunt_hands_floor1_purple"));
 				TE_WriteNum("m_iAttachType", 1);
 
 				TE_WriteNum("entindex", client);
@@ -408,11 +408,18 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 				
 				TE_SendToAll();
 				isUltimateActive[client] = true;
+				CreateTimer(10.0, StopUltimate, EntIndexToEntRef(client));
 			}
 		}
 	}
 }
-
+public Action StopUltimate(Handle timer, int ref){
+	int client = EntRefToEntIndex(ref);
+	if(ValidPlayer(client)){
+		isUltimateActive[client] = false;
+	}
+	return Plugin_Stop;
+}
 public Action Timer_KillTEParticle(Handle timer, any entity)
 {	
 	entity = EntRefToEntIndex(entity);

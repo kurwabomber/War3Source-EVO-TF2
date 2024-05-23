@@ -246,6 +246,10 @@ Internal_CreateCooldown(client,Float:cooldownTime,raceid,skillNum,bool:resetOnSp
 		LogError("ERROR, UNABLE TO CREATE COOLDOWN");
 	}
 	else{
+		//This cooldown is already finished as additive.
+		if(additive && Cooldown[indextouse].cexpiretime <= GetEngineTime() && cooldownTime <= 0.0)
+			return;
+
 		if(createlinks){ //if u create links again and u are already link from the prevous person, u will infinite loop
 
 			Cooldown[indextouse].cnext=Cooldown[indextouse-1].cnext; //this next is the previous guy's next
