@@ -41,7 +41,8 @@ new Float:ultRange=450.0;
 new Float:ultCooldown[]={45.0,44.0,43.0,42.0,41.0};
 
 new String:judgesnd[]="war3source/sr/judgement.mp3";
-new String:ultsnd[]="war3source/SOulBurn.mp3";
+new String:ultsnd[]="war3source/SoulBurn1.mp3";
+new String:ultsnd2[]="war3source/sr/ult.mp3";
 
 new AuraID;
 
@@ -143,6 +144,7 @@ public OnMapStart()
 {
 	PrecacheSound(judgesnd);
 	PrecacheSound(ultsnd);
+	PrecacheSound(ultsnd2);
 }
 
 public OnAddSound(sound_priority)
@@ -151,6 +153,7 @@ public OnAddSound(sound_priority)
 	{
 		War3_AddSound(judgesnd);
 		War3_AddSound(ultsnd);
+		War3_AddSound(ultsnd2);
 	}
 }
 
@@ -247,6 +250,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 				War3_CooldownMGR(client,ultCooldown[skill],thisRaceID,ULT_EXECUTE,true,true);
 				War3_EmitSoundToAll(ultsnd,client);
 				War3_EmitSoundToAll(ultsnd,client);
+				War3_EmitSoundToAll(ultsnd2,client);
 			}else{
 				W3MsgNoTargetFound(client,ultRange);
 			}
