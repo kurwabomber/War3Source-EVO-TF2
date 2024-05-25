@@ -280,7 +280,7 @@ public Action:War3Source_UltimateCommand(client,args)
 		War3_ChatMessage(client,"%s is currently paused, please wait until %s resumes.",W3GAMETITLE,W3GAMETITLE);
 		return Plugin_Continue;
 	}
-	if(IsInvis(client)) return Plugin_Continue;
+	if(IsInvis(client) || TF2_IsPlayerInCondition(client, TFCond_Bonked)) return Plugin_Continue;
 
 	char command[32];
 	GetCmdArg(0,command,sizeof(command));
@@ -312,7 +312,7 @@ public Action:War3Source_AbilityCommand(client,args)
 		War3_ChatMessage(client,"%s is currently paused, please wait until %s resumes.",W3GAMETITLE,W3GAMETITLE);
 		return Plugin_Continue;
 	}
-	if(IsInvis(client)) return Plugin_Continue;
+	if(IsInvis(client) || TF2_IsPlayerInCondition(client, TFCond_Bonked)) return Plugin_Continue;
 
 	char command[32];
 	GetCmdArg(0,command,sizeof(command));
@@ -348,7 +348,7 @@ public Action:War3Source_NoNumAbilityCommand(client,args)
 		return Plugin_Continue;
 	}
 
-	if(IsInvis(client)) return Plugin_Continue;
+	if(IsInvis(client) || TF2_IsPlayerInCondition(client, TFCond_Bonked)) return Plugin_Continue;
 
 	char command[32];
 	GetCmdArg(0,command,sizeof(command));
@@ -908,7 +908,7 @@ public int Press_Ability(int client, int ability)
 		War3_ChatMessage(client,"%s is currently paused, please wait until %s resumes.",W3GAMETITLE,W3GAMETITLE);
 		return 2;
 	}
-	if(IsInvis(client)) return 3;
+	if(IsInvis(client) || TF2_IsPlayerInCondition(client, TFCond_Bonked)) return 3;
 
 	Call_StartForward(p_OnAbilityCommand);
 	Call_PushCell(client);
@@ -929,7 +929,7 @@ public int Press_Ultimate(int client)
 		War3_ChatMessage(client,"%s is currently paused, please wait until %s resumes.",W3GAMETITLE,W3GAMETITLE);
 		return 2;
 	}
-	if(IsInvis(client)) return 3;
+	if(IsInvis(client) || TF2_IsPlayerInCondition(client, TFCond_Bonked)) return 3;
 
 	Call_StartForward(p_OnUltimateCommand);
 	Call_PushCell(client);
