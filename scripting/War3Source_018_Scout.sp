@@ -521,7 +521,7 @@ public OnW3PlayerAuraStateChanged(client,tAuraID,bool:inAura,level,AuraStack,Aur
 		float resistance = W3GetBuffStackedFloat(client, fAbilityResistance)
 		if(resistance < 1.0)
 		{
-			if(GetPlayerDistance(client, AuraOwner) <= 500.0*(1-resistance)){
+			if(GetPlayerDistance(client, AuraOwner) <= 700.0*(1-resistance)){
 				if(ValidPlayer(AuraOwner,true))
 				{
 					TF2_RemoveCondition(AuraOwner, TFCond_Stealthed);
