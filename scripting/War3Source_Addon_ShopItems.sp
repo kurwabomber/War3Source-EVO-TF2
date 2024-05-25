@@ -130,7 +130,7 @@ public OnWar3LoadRaceOrItemOrdered(num)
 
 		shopItem[CLOAK]=War3_CreateShopItemT("cloak","40% invis",2,1000);
 
-		shopItem[MASK]=War3_CreateShopItemT("mask","30% lifesteal",5,1500);
+		shopItem[MASK]=War3_CreateShopItemT("mask","20% lifesteal",5,1500);
 
 		shopItem[NECKLACE]=War3_CreateShopItemT("lace","40% immunity to ultimates",2,800);
 

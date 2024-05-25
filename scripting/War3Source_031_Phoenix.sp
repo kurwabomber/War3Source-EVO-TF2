@@ -184,7 +184,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 									War3_NotifyPlayerTookDamageFromSkill(i, client, War3_GetWar3DamageDealt(), ULT_FIRE);
 								}
 								TF2_IgnitePlayer(i, client, 5.0);
-								War3_CooldownMGR(client,1.5,thisRaceID,ULT_FIRE,_,_);
+								War3_CooldownMGR(client,1.5,thisRaceID,ULT_FIRE,_,false);
 								victimfound = true;
 							}
 						}
@@ -194,7 +194,7 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 			if(!victimfound)
 			{
 				War3_ChatMessage(client,"{lightgreen}No victims found for Phoenix Flames!");
-				War3_CooldownMGR(client,1.0,thisRaceID,ULT_FIRE,_,_);
+				War3_CooldownMGR(client,1.0,thisRaceID,ULT_FIRE,_,false);
 			}
 			else
 			{
