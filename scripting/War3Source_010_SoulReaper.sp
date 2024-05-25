@@ -202,6 +202,11 @@ public void OnAbilityCommand(int client, int ability, bool pressed, bool bypass)
 			War3_EmitSoundToAll(judgesnd,client);
 			War3_EmitSoundToAll(judgesnd,client);
 			War3_CooldownMGR(client,JudgementCooldownTime[skill_level],thisRaceID,SKILL_JUDGE,true,true);
+
+			if(War3_SkillNotInCooldown(client, thisRaceID, ULT_EXECUTE))
+				War3_CooldownMGR(client,2.0,thisRaceID,ULT_EXECUTE,true,true);
+			else
+				War3_CooldownMGR(client,2.0,thisRaceID,ULT_EXECUTE,true,false,true);
 		}
 	}
 }
@@ -251,6 +256,11 @@ public void OnUltimateCommand(int client, int race, bool pressed, bool bypass)
 				War3_EmitSoundToAll(ultsnd,client);
 				War3_EmitSoundToAll(ultsnd,client);
 				War3_EmitSoundToAll(ultsnd2,client);
+
+				if(War3_SkillNotInCooldown(client, thisRaceID, SKILL_JUDGE))
+					War3_CooldownMGR(client,2.0,thisRaceID,SKILL_JUDGE,true,true);
+				else
+					War3_CooldownMGR(client,2.0,thisRaceID,SKILL_JUDGE,true,false,true);
 			}else{
 				W3MsgNoTargetFound(client,ultRange);
 			}

@@ -17,7 +17,7 @@ public void War3Source_Engine_WCX_Engine_Reflect_OnWar3EventPostHurt(int victim,
 	if(StrEqual(weapon, "reflect"))
 		return;
 
-	if(!IsValidEntity(wep) || !HasEntProp(wep, Prop_Send, "m_iItemDefinitionIndex"))
+	if(!IsValidEntity(wep) || !TF2Util_IsEntityWeapon(wep))
 		return;
 
 	if(TF2Util_GetWeaponSlot(wep) != TFWeaponSlot_Melee)

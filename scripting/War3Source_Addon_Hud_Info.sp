@@ -29,7 +29,6 @@ public Plugin:myinfo =
 new g_bShowHUD[MAXPLAYERS];
 new MoneyOffsetCS;
 new Handle:g_hMyCookie;
-new Handle:ShowOtherPlayerItemsCvar;
 new String:HUD_Text_Buffer[MAXPLAYERS][512];
 new String:MiniHUD_Text_Buffer[MAXPLAYERS][512];
 new String:HUD_Text_Add[MAXPLAYERS][512];
@@ -103,11 +102,6 @@ public OnPluginStart()
     }*/
     g_hMyCookie = RegClientCookie("w3shud_toggle", "W3S HUD Visibility Toggle", CookieAccess_Protected);
     CreateTimer(0.4, HudInfo_Timer, _, TIMER_REPEAT);
-}
-
-public OnMapStart()
-{
-    ShowOtherPlayerItemsCvar = FindConVar("war3_show_playerinfo_other_player_items");
 }
 
 public OnClientPutInServer(client)
@@ -212,21 +206,23 @@ public Action:HudInfo_Timer(Handle:timer)
             continue;
 
         new display = client; 
-        new observed = -1;
+        //new observed = -1;
         if(!g_bCustomHUD)
         {
-            if(!IsPlayerAlive(display))
+            /*if(!IsPlayerAlive(display) || IsClientObserver(display))
             {
-                if(4 == GetEntProp(display, Prop_Send, "m_iObserverMode")) // OBS_MODE_IN_EYE
+                if(GetEntProp(display, Prop_Send, "m_iObserverMode") == 4) // OBS_MODE_IN_EYE
                     observed = GetEntPropEnt(display, Prop_Send, "m_hObserverTarget"); 
                 if(ValidPlayer(observed, true))
                     client = observed;
-            }
+
+                PrintToServer("yuh? %N | %N", display, client);
+            }*/
             new race=War3_GetRace(client);
-            if (race > 0 && IsPlayerAlive(client) && !IsClientObserver(client))
-            {                    
-                new String:HUD_Text[2048];
-                new String:MiniHUD_Text[1024];
+            if (race > 0 && IsPlayerAlive(client))
+            {
+                new String:HUD_Text[512];
+                new String:MiniHUD_Text[512];
                 new String:racename[64];
                 War3_GetRaceName(race,racename,sizeof(racename));
                 new level=War3_GetLevel(client, race);
@@ -274,8 +270,6 @@ public Action:HudInfo_Timer(Handle:timer)
                 }
                 new Float:itemalpha=W3GetBuffMinFloat(client,fInvisibilityItem);
                 if(falpha!=1.0){
-                    //PrintToChatAll("has skill invis");
-                    //has skill, reduce stack
                     itemalpha=Pow(itemalpha,0.75);
                 }
                 falpha = falpha * itemalpha;
@@ -376,48 +370,23 @@ public Action:HudInfo_Timer(Handle:timer)
 
                 }
                 
+                new bool:itemsonce = true;
+                new String:itemname[64];
+                new ItemsLoaded = W3GetItemsLoaded();
+                for(new itemid=1;itemid<=ItemsLoaded;itemid++)
+                {
+                    if(War3_GetOwnsItem(client,itemid))
+                    {
+                        if(itemsonce)
+                        {
+                            StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "\nItems: ");
+                            itemsonce = false;
+                        }
+                        W3GetItemShortname(itemid,itemname,sizeof(itemname));
+                        Format(MiniHUD_Text,sizeof(MiniHUD_Text),"%s%s | ",MiniHUD_Text,itemname);
+                    }
+                }
 
-                
-                if(GetConVarBool(ShowOtherPlayerItemsCvar)&&client!=display)
-                {
-                    new bool:itemsonce = true;
-                    new String:itemname[64];
-                    new moleitemid=War3_GetItemIdByShortname("mole");
-                    new ItemsLoaded = W3GetItemsLoaded();
-                    for(new itemid=1;itemid<=ItemsLoaded;itemid++)
-                    {
-                        if(War3_GetOwnsItem(client,itemid)&&itemid!=moleitemid)
-                        {
-                            if(itemsonce)
-                            {
-                                StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "\nItems: ");
-                                itemsonce = false;
-                            }
-                            W3GetItemShortname(itemid,itemname,sizeof(itemname));
-                            Format(MiniHUD_Text,sizeof(MiniHUD_Text),"%s%s | ",MiniHUD_Text,itemname);
-                        }
-                    }
-                }
-                else if(client==display)
-                {
-                    new bool:itemsonce = true;
-                    
-                    new String:itemname[64];
-                    new ItemsLoaded = W3GetItemsLoaded();
-                    for(new itemid=1;itemid<=ItemsLoaded;itemid++)
-                    {
-                        if(War3_GetOwnsItem(client,itemid))
-                        {
-                            if(itemsonce)
-                            {
-                                StrCat(MiniHUD_Text, sizeof(MiniHUD_Text), "\nItems: ");
-                                itemsonce = false;
-                            }
-                            W3GetItemShortname(itemid,itemname,sizeof(itemname));
-                            Format(MiniHUD_Text,sizeof(MiniHUD_Text),"%s%s | ",MiniHUD_Text,itemname);
-                        }
-                    }
-                }
                 Format(HUD_Text,sizeof(HUD_Text),"%s\n--- Cooldowns ---",HUD_Text);
                 for(new i = 1;i <= War3_GetRaceSkillCount(race);i++)
                 {

@@ -89,6 +89,8 @@ new standStillCount[MAXPLAYERSCUSTOM];
 // Effects
 //new BeamSprite,HaloSprite;
 
+const float immunityRevealRadius = 600.0;
+
 new AuraID;
 
 public Plugin:myinfo =
@@ -515,6 +517,16 @@ public OnW3PlayerAuraStateChanged(client,tAuraID,bool:inAura,level,AuraStack,Aur
 		{
 			War3_SetBuff(client,bInvisibilityDenyAll,thisRaceID,false);
 			War3_NotifyPlayerImmuneFromSkill(AuraOwner, client, SKILL_TRUESIGHT);
+		}
+		float resistance = W3GetBuffStackedFloat(client, fAbilityResistance)
+		if(resistance < 1.0)
+		{
+			if(GetPlayerDistance(client, AuraOwner) <= 500.0*(1-resistance)){
+				if(ValidPlayer(AuraOwner,true))
+				{
+					TF2_RemoveCondition(AuraOwner, TFCond_Stealthed);
+				}
+			}
 		}
 	}
 
