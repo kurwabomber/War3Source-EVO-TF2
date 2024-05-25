@@ -595,9 +595,9 @@ public Action OnW3TakeDmgAll(int victim,int attacker, float damage)
 				new Float:pos[3];
 				GetClientAbsOrigin(victim,pos);
 				new Float:otherVec[3];
-				for(new i=1;i<=MaxClients;i++)
+				for(new i=1;i<=MaxClients;++i)
 				{
-					if(ValidPlayer(i,true)&&GetClientTeam(i)!=team)
+					if(ValidPlayer(i,true)&&GetClientTeam(i)==team)
 					{
 						GetClientAbsOrigin(i,otherVec);
 						if(GetVectorDistance(pos,otherVec)<StaticHealRadius){
