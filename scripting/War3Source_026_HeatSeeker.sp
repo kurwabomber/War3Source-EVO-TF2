@@ -33,7 +33,7 @@ float SelfBlastDamageReduction[]={0.6,0.55,0.5,0.45,0.4};
 
 //Supernova
 float blastRadiusBonus[] = {1.1, 1.125, 1.15, 1.175, 1.2};
-float blastFalloffBonus[] = {1.2, 1.225, 1.25, 1.275, 1.3};
+float blastFalloffBonus[] = {0.2, 0.225, 0.25, 0.275, 0.3};
 
 char heatSeekingSound[]="war3source/Hunter_Seeker_launch.mp3";
 bool isProjectileHoming[MAXENTITIES] = {false,...};
@@ -138,7 +138,7 @@ public InitPassiveSkills(client)
 		TF2Attrib_SetByName(client, "blast dmg to self increased", SelfBlastDamageReduction[skill_level]);
 
 		skill_level = War3_GetSkillLevel(client, thisRaceID, STABILIZERS_SKILL);
-		TF2Attrib_SetByName(client, "dmg falloff decreased", 1.0/blastFalloffBonus[skill_level]);
+		TF2Attrib_SetByName(client, "dmg falloff decreased", blastFalloffBonus[skill_level]);
 		TF2Attrib_SetByName(client, "Blast radius increased", blastRadiusBonus[skill_level]);
 	}
 }
