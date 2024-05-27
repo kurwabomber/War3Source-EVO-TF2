@@ -138,7 +138,7 @@ public InitPassiveSkills(client)
 		TF2Attrib_SetByName(client, "blast dmg to self increased", SelfBlastDamageReduction[skill_level]);
 
 		skill_level = War3_GetSkillLevel(client, thisRaceID, STABILIZERS_SKILL);
-		TF2Attrib_SetByName(client, "dmg falloff decreased", blastFalloffBonus[skill_level]);
+		TF2Attrib_SetByName(client, "dmg falloff decreased", 1.0/blastFalloffBonus[skill_level]);
 		TF2Attrib_SetByName(client, "Blast radius increased", blastRadiusBonus[skill_level]);
 	}
 }
